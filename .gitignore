@@ -1,0 +1,9 @@
+# Development environment
+venv/
+.idea/
+__pycache__/
+
+# IO files
+*.txt
+*.tsv
+*.csv
