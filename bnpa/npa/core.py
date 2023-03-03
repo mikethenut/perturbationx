@@ -2,31 +2,39 @@ import numpy as np
 import scipy.sparse as sparse
 
 
-def npa_value_diffusion(diffusion_matrix: np.ndarray, network_node_name: dict,
-                        fold_change: np.ndarray, dataset_node_name: dict):
-
+def value_diffusion(diffusion_matrix: np.ndarray, fold_change: np.ndarray):
     if diffusion_matrix.ndim != 2:
-        raise ValueError("Argument transformation_matrix is not of correct shape.")
+        raise ValueError("Argument diffusion_matrix is not two-dimensional.")
     elif fold_change.ndim != 1:
-        raise ValueError("Argument fold_change is not of correct shape.")
+        raise ValueError("Argument fold_change is not one-dimensional.")
+    elif diffusion_matrix.shape[1] != fold_change.shape[0]:
+        raise ValueError("Dimensions of diffusion_matrix and fold_change do not match.")
 
-    backbone_node_count = diffusion_matrix.shape[0]
-    dataset_node_idx = {v: k for k, v in dataset_node_name.items()}
-
-    network_idx = np.array([node_idx - backbone_node_count for node_idx, node_name in sorted(network_node_name.items())
-                            if node_name in dataset_node_idx])
-    dataset_idx = np.array([dataset_node_idx[node_name] for node_idx, node_name in sorted(network_node_name.items())
-                            if node_name in dataset_node_idx])
-
-    transformation_matrix = diffusion_matrix[:, network_idx]
-    fold_change = fold_change[dataset_idx, ]
-
-    return - np.matmul(transformation_matrix, fold_change)
+    return - np.matmul(diffusion_matrix, fold_change)
 
 
-def network_perturbation_amplitude(backbone_edge_count: int, laplacian_backbone_signless: sparse.spmatrix,
-                                   backbone_values: np.ndarray):
+def perturbation_amplitude(q: np.ndarray, backbone_values: np.ndarray, backbone_edge_count: int):
+    if q.ndim != 2 or q.shape[0] != q.shape[1]:
+        raise ValueError("Argument q is not a square matrix.")
+    elif backbone_values.ndim != 1:
+        raise ValueError("Argument backbone_values is not one-dimensional.")
+    elif q.shape[0] != backbone_values.shape[0]:
+        raise ValueError("Dimensions of q and backbone_values do not match.")
 
-    temp = np.matmul(laplacian_backbone_signless.todense().A, backbone_values)
-    res = np.matmul(backbone_values, temp)
-    return res / backbone_edge_count
+    return np.matmul(q.dot(backbone_values), backbone_values) / backbone_edge_count
+
+
+def perturbation_amplitude_contributions(q: sparse.spmatrix, backbone_values: np.ndarray, backbone_edge_count: int):
+    if q.ndim != 2 or q.shape[0] != q.shape[1]:
+        raise ValueError("Argument q is not a square matrix.")
+    elif backbone_values.ndim != 1:
+        raise ValueError("Argument backbone_values is not one-dimensional.")
+    elif q.shape[0] != backbone_values.shape[0]:
+        raise ValueError("Dimensions of q and backbone_values do not match.")
+
+    temp = q.dot(backbone_values)
+    node_contributions_abs = np.multiply(temp, backbone_values)
+    total_perturbation = np.sum(node_contributions_abs)
+
+    node_contributions_rel = np.divide(node_contributions_abs, total_perturbation)
+    return total_perturbation / backbone_edge_count, node_contributions_rel
