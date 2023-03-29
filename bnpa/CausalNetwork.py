@@ -2,9 +2,10 @@ import warnings
 from collections.abc import Iterable
 from typing import Optional
 
+import pandas as pd
+
 from bnpa.importer.network import parse_dsv
 from bnpa.importer.RelationTranslator import RelationTranslator
-from bnpa.Dataset import Dataset
 from bnpa.npa.NPAResult import NPAResult
 
 from bnpa.npa.util import enumerate_nodes, adjacency_matrix, reduce_to_common_nodes
@@ -16,7 +17,7 @@ from bnpa.npa.statistics import backbone_covariance_matrix, backbone_confidence_
 
 class CausalNetwork:
     def __init__(self, backbone_edges=None, downstream_edges=None,
-                 relation_translator: Optional[RelationTranslator] = None, preprocess=False):
+                 relation_translator: Optional[RelationTranslator] = None):
         if not issubclass(type(backbone_edges), Iterable):
             raise TypeError("Argument backbone_edges is not iterable.")
         if not issubclass(type(backbone_edges), Iterable):
@@ -36,24 +37,21 @@ class CausalNetwork:
         if downstream_edges is not None:
             self._downstream_edges = dict()
             for s, r, o in downstream_edges:
-                if (s, o.upper()) in self._downstream_edges:
+                if (s, o) in self._downstream_edges:
                     warnings.warn("Multiple relations between %s and %s. "
-                                  "Only the first instance will be kept." % (s, o.upper()))
+                                  "Only the first instance will be kept." % (s, o))
                 else:
-                    self._downstream_edges[(s, o.upper())] = r
+                    self._downstream_edges[(s, o)] = r
 
         if relation_translator is None:
             self._relation_translator = RelationTranslator()
         else:
             self._relation_translator = relation_translator
 
-        if preprocess:
-            self.preprocess_network()
-        else:
-            self._is_preprocessed = False
-            self._node_name = None
-            self._l3, self._l2, self._q = None, None, None
-            self._l3_permutations = None
+        self._is_preprocessed = False
+        self._node_idx = None
+        self._l3, self._l2, self._q = None, None, None
+        self._l3_permutations = None
 
     def set_relation_translator(self, relation_translator: RelationTranslator):
         self._relation_translator = relation_translator
@@ -91,37 +89,41 @@ class CausalNetwork:
         self._is_preprocessed = False
 
     def add_edge_downstream(self, src, trg, rel):
-        if (src, trg.upper()) in self._downstream_edges:
+        if (src, trg) in self._downstream_edges:
             warnings.warn("Relation between %s and %s already exists "
-                          "and will be modified." % (src, trg.upper()))
-        self._downstream_edges[(src, trg.upper())] = rel
+                          "and will be modified." % (src, trg))
+        self._downstream_edges[(src, trg)] = rel
         self._is_preprocessed = False
 
     def modify_edge_downstream(self, src, trg, rel):
-        if (src, trg.upper()) not in self._downstream_edges:
-            raise KeyError("Relation between %s and %s does not exist." % (src, trg.upper()))
-        self._downstream_edges[(src, trg.upper())] = rel
+        if (src, trg) not in self._downstream_edges:
+            raise KeyError("Relation between %s and %s does not exist." % (src, trg))
+        self._downstream_edges[(src, trg)] = rel
         self._is_preprocessed = False
 
     def remove_edge_downstream(self, src, trg):
-        if (src, trg.upper()) not in self._downstream_edges:
-            raise KeyError("Relation between %s and %s does not exist." % (src, trg.upper()))
-        del self._downstream_edges[(src, trg.upper())]
+        if (src, trg) not in self._downstream_edges:
+            raise KeyError("Relation between %s and %s does not exist." % (src, trg))
+        del self._downstream_edges[(src, trg)]
         self._is_preprocessed = False
 
     def preprocess_network(self):
-        node_idx, self._node_name, bb_size = enumerate_nodes(self._backbone_edges, self._downstream_edges)
-        adj_mat = adjacency_matrix(self._backbone_edges, self._downstream_edges, node_idx, self._relation_translator)
+        self._node_idx, bb_size = enumerate_nodes(self._backbone_edges, self._downstream_edges)
+        adj_mat = adjacency_matrix(self._backbone_edges, self._downstream_edges,
+                                   self._node_idx, self._relation_translator)
         self._l3, self._l2, self._q = laplacian_matrices(adj_mat, bb_size)
         self._l3_permutations = permute_laplacian_k(self._l3)
         self._is_preprocessed = True
 
-    def compute_npa(self, dataset: Dataset, statistics=True):
+    def compute_npa(self, dataset: pd.DataFrame, statistics=True):
+        if 'nodeID' not in dataset.columns or 'logFC' not in dataset.columns or 't' not in dataset.columns:
+            raise ValueError("Dataset must be contain columns 'nodeID', 'logFC' and 't'.")
+
         if not self._is_preprocessed:
             self.preprocess_network()
 
-        l2_reduced, fold_change_reduced, t_statistic_reduced = reduce_to_common_nodes(
-            self._l2, self._node_name, dataset.fold_change, dataset.t_statistic, dataset.node_name)
+        l2_reduced, fold_change_reduced, t_statistic_reduced = \
+            reduce_to_common_nodes(self._l2, self._node_idx, dataset)
         diff_mat = diffusion_matrix(self._l3, l2_reduced)
         backbone_values = value_diffusion(diff_mat, fold_change_reduced)
 
