@@ -2,6 +2,39 @@ import numpy as np
 import numpy.linalg as la
 import scipy.sparse as sparse
 
+from bnpa.importer.RelationTranslator import RelationTranslator
+from typing import Optional
+
+
+def enumerate_nodes(backbone_edges: dict, downstream_edges: dict):
+    backbone_nodes = {n for nodes in backbone_edges.keys() for n in nodes} | \
+                     {nodes[0] for nodes in downstream_edges.keys()}
+    downstream_nodes = {nodes[1] for nodes in downstream_edges.keys()}
+    node_intersection = backbone_nodes & downstream_nodes
+    if len(node_intersection) > 0:
+        raise ValueError("The same nodes appear in network backbone and downstream: %s." % str(node_intersection))
+
+    backbone_size = len(backbone_nodes)
+    node_idx = {node: idx for idx, node in enumerate(backbone_nodes)} | \
+               {node: (backbone_size + idx) for idx, node in enumerate(downstream_nodes)}
+    return node_idx, backbone_size
+
+
+def adjacency_matrix(backbone_edges: dict, downstream_edges: dict, node_idx: dict,
+                     relation_translator: Optional[RelationTranslator] = None):
+    if relation_translator is None:
+        relation_translator = RelationTranslator()
+
+    downstream_degree = {src: 0. for src, trg in downstream_edges}
+    for (src, trg), rel in downstream_edges.items():
+        downstream_degree[src] += abs(relation_translator.translate(rel))
+
+    rows = [node_idx[src] for src, trg in backbone_edges] + [node_idx[src] for src, trg in downstream_edges]
+    cols = [node_idx[trg] for src, trg in backbone_edges] + [node_idx[trg] for src, trg in downstream_edges]
+    data = [relation_translator.translate(rel) for rel in backbone_edges.values()] + \
+           [relation_translator.translate(rel) / downstream_degree[src] for (src, trg), rel in downstream_edges.items()]
+    return sparse.csr_matrix((data, (rows, cols)), shape=(len(node_idx), len(node_idx)))
+
 
 def laplacian_matrices(adjacency: sparse.spmatrix, backbone_size: int):
     if adjacency.ndim != 2 or adjacency.shape[0] != adjacency.shape[1]:
@@ -24,22 +57,11 @@ def laplacian_matrices(adjacency: sparse.spmatrix, backbone_size: int):
     return l3, l2, q
 
 
-def diffusion_matrix(l3: np.ndarray, l2: np.ndarray):
-    if l2.ndim != 2:
-        raise ValueError("Argument l2 is not two-dimensional.")
-    elif l3.ndim != 2 or l3.shape[0] != l3.shape[1]:
-        raise ValueError("Argument l3 is not a square matrix.")
-    elif l3.shape[0] != l2.shape[0]:
-        raise ValueError("Dimensions of l2 and l3 do not match.")
-
-    return np.matmul(la.inv(l3), l2)
-
-
 def permute_laplacian_k(laplacian: np.ndarray, permutations=500, seed=None):
     if laplacian.ndim != 2 or laplacian.shape[0] != laplacian.shape[1]:
         print(laplacian.shape)
         raise ValueError("Argument laplacian is not a square matrix.")
-    # WARNING: Some of the generated laplacians might be singular
+    # WARNING: Some generated laplacians might be singular
 
     if seed is None:
         generator = np.random.default_rng()
@@ -66,6 +88,22 @@ def permute_laplacian_k(laplacian: np.ndarray, permutations=500, seed=None):
             random_laplacian[trg, n] = 1
 
         np.fill_diagonal(random_laplacian, np.sum(np.abs(random_laplacian), axis=0) + excess_degree)
-        permuted.append(random_laplacian)
+
+        try:
+            la.inv(random_laplacian)
+            permuted.append(random_laplacian)
+        except la.LinAlgError:
+            # Singular backbone generated
+            continue
 
     return permuted
+
+
+def preprocess_network(backbone_edges, downstream_edges, relation_translator):
+    node_idx, bb_size = enumerate_nodes(backbone_edges, downstream_edges)
+    adj_mat = adjacency_matrix(backbone_edges, downstream_edges,
+                               node_idx, relation_translator)
+    l3, l2, q = laplacian_matrices(adj_mat, bb_size)
+    l3_permutations = permute_laplacian_k(l3)
+
+    return node_idx, l3, l2, q, l3_permutations

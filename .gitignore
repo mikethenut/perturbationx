@@ -12,3 +12,6 @@ __pycache__/
 
 # Exclude test fixtures
 !tests/fixtures/**
+
+# Exclude jupyter-lab
+*.ipynb
