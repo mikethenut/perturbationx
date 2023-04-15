@@ -16,6 +16,6 @@ def parse_dsv(input_path, delimiter='\t'):
 
         for line in dsv_file:
             src, rel, trg = line[src_idx], line[rel_idx], line[trg_idx]
-            edges.append((src, rel, trg))
+            edges.append((src, trg, rel))
 
     return edges

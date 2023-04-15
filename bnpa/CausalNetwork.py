@@ -1,9 +1,10 @@
+import os
 import warnings
 from collections.abc import Iterable
 from typing import Optional
 
 import pandas as pd
-import igraph as ig
+import networkx as nx
 
 from bnpa.importer.RelationTranslator import RelationTranslator
 from bnpa.importer.network import parse_dsv
@@ -15,52 +16,75 @@ from bnpa.output.NPAResultBuilder import NPAResultBuilder
 
 
 class CausalNetwork:
-    def __init__(self, backbone_edges=None, downstream_edges=None,
-                 relation_translator: Optional[RelationTranslator] = None):
-        if not issubclass(type(backbone_edges), Iterable):
-            raise TypeError("Argument backbone_edges is not iterable.")
-        if not issubclass(type(backbone_edges), Iterable):
-            raise TypeError("Argument downstream_edges is not iterable.")
+    __allowed_edge_types = ("core", "boundary", "infer")
 
-        # change input parameters
+    def __init__(self, edges=None, relation_translator: Optional[RelationTranslator] = None,
+                 metadata: dict = None):
+        if not issubclass(type(edges), Iterable):
+            raise TypeError("Argument backbone_edges is not iterable.")
+
+        self._graph = nx.DiGraph()
+        self._backbone_edges = dict()
+        self._downstream_edges = dict()
+        dod = dict()  # Format: {src: {trg: {"relation": "+", "type": "core"}}}
+        if edges is not None:
+            for edge in edges:
+                if not 3 <= len(edge) <= 4:
+                    warnings.warn("Edge %s is of invalid length and will be ignored." % str(edge))
+                    continue
+
+                src, trg, rel = str(edge[0]), str(edge[1]), str(edge[2])
+
+                if src not in dod:
+                    dod[src] = dict()
+                if trg in dod[src]:
+                    warnings.warn("Multiple edges between %s and %s. "
+                                  "Only the first instance will be kept." % (src, trg))
+                    continue
+
+                dod[src][trg] = {"relation": rel}
+                if len(edge) == 4:
+                    typ = str(edge[3]).lower()
+
+                    # TODO: remove this
+                    if typ == "core":
+                        self._backbone_edges[(src, trg)] = rel
+                    else:
+                        self._downstream_edges[(src, trg)] = rel
+
+                    if typ in self.__allowed_edge_types:
+                        dod[src][trg]["type"] = typ
+                    else:
+                        warnings.warn("Unknown type %s of edge %s will be "
+                                      "replaced with \"infer\"." % (typ, str(edge)))
+                        dod[src][trg]["type"] = "infer"
+                else:
+                    dod[src][trg]["type"] = "infer"
+                    # TODO: remove this
+                    self._downstream_edges[(src, trg)] = rel
+
         # modify imports
-        # create igraph from tuple list
         # change edge modifications
 
-        self._backbone_edges = dict()
-        if backbone_edges is not None:
-            self._backbone_edges = dict()
-            for s, r, o in backbone_edges:
-                if (s, o) in self._backbone_edges:
-                    warnings.warn("Multiple relations between %s and %s. "
-                                  "Only the first instance will be kept." % (s, o))
-                else:
-                    self._backbone_edges[(s, o)] = r
+        self.relation_translator = relation_translator \
+            if relation_translator is not None \
+            else RelationTranslator()
 
-        self._downstream_edges = dict()
-        if downstream_edges is not None:
-            self._downstream_edges = dict()
-            for s, r, o in downstream_edges:
-                if (s, o) in self._downstream_edges:
-                    warnings.warn("Multiple relations between %s and %s. "
-                                  "Only the first instance will be kept." % (s, o))
-                else:
-                    self._downstream_edges[(s, o)] = r
-
-        self.relation_translator = relation_translator if relation_translator is not None else RelationTranslator()
-        self.metadata = dict()
+        # TODO: enter default metadata
+        self.metadata = metadata \
+            if metadata is not None \
+            else dict()
 
     @classmethod
-    def from_tsv(cls, backbone_network, downstream_network, relation_translator=None):
-        backbone_edges = parse_dsv(backbone_network)
-        downstream_edges = parse_dsv(downstream_network)
-        return cls(backbone_edges, downstream_edges, relation_translator)
+    def from_dsv(cls, core_filepath, boundary_filepath=None, relation_translator=None, delimiter='\t'):
+        core_edges = [(a, b, c, "core") for (a, b, c) in
+                      parse_dsv(core_filepath, delimiter=delimiter)]
+        boundary_edges = [(a, b, c, "boundary") for (a, b, c) in
+                          parse_dsv(boundary_filepath, delimiter=delimiter)] \
+            if boundary_filepath is not None else []
 
-    @classmethod
-    def from_csv(cls, backbone_network, downstream_network, relation_translator=None):
-        backbone_edges = parse_dsv(backbone_network, delimiter=',')
-        downstream_edges = parse_dsv(downstream_network, delimiter=',')
-        return cls(backbone_edges, downstream_edges, relation_translator)
+        metadata = {"name": os.path.basename(core_filepath)}
+        return cls(core_edges + boundary_edges, relation_translator, metadata)
 
     def add_edge_backbone(self, src, trg, rel):
         if (src, trg) in self._backbone_edges:
