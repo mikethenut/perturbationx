@@ -53,10 +53,9 @@ class NPAResult:
             distr = self._distributions[distribution][d]
             ax[idx].set_ylabel(d)
 
-            sns.histplot(distr[0], ax=ax[idx], color='lightblue', stat='density')
+            sns.histplot(distr[0], ax=ax[idx], color='lightblue', stat='density', bins=25)
             sns.kdeplot(distr[0], ax=ax[idx], color='navy')
             if distr[1] is not None:
-                print(distr[1])
                 ax[idx].axvline(x=distr[1], color='red')
 
         plt.show()

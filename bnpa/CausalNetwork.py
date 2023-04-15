@@ -159,8 +159,8 @@ class CausalNetwork:
             k_pv, k_distribution = permutation_test_k(l3_permutations, l2_reduced, q,
                                                       dataset_reduced['logFC'].to_numpy(), bb_edge_count, perturbation)
             result_builder.set_global_attributes(dataset_id, ['o_value', 'k_value'], [o_pv, k_pv])
-            result_builder.set_permutations(dataset_id, ['o_distribution', 'k_distribution'],
-                                            [o_distribution, k_distribution])
+            result_builder.set_distribution(dataset_id, 'o_distribution', o_distribution, perturbation)
+            result_builder.set_distribution(dataset_id, 'k_distribution', k_distribution, perturbation)
 
         return result_builder.build()
 

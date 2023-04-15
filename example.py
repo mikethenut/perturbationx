@@ -18,5 +18,8 @@ if __name__ == "__main__":
 
     output_file = "test_results.txt"
     with open(output_file, "w") as f:
-        f.write(results.network_info.to_string() + "\n")
-        f.write(results.permutation_info.to_string() + "\n")
+        f.write(results.global_info().to_string() + "\n")
+        for attr in results.node_attributes():
+            f.write(results.node_info(attr).to_string() + "\n")
+        for distr in results.distributions():
+            results.plot_distribution(distr)
