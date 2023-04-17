@@ -1,63 +1,88 @@
+import warnings
+
 import numpy as np
 import numpy.linalg as la
 import scipy.sparse as sparse
+import pandas as pd
+import networkx as nx
 
 from bnpa.importer.RelationTranslator import RelationTranslator
 from typing import Optional
 
 
-def enumerate_nodes(backbone_edges: dict, downstream_edges: dict):
-    backbone_nodes = {n for nodes in backbone_edges.keys() for n in nodes} | \
-                     {nodes[0] for nodes in downstream_edges.keys()}
-    downstream_nodes = {nodes[1] for nodes in downstream_edges.keys()}
-    node_intersection = backbone_nodes & downstream_nodes
+def enumerate_nodes(graph: nx.DiGraph):
+    # Select nodes with outgoing edges and targets of core edges as core nodes,
+    # select targets of boundary edges as boundary nodes
+    core_nodes = {src for src, trg in graph.edges} | \
+                 {trg for src, trg in graph.edges if graph[src][trg]["type"] == "core"}
+    boundary_nodes = {trg for src, trg in graph.edges if graph[src][trg]["type"] == "boundary"}
+
+    # Check that there isn't overlap between the two sets
+    node_intersection = core_nodes & boundary_nodes
     if len(node_intersection) > 0:
-        raise ValueError("The same nodes appear in network backbone and downstream: %s." % str(node_intersection))
+        raise ValueError("The same nodes appear in network core and boundary: %s." % str(node_intersection))
 
-    backbone_size = len(backbone_nodes)
-    node_idx = {node: idx for idx, node in enumerate(backbone_nodes)} | \
-               {node: (backbone_size + idx) for idx, node in enumerate(downstream_nodes)}
-    return node_idx, backbone_size
+    # Infer targets of unknown edges; their type defaults to boundary if they have no outgoing links
+    for src, trg in graph.edges:
+        if graph[src][trg]["type"] not in ("core", "boundary"):
+            if trg in core_nodes:
+                graph[src][trg]["type"] = "core"
+            else:
+                graph[src][trg]["type"] = "boundary"
+                boundary_nodes.add(trg)
 
+    # Compute indices and add data to graph instance
+    core_size = len(core_nodes)
+    node_idx = {node: idx for idx, node in enumerate(core_nodes)} | \
+               {node: (core_size + idx) for idx, node in enumerate(boundary_nodes)}
+    for n in graph.nodes:
+        graph.nodes[n]["idx"] = node_idx[n]
+        graph.nodes[n]["type"] = "core" if n in core_nodes else "boundary"
 
-def adjacency_matrix(backbone_edges: dict, downstream_edges: dict, node_idx: dict,
-                     relation_translator: Optional[RelationTranslator] = None):
-    if relation_translator is None:
-        relation_translator = RelationTranslator()
-
-    downstream_degree = {src: 0. for src, trg in downstream_edges}
-    for (src, trg), rel in downstream_edges.items():
-        downstream_degree[src] += abs(relation_translator.translate(rel))
-
-    rows = [node_idx[src] for src, trg in backbone_edges] + [node_idx[src] for src, trg in downstream_edges]
-    cols = [node_idx[trg] for src, trg in backbone_edges] + [node_idx[trg] for src, trg in downstream_edges]
-    data = [relation_translator.translate(rel) for rel in backbone_edges.values()] + \
-           [relation_translator.translate(rel) / downstream_degree[src] for (src, trg), rel in downstream_edges.items()]
-    return sparse.csr_matrix((data, (rows, cols)), shape=(len(node_idx), len(node_idx)))
+    return graph
 
 
-def laplacian_matrices(adjacency: sparse.spmatrix, backbone_size: int):
+def adjacency_matrix(graph: nx.DiGraph, relation_translator: Optional[RelationTranslator] = None):
+    rt = relation_translator if relation_translator is not None else RelationTranslator()
+
+    boundary_outdegree = {src: 0. for src, trg in graph.edges if graph.nodes[trg]["type"] == "boundary"}
+    for src, trg in graph.edges:
+        if graph.nodes[trg]["type"] == "boundary":
+            boundary_outdegree[src] += abs(rt.translate(graph[src][trg]["relation"]))
+
+    rows = [graph.nodes[src]["idx"] for src, trg in graph.edges]
+    cols = [graph.nodes[trg]["idx"] for src, trg in graph.edges]
+    data = [rt.translate(graph[src][trg]["relation"])
+            if graph.nodes[trg]["type"] == "core" else
+            rt.translate(graph[src][trg]["relation"]) / boundary_outdegree[src]
+            for src, trg in graph.edges]
+    return sparse.csr_matrix((data, (rows, cols)), shape=(graph.number_of_nodes(), graph.number_of_nodes()))
+
+
+def laplacian_matrices(graph: nx.DiGraph, adjacency: sparse.spmatrix):
     if adjacency.ndim != 2 or adjacency.shape[0] != adjacency.shape[1]:
         raise ValueError("Argument adjacency is not a square matrix.")
-    if backbone_size < 0 or backbone_size >= adjacency.shape[0]:
-        raise ValueError("Argument backbone_size is outside of interval [%d, %d]." % (0, adjacency.shape[0]))
+    if graph.number_of_nodes() != adjacency.shape[0]:
+        raise ValueError("Argument graph has invalid number of "
+                         "vertices (%d)." % graph.number_of_nodes())
 
+    core_size = sum(1 for n in graph.nodes if graph.nodes[n]["type"] == "core")
     laplacian = - adjacency - adjacency.transpose()
     degree = abs(laplacian).sum(axis=1).A[:, 0]
     laplacian = sparse.diags(degree) + laplacian
-    l3 = laplacian[:backbone_size, :backbone_size].todense().A
-    l2 = laplacian[:backbone_size, backbone_size:].todense().A
+    lap_c = laplacian[:core_size, :core_size].todense().A
+    lap_b = laplacian[:core_size, core_size:].todense().A
 
-    backbone_adjacency = adjacency[:backbone_size, :backbone_size]
-    q = backbone_adjacency + backbone_adjacency.transpose()
-    backbone_degree = abs(q).sum(axis=1).A[:, 0]
-    q = sparse.diags(backbone_degree) + q
-    q = q.todense().A
+    core_adjacency = adjacency[:core_size, :core_size]
+    lap_q = core_adjacency + core_adjacency.transpose()
+    core_degree = abs(lap_q).sum(axis=1).A[:, 0]
+    lap_q = sparse.diags(core_degree) + lap_q
+    lap_q = lap_q.todense().A
 
-    return l3, l2, q
+    return lap_c, lap_b, lap_q
 
 
-def permute_laplacian_k(laplacian: np.ndarray, permutations=500, seed=None):
+def permute_laplacian_k(laplacian: np.ndarray, iterations=500, seed=None):
     if laplacian.ndim != 2 or laplacian.shape[0] != laplacian.shape[1]:
         print(laplacian.shape)
         raise ValueError("Argument laplacian is not a square matrix.")
@@ -73,7 +98,7 @@ def permute_laplacian_k(laplacian: np.ndarray, permutations=500, seed=None):
     excess_degree = np.sum(np.abs(laplacian), axis=0) - 2 * laplacian.diagonal()
 
     permuted = []
-    for p in range(permutations):
+    for p in range(iterations):
         random_tril = generator.permutation(laplacian[tril_idx])
         random_laplacian = np.zeros((network_size, network_size))
         random_laplacian[tril_idx] = random_tril
@@ -99,11 +124,39 @@ def permute_laplacian_k(laplacian: np.ndarray, permutations=500, seed=None):
     return permuted
 
 
-def preprocess_network(backbone_edges, downstream_edges, relation_translator):
-    node_idx, bb_size = enumerate_nodes(backbone_edges, downstream_edges)
-    adj_mat = adjacency_matrix(backbone_edges, downstream_edges,
-                               node_idx, relation_translator)
-    l3, l2, q = laplacian_matrices(adj_mat, bb_size)
-    l3_permutations = permute_laplacian_k(l3)
+def preprocess_network(graph, relation_translator, permutations='k', p_iters=500, seed=None):
+    enumerate_nodes(graph)
+    adj_mat = adjacency_matrix(graph, relation_translator)
+    lap_c, lap_b, lap_q = laplacian_matrices(graph, adj_mat)
+    lps = {'c': lap_c, 'b': lap_b, 'q': lap_q}
 
-    return node_idx, l3, l2, q, l3_permutations
+    lperms = dict()
+    for p in set(permutations):
+        match p.lower():
+            case 'k':
+                lperms[p] = permute_laplacian_k(lap_c, p_iters, seed)
+            case 'o':
+                warnings.warn("Permutation 'o' is a boundary permutation "
+                              "and is not applied to the laplacian." % p)
+            case _:
+                warnings.warn("Permutation %s is unknown and will be skipped." % p)
+
+    return graph, lps, lperms
+
+
+def reduce_to_common_nodes(lb: np.ndarray, graph: nx.DiGraph, dataset: pd.DataFrame):
+    if lb.ndim != 2:
+        raise ValueError("Argument lb is not two-dimensional.")
+    elif any(col not in dataset.columns for col in ['nodeID', 'logFC', 't']):
+        raise ValueError("Dataset does not contain columns 'nodeID', 'logFC' and 't'.")
+
+    core_size = lb.shape[0]
+    network_idx = np.array([graph.nodes[node_name]["idx"] - core_size
+                            for node_name in dataset['nodeID'].values
+                            if node_name in graph.nodes])
+    lb_reduced = lb[:, network_idx]
+
+    dataset_reduced = dataset[['nodeID', 'logFC', 't']]
+    dataset_reduced = dataset_reduced[dataset['nodeID'].isin(graph.nodes)]
+
+    return lb_reduced, dataset_reduced

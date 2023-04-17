@@ -15,6 +15,7 @@ if __name__ == "__main__":
         datasets[dataset] = datasets[dataset].rename(columns={"nodeLabel": "nodeID", "foldChange": "logFC"})
 
     results = my_cbn.compute_npa(datasets)
+    print(results.node_attributes())
 
     output_file = "test_results.txt"
     with open(output_file, "w") as f:

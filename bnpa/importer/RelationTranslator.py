@@ -14,7 +14,7 @@ defaultMap = {
 
 
 class RelationTranslator:
-    def __init__(self, mappings=None, allow_numeric=False):
+    def __init__(self, mappings=None, allow_numeric=True):
         self._map = defaultMap.copy()
         if mappings is not None:
             for k, v in mappings.items():
