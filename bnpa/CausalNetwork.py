@@ -18,50 +18,78 @@ from bnpa.output.NPAResultBuilder import NPAResultBuilder
 class CausalNetwork:
     __allowed_edge_types = ("core", "boundary", "infer")
 
-    def __init__(self, edges=None, relation_translator: Optional[RelationTranslator] = None,
-                 metadata: dict = None):
+    def __init__(self, graph: nx.DiGraph = None, relation_translator: Optional[RelationTranslator] = None):
+        if graph is None:
+            graph = nx.DiGraph()
+        if relation_translator is None:
+            relation_translator = RelationTranslator()
+
+        if not type(graph) == nx.DiGraph:
+            raise TypeError("Argument graph is not a networkx.Digraph.")
+        if not type(relation_translator) == RelationTranslator:
+            raise TypeError("Argument relation_translator is not a RelationTranslator.")
+
+        to_remove = []
+        for src, trg, data in graph.edges.data():
+            if "relation" not in data:
+                warnings.warn("Edge between %s and %s does not have a "
+                              "relation specified and will be ignored." % (src, trg))
+                to_remove.append((src, trg))
+                continue
+
+            if "type" not in data:
+                graph[src][trg]["type"] = "infer"
+            elif data["type"] not in self.__allowed_edge_types:
+                warnings.warn("Unknown type %s of edge %s will be replaced "
+                              "with \"infer\"." % (data["type"], str((src, trg))))
+                graph[src][trg]["type"] = "infer"
+
+        for src, trg in to_remove:
+            graph.remove_edge(src, trg)
+            if graph.degree[src] == 0:
+                graph.remove_node(src)
+            if graph.degree[trg] == 0:
+                graph.remove_node(trg)
+
+        self._graph = graph
+        self.relation_translator = relation_translator
+
+        # TODO: enter networks stats as metadata and forward them to results
+        self.metadata = dict()
+
+    @classmethod
+    def from_edge_list(cls, edges: Iterable, relation_translator: Optional[RelationTranslator] = None):
         if not issubclass(type(edges), Iterable):
-            raise TypeError("Argument backbone_edges is not iterable.")
+            raise TypeError("Argument edges is not iterable.")
 
         dod = dict()  # Format: {src: {trg: {"relation": "+", "type": "core"}}}
-        if edges is not None:
-            for edge in edges:
-                if not 3 <= len(edge) <= 4:
-                    warnings.warn("Edge %s is of invalid length and will be ignored." % str(edge))
-                    continue
+        for edge in edges:
+            if not 3 <= len(edge) <= 4:
+                warnings.warn("Edge %s is of invalid length and will be ignored." % str(edge))
+                continue
 
-                src, trg, rel = str(edge[0]), str(edge[1]), str(edge[2])
+            src, trg, rel = str(edge[0]), str(edge[1]), str(edge[2])
+            if src not in dod:
+                dod[src] = dict()
+            if trg in dod[src]:
+                warnings.warn("Multiple edges between %s and %s. "
+                              "Only the first instance will be kept." % (src, trg))
+                continue
 
-                if src not in dod:
-                    dod[src] = dict()
-                if trg in dod[src]:
-                    warnings.warn("Multiple edges between %s and %s. "
-                                  "Only the first instance will be kept." % (src, trg))
-                    continue
+            dod[src][trg] = {"relation": rel}
+            if len(edge) == 4:
+                typ = str(edge[3]).lower()
 
-                dod[src][trg] = {"relation": rel}
-                if len(edge) == 4:
-                    typ = str(edge[3]).lower()
-
-                    if typ in self.__allowed_edge_types:
-                        dod[src][trg]["type"] = typ
-                    else:
-                        warnings.warn("Unknown type %s of edge %s will be "
-                                      "replaced with \"infer\"." % (typ, str((src, trg))))
-                        dod[src][trg]["type"] = "infer"
+                if typ in cls.__allowed_edge_types:
+                    dod[src][trg]["type"] = typ
                 else:
+                    warnings.warn("Unknown type %s of edge %s will be "
+                                  "replaced with \"infer\"." % (typ, str((src, trg))))
                     dod[src][trg]["type"] = "infer"
+            else:
+                dod[src][trg]["type"] = "infer"
 
-        self._graph = nx.DiGraph(dod)
-
-        self.relation_translator = relation_translator \
-            if relation_translator is not None \
-            else RelationTranslator()
-
-        # TODO: enter default metadata
-        self.metadata = metadata \
-            if metadata is not None \
-            else dict()
+        return cls(nx.DiGraph(dod), relation_translator)
 
     @classmethod
     def from_dsv(cls, core_filepath, boundary_filepath=None, relation_translator=None, delimiter='\t'):
@@ -71,8 +99,36 @@ class CausalNetwork:
                           parse_dsv(boundary_filepath, delimiter=delimiter)] \
             if boundary_filepath is not None else []
 
-        metadata = {"name": os.path.basename(core_filepath)}
-        return cls(core_edges + boundary_edges, relation_translator, metadata)
+        cn_instance = cls.from_edge_list(core_edges + boundary_edges, relation_translator)
+        cn_instance.metadata["name"] = os.path.basename(core_filepath)
+        return cn_instance
+
+    @classmethod
+    def from_tsv(cls, core_filepath, boundary_filepath=None, relation_translator=None):
+        return cls.from_dsv(core_filepath, boundary_filepath, relation_translator)
+
+    @classmethod
+    def from_csv(cls, core_filepath, boundary_filepath=None, relation_translator=None):
+        return cls.from_dsv(core_filepath, boundary_filepath, relation_translator, delimiter=',')
+
+    def copy(self):
+        return CausalNetwork(self._graph.copy(), self.relation_translator.copy())
+
+    def number_of_nodes(self):
+        return self._graph.number_of_nodes()
+
+    def nodes(self):
+        return list(self._graph.nodes(data=True))
+
+    def number_of_edges(self, typ=None):
+        if typ is not None:
+            return sum(1 for e in self._graph.edges.data() if e[2]["type"] == typ)
+        return self._graph.number_of_edges()
+
+    def edges(self, typ=None):
+        if typ is not None:
+            return [e for e in self._graph.edges.data() if e[2]["type"] == typ]
+        return list(self._graph.edges.data())
 
     def add_edge(self, src, trg, rel, typ="infer"):
         if self._graph.has_edge(src, trg):
@@ -92,12 +148,12 @@ class CausalNetwork:
             self._graph[src][trg]["relation"] = rel
         if typ is not None:
             if typ not in self.__allowed_edge_types:
-                self._graph[src][trg]["type"] = rel
+                self._graph[src][trg]["type"] = typ
             else:
                 warnings.warn("Unknown type %s of edge %s "
                               "will be ignored." % (typ, str((src, trg))))
 
-    def remove_edge(self, src, trg, typ):
+    def remove_edge(self, src, trg):
         if not self._graph.has_edge(src, trg):
             raise KeyError("Edge between %s and %s does not exist." % (src, trg))
         self._graph.remove_edge(src, trg)

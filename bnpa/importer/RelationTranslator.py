@@ -27,6 +27,9 @@ class RelationTranslator:
     def remove_mapping(self, relation):
         del self._map[relation]
 
+    def copy(self):
+        return RelationTranslator(self._map.copy(), self._allow_numeric)
+
     def translate(self, relation):
         if relation in self._map:
             res = self._map[relation]
