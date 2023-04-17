@@ -6,7 +6,8 @@ import seaborn as sns
 
 
 class NPAResult:
-    def __init__(self, datasets, global_info, node_info, distributions):
+    def __init__(self, graph, datasets, global_info, node_info, distributions):
+        self._graph = graph
         self._datasets = datasets
         self._global_info = global_info
         self._node_info = node_info

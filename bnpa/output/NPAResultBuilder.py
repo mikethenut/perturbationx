@@ -7,9 +7,11 @@ from bnpa.output.NPAResult import NPAResult
 
 
 class NPAResultBuilder:
-    def __init__(self, datasets, nodes):
+    def __init__(self, graph, datasets):
+        self._graph = graph
         self._datasets = datasets
-        self._nodes = nodes
+        self._nodes = sorted([n for n in graph.nodes if graph.nodes[n]["type"] == "core"],
+                             key=lambda n: graph.nodes[n]["idx"])
 
         self._global_attributes = {}  # One score per dataset
         self._node_attributes = {}  # N scores per dataset, where N is number of nodes
@@ -70,4 +72,4 @@ class NPAResultBuilder:
             for d, attr in node_indices
         ], index=node_indices, columns=self._nodes)
 
-        return NPAResult(self._datasets, global_info, node_info, self._distributions)
+        return NPAResult(self._graph, self._datasets, global_info, node_info, self._distributions)

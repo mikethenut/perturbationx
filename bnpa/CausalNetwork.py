@@ -23,8 +23,6 @@ class CausalNetwork:
         if not issubclass(type(edges), Iterable):
             raise TypeError("Argument backbone_edges is not iterable.")
 
-        self._backbone_edges = dict()
-        self._downstream_edges = dict()
         dod = dict()  # Format: {src: {trg: {"relation": "+", "type": "core"}}}
         if edges is not None:
             for edge in edges:
@@ -111,10 +109,8 @@ class CausalNetwork:
 
     def compute_npa(self, datasets: dict):
         prograph, lps, lperms = preprocess_network(self._graph.copy(), self.relation_translator)
-        bb_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
-        backbone_nodes = sorted([n for n in prograph.nodes if prograph.nodes[n]["type"] == "core"],
-                                key=lambda n: prograph.nodes[n]["idx"])
-        result_builder = NPAResultBuilder.new_builder(list(datasets.keys()), backbone_nodes)
+        core_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
+        result_builder = NPAResultBuilder.new_builder(prograph, list(datasets.keys()))
 
         for dataset_id in datasets:
             dataset = datasets[dataset_id]
@@ -128,32 +124,42 @@ class CausalNetwork:
 
             backbone_values = value_diffusion(lps['c'], lb_reduced, dataset_reduced['logFC'].to_numpy())
             perturbation, node_contributions = perturbation_amplitude_contributions(
-                lps['q'], backbone_values, bb_edge_count)
+                lps['q'], backbone_values, core_edge_count
+            )
             result_builder.set_global_attributes(dataset_id, ['NPA'], [perturbation])
-            result_builder.set_node_attributes(dataset_id, ['contributions', 'coefficients'],
-                                               [node_contributions, backbone_values])
+            result_builder.set_node_attributes(
+                dataset_id, ['contributions', 'coefficients'], [node_contributions, backbone_values]
+            )
 
             backbone_covariance = backbone_covariance_matrix(
-                lps['c'], lb_reduced, dataset_reduced['logFC'].to_numpy(), dataset_reduced['t'].to_numpy())
+                lps['c'], lb_reduced, dataset_reduced['logFC'].to_numpy(), dataset_reduced['t'].to_numpy()
+            )
             npa_var, npa_ci_lower, npa_ci_upper = perturbation_confidence_interval(
-                lps['q'], backbone_values, backbone_covariance, bb_edge_count)
-            result_builder.set_global_attributes(dataset_id, ['variance', 'ci_lower', 'ci_upper'],
-                                                 [npa_var, npa_ci_lower, npa_ci_upper])
+                lps['q'], backbone_values, backbone_covariance, core_edge_count
+            )
+            result_builder.set_global_attributes(
+                dataset_id, ['variance', 'ci_lower', 'ci_upper'], [npa_var, npa_ci_lower, npa_ci_upper]
+            )
 
             node_var, node_ci_lower, node_ci_upper, node_p_value = backbone_confidence_interval(
                 backbone_values, backbone_covariance)
-            result_builder.set_node_attributes(dataset_id, ['coefficient variance', 'ci_lower', 'ci_upper', 'p_value'],
-                                               [node_var, node_ci_lower, node_ci_upper, node_p_value])
+            result_builder.set_node_attributes(
+                dataset_id, ['coefficient variance', 'ci_lower', 'ci_upper', 'p_value'],
+                [node_var, node_ci_lower, node_ci_upper, node_p_value]
+            )
 
-            o_pv, o_distribution = permutation_test_o(lps['c'], lb_reduced, lps['q'],
-                                                      dataset_reduced['logFC'].to_numpy(), bb_edge_count)
-            k_pv, k_distribution = permutation_test_k(lperms['k'], lb_reduced, lps['q'],
-                                                      dataset_reduced['logFC'].to_numpy(), bb_edge_count, perturbation)
+            o_pv, o_distribution = permutation_test_o(
+                lps['c'], lb_reduced, lps['q'], dataset_reduced['logFC'].to_numpy(), core_edge_count
+            )
+            k_pv, k_distribution = permutation_test_k(
+                lperms['k'], lb_reduced, lps['q'], dataset_reduced['logFC'].to_numpy(), core_edge_count, perturbation
+            )
             result_builder.set_global_attributes(dataset_id, ['o_value', 'k_value'], [o_pv, k_pv])
             result_builder.set_distribution(dataset_id, 'o_distribution', o_distribution, perturbation)
             result_builder.set_distribution(dataset_id, 'k_distribution', k_distribution, perturbation)
 
         return result_builder.build()
 
-    def visualize(self):
+    def display(self):
+        # TODO
         pass
