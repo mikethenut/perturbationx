@@ -45,12 +45,6 @@ class CausalNetwork:
                 if len(edge) == 4:
                     typ = str(edge[3]).lower()
 
-                    # TODO: remove this after changing computation
-                    if typ == "core":
-                        self._backbone_edges[(src, trg)] = rel
-                    else:
-                        self._downstream_edges[(src, trg)] = rel
-
                     if typ in self.__allowed_edge_types:
                         dod[src][trg]["type"] = typ
                     else:
@@ -59,8 +53,6 @@ class CausalNetwork:
                         dod[src][trg]["type"] = "infer"
                 else:
                     dod[src][trg]["type"] = "infer"
-                    # TODO: remove this after changing computation
-                    self._downstream_edges[(src, trg)] = rel
 
         self._graph = nx.DiGraph(dod)
 
@@ -85,18 +77,6 @@ class CausalNetwork:
         return cls(core_edges + boundary_edges, relation_translator, metadata)
 
     def add_edge(self, src, trg, rel, typ="infer"):
-        # TODO: remove this after changing computation
-        if typ == "core":
-            if (src, trg) in self._backbone_edges:
-                warnings.warn("Edge between %s and %s already exists "
-                              "and will be modified." % (src, trg))
-            self._backbone_edges[(src, trg)] = rel
-        else:
-            if (src, trg) in self._downstream_edges:
-                warnings.warn("Edge between %s and %s already exists "
-                              "and will be modified." % (src, trg))
-            self._downstream_edges[(src, trg)] = rel
-
         if self._graph.has_edge(src, trg):
             warnings.warn("Edge between %s and %s already exists "
                           "and will be modified." % (src, trg))
@@ -108,16 +88,6 @@ class CausalNetwork:
             self._graph.add_edge(src, trg, relation=rel, type=typ)
 
     def modify_edge(self, src, trg, rel=None, typ=None):
-        # TODO: remove this after changing computation
-        if typ == "core":
-            if (src, trg) not in self._backbone_edges:
-                raise KeyError("Edge between %s and %s does not exist." % (src, trg))
-            self._backbone_edges[(src, trg)] = rel
-        else:
-            if (src, trg) not in self._downstream_edges:
-                raise KeyError("Edge between %s and %s does not exist." % (src, trg))
-            self._downstream_edges[(src, trg)] = rel
-
         if not self._graph.has_edge(src, trg):
             raise KeyError("Edge between %s and %s does not exist." % (src, trg))
         if rel is not None:
@@ -130,16 +100,6 @@ class CausalNetwork:
                               "will be ignored." % (typ, str((src, trg))))
 
     def remove_edge(self, src, trg, typ):
-        # TODO: remove this after changing computation
-        if typ == "core":
-            if (src, trg) not in self._backbone_edges:
-                raise KeyError("Edge between %s and %s does not exist." % (src, trg))
-            del self._backbone_edges[(src, trg)]
-        else:
-            if (src, trg) not in self._downstream_edges:
-                raise KeyError("Edge between %s and %s does not exist." % (src, trg))
-            del self._downstream_edges[(src, trg)]
-
         if not self._graph.has_edge(src, trg):
             raise KeyError("Edge between %s and %s does not exist." % (src, trg))
         self._graph.remove_edge(src, trg)
@@ -150,7 +110,6 @@ class CausalNetwork:
             self._graph.remove_node(trg)
 
     def compute_npa(self, datasets: dict):
-        # TODO: change this to use networkx object
         prograph, lps, lperms = preprocess_network(self._graph.copy(), self.relation_translator)
         bb_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
         backbone_nodes = sorted([n for n in prograph.nodes if prograph.nodes[n]["type"] == "core"],
