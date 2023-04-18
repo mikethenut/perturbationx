@@ -5,6 +5,7 @@ from typing import Optional
 
 import pandas as pd
 import networkx as nx
+import py4cytoscape as p4c
 
 from bnpa.importer.RelationTranslator import RelationTranslator
 from bnpa.importer.network import parse_dsv
@@ -183,9 +184,8 @@ class CausalNetwork:
                 lps['q'], backbone_values, core_edge_count
             )
             result_builder.set_global_attributes(dataset_id, ['NPA'], [perturbation])
-            result_builder.set_node_attributes(
-                dataset_id, ['contributions', 'coefficients'], [node_contributions, backbone_values]
-            )
+            result_builder.set_node_attributes(dataset_id, ['contr'], [node_contributions], fmt="{:.2%}")
+            result_builder.set_node_attributes(dataset_id, ['coeff'], [backbone_values])
 
             backbone_covariance = backbone_covariance_matrix(
                 lps['c'], lb_reduced, dataset_reduced['logFC'].to_numpy(), dataset_reduced['t'].to_numpy()
@@ -194,13 +194,13 @@ class CausalNetwork:
                 lps['q'], backbone_values, backbone_covariance, core_edge_count
             )
             result_builder.set_global_attributes(
-                dataset_id, ['variance', 'ci_lower', 'ci_upper'], [npa_var, npa_ci_lower, npa_ci_upper]
+                dataset_id, ['var', 'ci_lower', 'ci_upper'], [npa_var, npa_ci_lower, npa_ci_upper]
             )
 
             node_var, node_ci_lower, node_ci_upper, node_p_value = backbone_confidence_interval(
                 backbone_values, backbone_covariance)
             result_builder.set_node_attributes(
-                dataset_id, ['coefficient variance', 'ci_lower', 'ci_upper', 'p_value'],
+                dataset_id, ['var', 'ci_lower', 'ci_upper', 'p_value'],
                 [node_var, node_ci_lower, node_ci_upper, node_p_value]
             )
 
@@ -210,7 +210,7 @@ class CausalNetwork:
             k_pv, k_distribution = permutation_test_k(
                 lperms['k'], lb_reduced, lps['q'], dataset_reduced['logFC'].to_numpy(), core_edge_count, perturbation
             )
-            result_builder.set_global_attributes(dataset_id, ['o_value', 'k_value'], [o_pv, k_pv])
+            result_builder.set_global_attributes(dataset_id, ['o_value', 'k_value'], [o_pv, k_pv], fmt="{:.3f}")
             result_builder.set_distribution(dataset_id, 'o_distribution', o_distribution, perturbation)
             result_builder.set_distribution(dataset_id, 'k_distribution', k_distribution, perturbation)
 
@@ -218,4 +218,4 @@ class CausalNetwork:
 
     def display(self):
         # TODO
-        pass
+        p4c.networks.create_network_from_networkx(self._graph)

@@ -3,6 +3,7 @@ import warnings
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+import py4cytoscape as p4c
 
 
 class NPAResult:
@@ -70,4 +71,4 @@ class NPAResult:
 
     def display(self):
         # TODO
-        pass
+        p4c.networks.create_network_from_networkx(self._graph)

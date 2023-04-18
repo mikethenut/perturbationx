@@ -98,7 +98,7 @@ def permute_laplacian_k(laplacian: np.ndarray, iterations=500, seed=None):
     excess_degree = np.sum(np.abs(laplacian), axis=0) - 2 * laplacian.diagonal()
 
     permuted = []
-    for p in range(iterations):
+    while len(permuted) < iterations:
         random_tril = generator.permutation(laplacian[tril_idx])
         random_laplacian = np.zeros((network_size, network_size))
         random_laplacian[tril_idx] = random_tril

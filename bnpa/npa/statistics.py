@@ -1,6 +1,4 @@
-from bnpa.exporter.network import write_matrix_alt
 import math
-import warnings
 
 import numpy as np
 import numpy.random
@@ -58,9 +56,9 @@ def permutation_test_o(l3: np.ndarray, l2: np.ndarray, q: np.ndarray, fold_chang
 
     true_perturbation = perturbation_amplitude(q, value_diffusion(l3, l2, fold_change), backbone_edge_count)
     distribution = []
+
     for p in range(permutations):
         permuted_downstream = generator.permutation(fold_change)
-
         backbone_values = value_diffusion(l3, l2, permuted_downstream)
         sample_perturbation = perturbation_amplitude(q, backbone_values, backbone_edge_count)
         distribution.append(sample_perturbation)
@@ -73,15 +71,9 @@ def permutation_test_k(l3_permutations, l2: np.ndarray, q: np.ndarray, fold_chan
                        backbone_edge_count: int, true_perturbation: float):
 
     distribution = []
-    temp = l2.dot(fold_change)
-    for l3 in l3_permutations:
-        try:
-            l3_inv = la.inv(l3)
-        except la.LinAlgError:
-            warnings.warn("Singular backbone in permutation test K.")
-            write_matrix_alt(l3)
-            continue
+    temp = - l2.dot(fold_change)
 
+    for l3_inv in l3_permutations:
         backbone_values = np.matmul(l3_inv, temp)
         sample_perturbation = perturbation_amplitude(q, backbone_values, backbone_edge_count)
         distribution.append(sample_perturbation)

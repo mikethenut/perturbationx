@@ -61,5 +61,6 @@ def perturbation_amplitude_contributions(q: sparse.spmatrix, backbone_values: np
     node_contributions_abs = np.multiply(temp, backbone_values)
     total_perturbation = np.sum(node_contributions_abs)
 
-    node_contributions_rel = np.divide(node_contributions_abs, total_perturbation)
+    node_contributions_rel = np.abs(np.divide(node_contributions_abs, total_perturbation))
+    node_contributions_rel[node_contributions_rel == -0.] = 0.
     return total_perturbation / backbone_edge_count, node_contributions_rel

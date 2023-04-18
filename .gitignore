@@ -9,6 +9,7 @@ __pycache__/
 *.csv
 *.sif
 *.pkl
+*.png
 
 # Exclude test fixtures
 !tests/fixtures/**

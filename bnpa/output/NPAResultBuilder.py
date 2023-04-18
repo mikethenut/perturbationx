@@ -21,7 +21,7 @@ class NPAResultBuilder:
     def new_builder(cls, datasets, nodes):
         return cls(datasets, nodes)
 
-    def set_global_attributes(self, dataset_id, attributes, values):
+    def set_global_attributes(self, dataset_id, attributes, values, fmt=None):
         if dataset_id not in self._datasets:
             warnings.warn("Attributes for unknown dataset %s will be ignored." % dataset_id)
             return
@@ -29,9 +29,9 @@ class NPAResultBuilder:
         for attr, val in zip(attributes, values):
             if attr not in self._global_attributes:
                 self._global_attributes[attr] = {d: np.nan for d in self._datasets}
-            self._global_attributes[attr][dataset_id] = val
+            self._global_attributes[attr][dataset_id] = fmt.format(val) if fmt is not None else val
 
-    def set_node_attributes(self, dataset_id, attributes, values):
+    def set_node_attributes(self, dataset_id, attributes, values, fmt=None):
         if dataset_id not in self._datasets:
             warnings.warn("Node attributes %s for unknown dataset %s will be ignored."
                           % (str(attributes), dataset_id))
@@ -45,7 +45,7 @@ class NPAResultBuilder:
 
             if attr not in self._node_attributes:
                 self._node_attributes[attr] = {d: np.full(len(self._nodes), np.nan) for d in self._datasets}
-            self._node_attributes[attr][dataset_id] = val
+            self._node_attributes[attr][dataset_id] = [fmt.format(v) for v in val] if fmt is not None else val
 
     def set_distribution(self, dataset_id, distribution, values, reference=None):
         if dataset_id not in self._datasets:
