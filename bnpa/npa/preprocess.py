@@ -1,4 +1,5 @@
 import warnings
+import sys
 
 import numpy as np
 import numpy.linalg as la
@@ -86,7 +87,8 @@ def permute_laplacian_k(laplacian: np.ndarray, iterations=500, seed=None):
     if laplacian.ndim != 2 or laplacian.shape[0] != laplacian.shape[1]:
         print(laplacian.shape)
         raise ValueError("Argument laplacian is not a square matrix.")
-    # WARNING: Some generated laplacians might be singular
+    # WARNING: Some generated laplacians might be singular and are ignored,
+    #          as the permutation does not ensure weakly chained diagonal dominance
 
     if seed is None:
         generator = np.random.default_rng()
@@ -95,9 +97,9 @@ def permute_laplacian_k(laplacian: np.ndarray, iterations=500, seed=None):
 
     network_size = laplacian.shape[0]
     tril_idx = np.tril_indices(network_size, -1)
-    excess_degree = np.sum(np.abs(laplacian), axis=0) - 2 * laplacian.diagonal()
-
+    excess_degree = 2 * laplacian.diagonal() - np.sum(np.abs(laplacian), axis=0)
     permuted = []
+
     while len(permuted) < iterations:
         random_tril = generator.permutation(laplacian[tril_idx])
         random_laplacian = np.zeros((network_size, network_size))
@@ -113,7 +115,6 @@ def permute_laplacian_k(laplacian: np.ndarray, iterations=500, seed=None):
             random_laplacian[trg, n] = 1
 
         np.fill_diagonal(random_laplacian, np.sum(np.abs(random_laplacian), axis=0) + excess_degree)
-
         try:
             la.inv(random_laplacian)
             permuted.append(random_laplacian)
@@ -129,6 +130,8 @@ def preprocess_network(graph, relation_translator, permutations='k', p_iters=500
     adj_mat = adjacency_matrix(graph, relation_translator)
     lap_c, lap_b, lap_q = laplacian_matrices(graph, adj_mat)
     lps = {'c': lap_c, 'b': lap_b, 'q': lap_q}
+
+    np.set_printoptions(threshold=sys.maxsize)
 
     lperms = dict()
     for p in set(permutations):

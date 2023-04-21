@@ -72,10 +72,9 @@ def permutation_test_k(l3_permutations, l2: np.ndarray, q: np.ndarray, fold_chan
 
     distribution = []
     temp = - l2.dot(fold_change)
-
-    for l3_inv in l3_permutations:
-        backbone_values = np.matmul(l3_inv, temp)
-        sample_perturbation = perturbation_amplitude(q, backbone_values, backbone_edge_count)
+    for l3 in l3_permutations:
+        backbone_values = np.matmul(la.inv(l3), temp)
+        sample_perturbation = np.matmul(q.dot(backbone_values), backbone_values) / backbone_edge_count
         distribution.append(sample_perturbation)
 
     p_value = sum(sample > true_perturbation for sample in distribution) / len(distribution)
