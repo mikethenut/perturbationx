@@ -8,10 +8,10 @@ import py4cytoscape as p4c
 
 from bnpa.importer.RelationTranslator import RelationTranslator
 from bnpa.importer.network import parse_dsv
-from bnpa.npa.core import value_diffusion, perturbation_amplitude_contributions
-from bnpa.npa.preprocess import preprocess_network, reduce_to_common_nodes
-from bnpa.npa.statistics import backbone_covariance_matrix, backbone_confidence_interval, \
-    perturbation_confidence_interval, permutation_test_o, permutation_test_k
+from bnpa.npa.core import value_inference, perturbation_amplitude_contributions
+from bnpa.npa.preprocess import preprocess_network, preprocess_dataset
+from bnpa.npa.statistics import compute_variances, confidence_interval
+from bnpa.npa.permutations import permutation_test_o, permutation_test_k
 from bnpa.output.NPAResultBuilder import NPAResultBuilder
 
 
@@ -129,8 +129,9 @@ class CausalNetwork:
         if self._graph.degree[trg] == 0:
             self._graph.remove_node(trg)
 
-    def compute_npa(self, datasets: dict):
-        prograph, lps, lperms = preprocess_network(self._graph.copy(), self.relation_translator)
+    def compute_npa(self, datasets: dict, alpha=0.95):
+        prograph, lap, lperms = preprocess_network(self._graph.copy(), self.relation_translator)
+        lb_original = lap['b']
         core_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
         result_builder = NPAResultBuilder.new_builder(prograph, list(datasets.keys()))
 
@@ -142,42 +143,39 @@ class CausalNetwork:
                 raise ValueError("Dataset %s does not contain columns "
                                  "'nodeID', 'logFC' and 't'." % dataset_id)
 
-            lb_reduced, dataset_reduced = reduce_to_common_nodes(lps['b'], prograph, dataset)
+            lap['b'], dataset_reduced = preprocess_dataset(lb_original, prograph, dataset)
 
-            backbone_values = value_diffusion(lps['c'], lb_reduced, dataset_reduced['logFC'].to_numpy())
-            perturbation, node_contributions = perturbation_amplitude_contributions(
-                lps['q'], backbone_values, core_edge_count
+            core_coefficients = value_inference(lap, dataset_reduced['logFC'].to_numpy())
+            npa, node_contributions = perturbation_amplitude_contributions(
+                lap['q'], core_coefficients, core_edge_count
             )
-            result_builder.set_global_attributes(dataset_id, ['NPA'], [perturbation])
+            result_builder.set_global_attributes(dataset_id, ['NPA'], [npa])
             result_builder.set_node_attributes(dataset_id, ['contr'], [node_contributions], fmt="{:.2%}")
-            result_builder.set_node_attributes(dataset_id, ['coeff'], [backbone_values])
+            result_builder.set_node_attributes(dataset_id, ['coeff'], [core_coefficients])
 
-            backbone_covariance = backbone_covariance_matrix(
-                lps['c'], lb_reduced, dataset_reduced['logFC'].to_numpy(), dataset_reduced['t'].to_numpy()
-            )
-            npa_var, npa_ci_lower, npa_ci_upper = perturbation_confidence_interval(
-                lps['q'], backbone_values, backbone_covariance, core_edge_count
-            )
+            npa_var, node_var = compute_variances(lap, dataset_reduced['stderr'].to_numpy(),
+                                                  core_coefficients, core_edge_count)
+
+            npa_ci_lower, npa_ci_upper, _ = confidence_interval(npa, npa_var, alpha)
             result_builder.set_global_attributes(
                 dataset_id, ['var', 'ci_lower', 'ci_upper'], [npa_var, npa_ci_lower, npa_ci_upper]
             )
 
-            node_var, node_ci_lower, node_ci_upper, node_p_value = backbone_confidence_interval(
-                backbone_values, backbone_covariance)
+            node_ci_lower, node_ci_upper, node_p_value = confidence_interval(core_coefficients, node_var, alpha)
             result_builder.set_node_attributes(
                 dataset_id, ['var', 'ci_lower', 'ci_upper', 'p_value'],
                 [node_var, node_ci_lower, node_ci_upper, node_p_value]
             )
 
             o_pv, o_distribution = permutation_test_o(
-                lps['c'], lb_reduced, lps['q'], dataset_reduced['logFC'].to_numpy(), core_edge_count
+                lap, dataset_reduced['logFC'].to_numpy(), core_edge_count
             )
             k_pv, k_distribution = permutation_test_k(
-                lperms['k'], lb_reduced, lps['q'], dataset_reduced['logFC'].to_numpy(), core_edge_count, perturbation
+                lperms['k'], lap['b'], lap['q'], dataset_reduced['logFC'].to_numpy(), core_edge_count, npa
             )
             result_builder.set_global_attributes(dataset_id, ['o_value', 'k_value'], [o_pv, k_pv], fmt="{:.3f}")
-            result_builder.set_distribution(dataset_id, 'o_distribution', o_distribution, perturbation)
-            result_builder.set_distribution(dataset_id, 'k_distribution', k_distribution, perturbation)
+            result_builder.set_distribution(dataset_id, 'o_distribution', o_distribution, npa)
+            result_builder.set_distribution(dataset_id, 'k_distribution', k_distribution, npa)
 
         return result_builder.build()
 

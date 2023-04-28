@@ -71,16 +71,16 @@ def laplacian_matrices(graph: nx.DiGraph, adjacency: sparse.spmatrix):
     laplacian = - adjacency - adjacency.transpose()
     degree = abs(laplacian).sum(axis=1).A[:, 0]
     laplacian = sparse.diags(degree) + laplacian
-    lap_c = laplacian[:core_size, :core_size].todense().A
-    lap_b = laplacian[:core_size, core_size:].todense().A
+    lc = laplacian[:core_size, :core_size].todense().A
+    lb = laplacian[:core_size, core_size:].todense().A
 
     core_adjacency = adjacency[:core_size, :core_size]
-    lap_q = core_adjacency + core_adjacency.transpose()
-    core_degree = abs(lap_q).sum(axis=1).A[:, 0]
-    lap_q = sparse.diags(core_degree) + lap_q
-    lap_q = lap_q.todense().A
+    lq = core_adjacency + core_adjacency.transpose()
+    core_degree = abs(lq).sum(axis=1).A[:, 0]
+    lq = sparse.diags(core_degree) + lq
+    lq = lq.todense().A
 
-    return lap_c, lap_b, lap_q
+    return lc, lb, lq
 
 
 def permute_laplacian_k(laplacian: np.ndarray, iterations=500, seed=None):
@@ -128,8 +128,8 @@ def permute_laplacian_k(laplacian: np.ndarray, iterations=500, seed=None):
 def preprocess_network(graph, relation_translator, permutations='k', p_iters=500, seed=None):
     enumerate_nodes(graph)
     adj_mat = adjacency_matrix(graph, relation_translator)
-    lap_c, lap_b, lap_q = laplacian_matrices(graph, adj_mat)
-    lps = {'c': lap_c, 'b': lap_b, 'q': lap_q}
+    lc, lb, lq = laplacian_matrices(graph, adj_mat)
+    lap = {'c': lc, 'b': lb, 'q': lq}
 
     np.set_printoptions(threshold=sys.maxsize)
 
@@ -137,21 +137,28 @@ def preprocess_network(graph, relation_translator, permutations='k', p_iters=500
     for p in set(permutations):
         match p.lower():
             case 'k':
-                lperms[p] = permute_laplacian_k(lap_c, p_iters, seed)
+                lperms[p] = permute_laplacian_k(lc, p_iters, seed)
             case 'o':
                 warnings.warn("Permutation 'o' is a boundary permutation "
                               "and is not applied to the laplacian." % p)
             case _:
                 warnings.warn("Permutation %s is unknown and will be skipped." % p)
 
-    return graph, lps, lperms
+    return graph, lap, lperms
 
 
-def reduce_to_common_nodes(lb: np.ndarray, graph: nx.DiGraph, dataset: pd.DataFrame):
+def preprocess_dataset(lb: np.ndarray, graph: nx.DiGraph, dataset: pd.DataFrame):
     if lb.ndim != 2:
         raise ValueError("Argument lb is not two-dimensional.")
-    elif any(col not in dataset.columns for col in ['nodeID', 'logFC', 't']):
-        raise ValueError("Dataset does not contain columns 'nodeID', 'logFC' and 't'.")
+    elif any(col not in dataset.columns for col in ['nodeID', 'logFC']):
+        raise ValueError("Dataset does not contain columns 'nodeID' and 'logFC'.")
+
+    if 'stderr' not in dataset.columns:
+        # TODO: Add more options for computing variance
+        if 't' in dataset.columns:
+            dataset['stderr'] = np.divide(dataset['logFC'].to_numpy(), dataset['t'].to_numpy())
+        else:
+            raise ValueError("Dataset does not contain columns 'stderr' or 't'.")
 
     core_size = lb.shape[0]
     network_idx = np.array([graph.nodes[node_name]["idx"] - core_size
@@ -159,7 +166,7 @@ def reduce_to_common_nodes(lb: np.ndarray, graph: nx.DiGraph, dataset: pd.DataFr
                             if node_name in graph.nodes])
     lb_reduced = lb[:, network_idx]
 
-    dataset_reduced = dataset[['nodeID', 'logFC', 't']]
-    dataset_reduced = dataset_reduced[dataset['nodeID'].isin(graph.nodes)]
+    dataset_reduced = dataset[dataset['nodeID'].isin(graph.nodes)]
+    dataset_reduced = dataset_reduced[['nodeID', 'logFC', 'stderr']]
 
     return lb_reduced, dataset_reduced
