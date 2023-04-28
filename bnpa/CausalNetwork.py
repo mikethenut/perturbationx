@@ -1,6 +1,5 @@
 import os
 import warnings
-from collections.abc import Iterable
 from typing import Optional
 
 import pandas as pd
@@ -59,58 +58,24 @@ class CausalNetwork:
         self.metadata = dict()
 
     @classmethod
-    def from_edge_list(cls, edges: Iterable, relation_translator: Optional[RelationTranslator] = None):
-        if not issubclass(type(edges), Iterable):
-            raise TypeError("Argument edges is not iterable.")
+    def from_dsv(cls, core_filepath=None, boundary_filepath=None, delimiter='\t', relation_translator=None):
+        graph = nx.DiGraph()
+        if core_filepath is not None:
+            graph.add_edges_from(parse_dsv(core_filepath, delimiter=delimiter, default_edge_type="core"))
+        if boundary_filepath is not None:
+            graph.add_edges_from(parse_dsv(boundary_filepath, delimiter=delimiter, default_edge_type="boundary"))
 
-        dod = dict()  # Format: {src: {trg: {"relation": "+", "type": "core"}}}
-        for edge in edges:
-            if not 3 <= len(edge) <= 4:
-                warnings.warn("Edge %s is of invalid length and will be ignored." % str(edge))
-                continue
-
-            src, trg, rel = str(edge[0]), str(edge[1]), str(edge[2])
-            if src not in dod:
-                dod[src] = dict()
-            if trg in dod[src]:
-                warnings.warn("Multiple edges between %s and %s. "
-                              "Only the first instance will be kept." % (src, trg))
-                continue
-
-            dod[src][trg] = {"relation": rel}
-            if len(edge) == 4:
-                typ = str(edge[3]).lower()
-
-                if typ in cls.__allowed_edge_types:
-                    dod[src][trg]["type"] = typ
-                else:
-                    warnings.warn("Unknown type %s of edge %s will be "
-                                  "replaced with \"infer\"." % (typ, str((src, trg))))
-                    dod[src][trg]["type"] = "infer"
-            else:
-                dod[src][trg]["type"] = "infer"
-
-        return cls(nx.DiGraph(dod), relation_translator)
-
-    @classmethod
-    def from_dsv(cls, core_filepath, boundary_filepath=None, relation_translator=None, delimiter='\t'):
-        core_edges = [(a, b, c, "core") for (a, b, c) in
-                      parse_dsv(core_filepath, delimiter=delimiter)]
-        boundary_edges = [(a, b, c, "boundary") for (a, b, c) in
-                          parse_dsv(boundary_filepath, delimiter=delimiter)] \
-            if boundary_filepath is not None else []
-
-        cn_instance = cls.from_edge_list(core_edges + boundary_edges, relation_translator)
+        cn_instance = cls(graph, relation_translator)
         cn_instance.metadata["name"] = os.path.basename(core_filepath)
         return cn_instance
 
     @classmethod
     def from_tsv(cls, core_filepath, boundary_filepath=None, relation_translator=None):
-        return cls.from_dsv(core_filepath, boundary_filepath, relation_translator)
+        return cls.from_dsv(core_filepath, boundary_filepath, relation_translator=relation_translator)
 
     @classmethod
     def from_csv(cls, core_filepath, boundary_filepath=None, relation_translator=None):
-        return cls.from_dsv(core_filepath, boundary_filepath, relation_translator, delimiter=',')
+        return cls.from_dsv(core_filepath, boundary_filepath, delimiter=',', relation_translator=relation_translator)
 
     def copy(self):
         return CausalNetwork(self._graph.copy(), self.relation_translator.copy())
