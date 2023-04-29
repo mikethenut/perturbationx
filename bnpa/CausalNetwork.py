@@ -11,7 +11,7 @@ from bnpa.importer.network import parse_dsv
 from bnpa.npa.core import value_inference, perturbation_amplitude_contributions
 from bnpa.npa.preprocess import preprocess_network, preprocess_dataset
 from bnpa.npa.statistics import compute_variances, confidence_interval
-from bnpa.npa.permutations import permutation_test_o, permutation_test_k
+from bnpa.npa.permutations import compute_permutations, p_value
 from bnpa.output.NPAResultBuilder import NPAResultBuilder
 
 
@@ -129,8 +129,9 @@ class CausalNetwork:
         if self._graph.degree[trg] == 0:
             self._graph.remove_node(trg)
 
-    def compute_npa(self, datasets: dict, alpha=0.95):
-        prograph, lap, lperms = preprocess_network(self._graph.copy(), self.relation_translator)
+    def compute_npa(self, datasets: dict, alpha=0.95, permutations=('o', 'k'), p_iters=500, seed=None):
+        prograph, lap, lperms = preprocess_network(self._graph.copy(), self.relation_translator,
+                                                   permutations, p_iters, seed)
         lb_original = lap['b']
         core_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
         result_builder = NPAResultBuilder.new_builder(prograph, list(datasets.keys()))
@@ -145,7 +146,7 @@ class CausalNetwork:
 
             lap['b'], dataset_reduced = preprocess_dataset(lb_original, prograph, dataset)
 
-            core_coefficients = value_inference(lap, dataset_reduced['logFC'].to_numpy())
+            core_coefficients = value_inference(lap['b'], lap['c'], dataset_reduced['logFC'].to_numpy())
             npa, node_contributions = perturbation_amplitude_contributions(
                 lap['q'], core_coefficients, core_edge_count
             )
@@ -167,15 +168,12 @@ class CausalNetwork:
                 [node_var, node_ci_lower, node_ci_upper, node_p_value]
             )
 
-            o_pv, o_distribution = permutation_test_o(
-                lap, dataset_reduced['logFC'].to_numpy(), core_edge_count
-            )
-            k_pv, k_distribution = permutation_test_k(
-                lperms['k'], lap['b'], lap['q'], dataset_reduced['logFC'].to_numpy(), core_edge_count, npa
-            )
-            result_builder.set_global_attributes(dataset_id, ['o_value', 'k_value'], [o_pv, k_pv], fmt="{:.3f}")
-            result_builder.set_distribution(dataset_id, 'o_distribution', o_distribution, npa)
-            result_builder.set_distribution(dataset_id, 'k_distribution', k_distribution, npa)
+            distributions = compute_permutations(lap, lperms, core_edge_count, dataset_reduced['logFC'].to_numpy(),
+                                                 permutations, p_iters, seed)
+            for p in distributions:
+                pv = p_value(npa, distributions[p])
+                result_builder.set_global_attributes(dataset_id, ["%s_value" % p], [pv], fmt="{:.3f}")
+                result_builder.set_distribution(dataset_id, "%s_distribution" % p, distributions[p], npa)
 
         return result_builder.build()
 

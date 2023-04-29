@@ -125,7 +125,7 @@ def permute_laplacian_k(laplacian: np.ndarray, iterations=500, seed=None):
     return permuted
 
 
-def preprocess_network(graph, relation_translator, permutations='k', p_iters=500, seed=None):
+def preprocess_network(graph, relation_translator, permutations=('k',), p_iters=500, seed=None):
     enumerate_nodes(graph)
     adj_mat = adjacency_matrix(graph, relation_translator)
     lc, lb, lq = laplacian_matrices(graph, adj_mat)
@@ -139,8 +139,8 @@ def preprocess_network(graph, relation_translator, permutations='k', p_iters=500
             case 'k':
                 lperms[p] = permute_laplacian_k(lc, p_iters, seed)
             case 'o':
-                warnings.warn("Permutation 'o' is a boundary permutation "
-                              "and is not applied to the laplacian." % p)
+                # Permutation 'o' is not applied to the laplacian.
+                continue
             case _:
                 warnings.warn("Permutation %s is unknown and will be skipped." % p)
 
@@ -154,7 +154,7 @@ def preprocess_dataset(lb: np.ndarray, graph: nx.DiGraph, dataset: pd.DataFrame)
         raise ValueError("Dataset does not contain columns 'nodeID' and 'logFC'.")
 
     if 'stderr' not in dataset.columns:
-        # TODO: Add more options for computing variance
+        # TODO: Add more options for computing standard error
         if 't' in dataset.columns:
             dataset['stderr'] = np.divide(dataset['logFC'].to_numpy(), dataset['t'].to_numpy())
         else:

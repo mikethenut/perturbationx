@@ -3,19 +3,18 @@ import numpy.linalg as la
 import scipy.sparse as sparse
 
 
-def value_inference(lap: dict, fold_change: np.ndarray):
-    lb, lc = lap['b'], lap['c']
+def value_inference(lb: np.ndarray, lc: np.ndarray, boundary_coefficients: np.ndarray):
     if lb.ndim != 2:
         raise ValueError("Argument lb is not two-dimensional.")
     elif lc.ndim != 2 or lc.shape[0] != lc.shape[1]:
         raise ValueError("Argument lc is not a square matrix.")
     elif lc.shape[0] != lb.shape[0]:
         raise ValueError("Dimensions of lb and lc do not match.")
-    elif lb.shape[1] != fold_change.shape[0]:
-        raise ValueError("Dimensions of lb and fold_change do not match.")
+    elif lb.shape[1] != boundary_coefficients.shape[0]:
+        raise ValueError("Dimensions of lb and boundary_coefficients do not match.")
 
-    diffusion_matrix = np.matmul(la.inv(lc), lb)
-    return - np.matmul(diffusion_matrix, fold_change)
+    inference_matrix = - np.matmul(la.inv(lc), lb)
+    return np.matmul(inference_matrix, boundary_coefficients)
 
 
 def perturbation_amplitude(lq: np.ndarray, core_coefficients: np.ndarray, core_edge_count: int):
