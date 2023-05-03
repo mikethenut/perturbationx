@@ -5,14 +5,16 @@ import numpy.random
 import numpy.linalg as la
 
 
-def permutation_test_o(inference_matrix: np.ndarray, lq: np.ndarray, boundary_coefficients: np.ndarray,
+def permutation_test_o(lb: np.ndarray, lc: np.ndarray, lq: np.ndarray, boundary_coefficients: np.ndarray,
                        core_edge_count: int, p_iters=500, seed=None):
     if seed is None:
         generator = np.random.default_rng()
     else:
         generator = np.random.default_rng(seed)
 
+    inference_matrix = - np.matmul(la.inv(lc), lb)
     distribution = []
+
     for p in range(p_iters):
         permuted_boundary = generator.permutation(boundary_coefficients)
         permuted_core = np.matmul(inference_matrix, permuted_boundary)
@@ -22,9 +24,12 @@ def permutation_test_o(inference_matrix: np.ndarray, lq: np.ndarray, boundary_co
     return distribution
 
 
-def permutation_test_k(edge_constraints: np.ndarray, lq: np.ndarray, lc_permutations, core_edge_count: int):
+def permutation_test_k(lb: np.ndarray, lc_permutations, lq: np.ndarray,
+                       boundary_coefficients: np.ndarray, core_edge_count: int):
 
+    edge_constraints = - lb.dot(boundary_coefficients)
     distribution = []
+
     for lc in lc_permutations:
         backbone_values = np.matmul(la.inv(lc), edge_constraints)
         sample_perturbation = np.matmul(lq.dot(backbone_values), backbone_values) / core_edge_count
@@ -35,18 +40,16 @@ def permutation_test_k(edge_constraints: np.ndarray, lq: np.ndarray, lc_permutat
 
 def compute_permutations(lap: dict, lperms: dict, core_edge_count: int, boundary_coefficients: np.ndarray,
                          permutations=('o', 'k'), p_iters=500, seed=None):
+
     distributions = dict()
-
-    inference_matrix = - np.matmul(la.inv(lap['c']), lap['b'])
-    edge_constraints = - lap['b'].dot(boundary_coefficients)
-
     for p in set(permutations):
         match p.lower():
             case 'o':
-                distributions[p] = permutation_test_o(inference_matrix, lap['q'], boundary_coefficients,
-                                              core_edge_count, p_iters, seed)
+                distributions[p] = permutation_test_o(lap['b'], lap['c'], lap['q'], boundary_coefficients,
+                                                      core_edge_count, p_iters, seed)
             case 'k':
-                distributions[p] = permutation_test_k(edge_constraints, lap['q'], lperms['k'], core_edge_count)
+                distributions[p] = permutation_test_k(lap['b'], lperms['k'], lap['q'],
+                                                      boundary_coefficients, core_edge_count)
             case _:
                 warnings.warn("Permutation %s is unknown and will be skipped." % p)
                 continue
