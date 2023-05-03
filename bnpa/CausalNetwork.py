@@ -1,5 +1,6 @@
 import os
 import warnings
+import logging
 from typing import Optional
 
 import pandas as pd
@@ -129,14 +130,21 @@ class CausalNetwork:
         if self._graph.degree[trg] == 0:
             self._graph.remove_node(trg)
 
-    def compute_npa(self, datasets: dict, alpha=0.95, permutations=('o', 'k'), p_iters=500, seed=None):
+    def compute_npa(self, datasets: dict, alpha=0.95, permutations=('o', 'k'), p_iters=500, seed=None, verbose=True):
+        if verbose:
+            logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s -- %(message)s")
+            logging.info("PREPROCESSING NETWORK")
+
         prograph, lap, lperms = preprocess_network(self._graph.copy(), self.relation_translator,
-                                                   permutations, p_iters, seed)
+                                                   permutations, p_iters, seed, verbose)
         lb_original = lap['b']
         core_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
         result_builder = NPAResultBuilder.new_builder(prograph, list(datasets.keys()))
 
         for dataset_id in datasets:
+            if verbose:
+                logging.info("COMPUTING NPA FOR DATASET '%s'" % dataset_id)
+
             dataset = datasets[dataset_id]
             if type(dataset) != pd.DataFrame:
                 raise ValueError("Dataset %s is not a pandas.DataFrame." % dataset_id)
@@ -144,7 +152,7 @@ class CausalNetwork:
                 raise ValueError("Dataset %s does not contain columns "
                                  "'nodeID', 'logFC' and 't'." % dataset_id)
 
-            lap['b'], dataset_reduced = preprocess_dataset(lb_original, prograph, dataset)
+            lap['b'], dataset_reduced = preprocess_dataset(lb_original, prograph, dataset, verbose)
 
             core_coefficients = value_inference(lap['b'], lap['c'], dataset_reduced['logFC'].to_numpy())
             npa, node_contributions = perturbation_amplitude_contributions(

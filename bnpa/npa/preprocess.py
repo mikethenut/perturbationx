@@ -1,5 +1,6 @@
-import warnings
 import sys
+import logging
+import warnings
 
 import numpy as np
 import numpy.linalg as la
@@ -11,11 +12,12 @@ from bnpa.importer.RelationTranslator import RelationTranslator
 from typing import Optional
 
 
-def enumerate_nodes(graph: nx.DiGraph):
-    # Select nodes with outgoing edges and targets of core edges as core nodes,
-    # select targets of boundary edges as boundary nodes
+def enumerate_nodes(graph: nx.DiGraph, verbose=True):
+    # Select nodes with outgoing edges and targets of core edges as core nodes
     core_nodes = {src for src, trg in graph.edges} | \
                  {trg for src, trg in graph.edges if graph[src][trg]["type"] == "core"}
+
+    # Select targets of boundary edges as boundary nodes
     boundary_nodes = {trg for src, trg in graph.edges if graph[src][trg]["type"] == "boundary"}
 
     # Check that there isn't overlap between the two sets
@@ -31,6 +33,21 @@ def enumerate_nodes(graph: nx.DiGraph):
             else:
                 graph[src][trg]["type"] = "boundary"
                 boundary_nodes.add(trg)
+
+    # Check that the network core and boundary are not empty
+    if len(core_nodes) == 0:
+        raise ValueError("The network does not contain any core nodes.")
+    if len(boundary_nodes) == 0:
+        raise ValueError("The network does not contain any boundary nodes.")
+    # TODO: Check that the core is connected
+
+    if verbose:  # Log network statistics
+        core_edge_count = sum(1 for e in graph.edges.data() if e[2]["type"] == "core")
+        boundary_edge_count = sum(1 for e in graph.edges.data() if e[2]["type"] == "boundary")
+        inner_boundary_nodes = {src for src, trg in graph.edges if graph[src][trg]["type"] == "boundary"}
+        logging.info("core edges: %d, boundary edges: %d" % (core_edge_count, boundary_edge_count))
+        logging.info("core nodes: %d, boundary nodes: %d" % (len(core_nodes), len(boundary_nodes)))
+        logging.info("core nodes with boundary edges: %d" % len(inner_boundary_nodes))
 
     # Compute indices and add data to graph instance
     core_size = len(core_nodes)
@@ -65,7 +82,7 @@ def laplacian_matrices(graph: nx.DiGraph, adjacency: sparse.spmatrix):
         raise ValueError("Argument adjacency is not a square matrix.")
     if graph.number_of_nodes() != adjacency.shape[0]:
         raise ValueError("Argument graph has invalid number of "
-                         "vertices (%d)." % graph.number_of_nodes())
+                         "nodes (%d)." % graph.number_of_nodes())
 
     core_size = sum(1 for n in graph.nodes if graph.nodes[n]["type"] == "core")
     laplacian = - adjacency - adjacency.transpose()
@@ -87,6 +104,7 @@ def permute_laplacian_k(laplacian: np.ndarray, iterations=500, seed=None):
     if laplacian.ndim != 2 or laplacian.shape[0] != laplacian.shape[1]:
         print(laplacian.shape)
         raise ValueError("Argument laplacian is not a square matrix.")
+
     # WARNING: Some generated laplacians might be singular and are ignored,
     #          as the permutation does not ensure weakly chained diagonal dominance
 
@@ -125,8 +143,8 @@ def permute_laplacian_k(laplacian: np.ndarray, iterations=500, seed=None):
     return permuted
 
 
-def preprocess_network(graph, relation_translator, permutations=('k',), p_iters=500, seed=None):
-    enumerate_nodes(graph)
+def preprocess_network(graph, relation_translator, permutations=('k',), p_iters=500, seed=None, verbose=True):
+    enumerate_nodes(graph, verbose)
     adj_mat = adjacency_matrix(graph, relation_translator)
     lc, lb, lq = laplacian_matrices(graph, adj_mat)
     lap = {'c': lc, 'b': lb, 'q': lq}
@@ -147,7 +165,7 @@ def preprocess_network(graph, relation_translator, permutations=('k',), p_iters=
     return graph, lap, lperms
 
 
-def preprocess_dataset(lb: np.ndarray, graph: nx.DiGraph, dataset: pd.DataFrame):
+def preprocess_dataset(lb: np.ndarray, graph: nx.DiGraph, dataset: pd.DataFrame, verbose=True):
     if lb.ndim != 2:
         raise ValueError("Argument lb is not two-dimensional.")
     elif any(col not in dataset.columns for col in ['nodeID', 'logFC']):
@@ -164,8 +182,13 @@ def preprocess_dataset(lb: np.ndarray, graph: nx.DiGraph, dataset: pd.DataFrame)
     network_idx = np.array([graph.nodes[node_name]["idx"] - core_size
                             for node_name in dataset['nodeID'].values
                             if node_name in graph.nodes])
-    lb_reduced = lb[:, network_idx]
 
+    if network_idx.ndim == 0:
+        raise ValueError("The dataset does not contain any boundary nodes.")
+    if verbose:
+        logging.info("boundary nodes matched with dataset: %d" % network_idx.size)
+
+    lb_reduced = lb[:, network_idx]
     dataset_reduced = dataset[dataset['nodeID'].isin(graph.nodes)]
     dataset_reduced = dataset_reduced[['nodeID', 'logFC', 'stderr']]
 
