@@ -1,3 +1,5 @@
+import sys
+import platform
 import copy
 import warnings
 
@@ -13,6 +15,24 @@ class NPAResult:
         self._global_info = global_info
         self._node_info = node_info
         self._distributions = distributions
+
+        # System metadata
+        self._metadata = dict()
+        self._metadata["python_implementation"] = platform.python_implementation()
+        self._metadata["python_version"] = platform.python_version()
+        self._metadata["python_executable"] = sys.executable
+        self._metadata["system_name"] = platform.system()
+        self._metadata["system_release"] = platform.release()
+        self._metadata["system_version"] = platform.version()
+
+        # Network metadata
+        for k, v in graph.graph.items():
+            self._metadata["network_" + k] = v
+
+        # TODO: Add metadata for package and dependency versions
+
+    def metadata(self):
+        return copy.deepcopy(self._metadata)
 
     def datasets(self):
         return copy.deepcopy(self._datasets)

@@ -41,13 +41,20 @@ def infer_graph_attributes(graph: nx.DiGraph, verbose=True):
         raise ValueError("The network does not contain any boundary nodes.")
     # TODO: Check that the core is connected
 
+    # Add stats to metadata
+    inner_boundary_nodes = {src for src, trg in graph.edges if graph[src][trg]["type"] == "boundary"}
+    core_edge_count = sum(1 for e in graph.edges.data() if e[2]["type"] == "core")
+    boundary_edge_count = sum(1 for e in graph.edges.data() if e[2]["type"] == "boundary")
+    graph.graph["core_edges"] = core_edge_count
+    graph.graph["boundary_edges"] = boundary_edge_count
+    graph.graph["core_nodes"] = len(core_nodes)
+    graph.graph["outer_boundary_nodes"] = len(boundary_nodes)
+    graph.graph["inner_boundary_nodes"] = len(inner_boundary_nodes)
+
     if verbose:  # Log network statistics
-        core_edge_count = sum(1 for e in graph.edges.data() if e[2]["type"] == "core")
-        boundary_edge_count = sum(1 for e in graph.edges.data() if e[2]["type"] == "boundary")
-        inner_boundary_nodes = {src for src, trg in graph.edges if graph[src][trg]["type"] == "boundary"}
         logging.info("core edges: %d, boundary edges: %d" % (core_edge_count, boundary_edge_count))
-        logging.info("core nodes: %d, boundary nodes: %d" % (len(core_nodes), len(boundary_nodes)))
-        logging.info("core nodes with boundary edges: %d" % len(inner_boundary_nodes))
+        logging.info("core nodes: %d, outer boundary nodes: %d" % (len(core_nodes), len(boundary_nodes)))
+        logging.info("inner boundary nodes: %d" % len(inner_boundary_nodes))
 
     # Compute indices and add data to graph instance
     core_size = len(core_nodes)

@@ -1,6 +1,8 @@
 import os
+import pathlib
 import warnings
 import logging
+from pathlib import Path
 from typing import Optional
 
 import pandas as pd
@@ -43,10 +45,14 @@ class CausalNetwork:
         if boundary_filepath is not None:
             graph.add_edges_from(parse_dsv(boundary_filepath, delimiter=delimiter, default_edge_type="boundary"))
 
-        graph.graph["title"] = os.path.basename(core_filepath)
-        graph.graph["collection"] = os.path.basename(core_filepath)
-        cn_instance = cls(graph, relation_translator)
-        return cn_instance
+        if core_filepath is not None:
+            graph.graph["title"] = Path(core_filepath).stem
+            graph.graph["collection"] = Path(core_filepath).parent.name
+        elif boundary_filepath is not None:
+            graph.graph["title"] = Path(boundary_filepath).stem
+            graph.graph["collection"] = Path(boundary_filepath).parent.name
+
+        return cls(graph, relation_translator)
 
     @classmethod
     def from_tsv(cls, core_filepath, boundary_filepath=None, relation_translator=None):
@@ -57,7 +63,8 @@ class CausalNetwork:
         return cls.from_dsv(core_filepath, boundary_filepath, delimiter=',', relation_translator=relation_translator)
 
     def initialize_metadata(self):
-        # TODO: enter networks stats as metadata and forward them to results
+        if self.metadata is None:
+            self.metadata = dict()
         if "title" not in self.metadata:
             self.metadata["title"] = "Untitled network"
         if "collection" not in self.metadata:
@@ -123,6 +130,7 @@ class CausalNetwork:
             logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s -- %(message)s")
             logging.info("PREPROCESSING NETWORK")
 
+        self.initialize_metadata()
         prograph, lap, lperms = preprocess_network(self._graph.copy(), self.relation_translator,
                                                    permutations, p_iters, seed, verbose)
         lb_original = lap['b']
