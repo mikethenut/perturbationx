@@ -27,10 +27,8 @@ class NPAResult:
         return self._global_info.copy()
 
     def node_info(self, accessor):
-        if accessor in self._datasets:
-            return self._node_info.xs(accessor, level="data").transpose(copy=True)
-        else:
-            return self._node_info.xs(accessor, level="attr").transpose(copy=True)
+        level = "data" if accessor in self._datasets else "attr"
+        return self._node_info.xs(accessor, level=level).transpose(copy=True)
 
     def get_distribution(self, distribution):
         return copy.deepcopy(self._distributions[distribution])
@@ -61,6 +59,7 @@ class NPAResult:
                 ax[idx].axvline(x=distr[1], color='red')
 
         plt.show()
+        return ax
 
     def export(self):
         # TODO

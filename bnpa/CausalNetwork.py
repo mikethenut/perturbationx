@@ -6,11 +6,12 @@ from typing import Optional
 import pandas as pd
 import networkx as nx
 import py4cytoscape as p4c
+from py4cytoscape.py4cytoscape_utils import DEFAULT_BASE_URL
 
 from bnpa.importer.RelationTranslator import RelationTranslator
-from bnpa.importer.network import parse_dsv
+from bnpa.importer.network import parse_dsv, validate_init_graph
 from bnpa.npa.core import value_inference, perturbation_amplitude_contributions
-from bnpa.npa.preprocess import preprocess_network, preprocess_dataset
+from bnpa.npa.preprocess import preprocess_network, preprocess_dataset, infer_graph_attributes
 from bnpa.npa.statistics import compute_variances, confidence_interval
 from bnpa.npa.permutations import compute_permutations, p_value
 from bnpa.output.NPAResultBuilder import NPAResultBuilder
@@ -20,43 +21,19 @@ class CausalNetwork:
     __allowed_edge_types = ("core", "boundary", "infer")
 
     def __init__(self, graph: nx.DiGraph = None, relation_translator: Optional[RelationTranslator] = None):
-        if graph is None:
-            graph = nx.DiGraph()
         if relation_translator is None:
             relation_translator = RelationTranslator()
-
-        if not type(graph) == nx.DiGraph:
-            raise TypeError("Argument graph is not a networkx.Digraph.")
-        if not type(relation_translator) == RelationTranslator:
+        if type(relation_translator) != RelationTranslator:
             raise TypeError("Argument relation_translator is not a RelationTranslator.")
-
-        to_remove = []
-        for src, trg, data in graph.edges.data():
-            if "relation" not in data:
-                warnings.warn("Edge between %s and %s does not have a "
-                              "relation specified and will be ignored." % (src, trg))
-                to_remove.append((src, trg))
-                continue
-
-            if "type" not in data:
-                graph[src][trg]["type"] = "infer"
-            elif data["type"] not in self.__allowed_edge_types:
-                warnings.warn("Unknown type %s of edge %s will be replaced "
-                              "with \"infer\"." % (data["type"], str((src, trg))))
-                graph[src][trg]["type"] = "infer"
-
-        for src, trg in to_remove:
-            graph.remove_edge(src, trg)
-            if graph.degree[src] == 0:
-                graph.remove_node(src)
-            if graph.degree[trg] == 0:
-                graph.remove_node(trg)
-
-        self._graph = graph
         self.relation_translator = relation_translator
 
-        # TODO: enter networks stats as metadata and forward them to results
-        self.metadata = dict()
+        if graph is None:
+            graph = nx.DiGraph()
+        validate_init_graph(graph, self.__allowed_edge_types)
+        self._graph = graph
+
+        self.metadata = self._graph.graph.copy()
+        self.initialize_metadata()
 
     @classmethod
     def from_dsv(cls, core_filepath=None, boundary_filepath=None, delimiter='\t', relation_translator=None):
@@ -66,8 +43,9 @@ class CausalNetwork:
         if boundary_filepath is not None:
             graph.add_edges_from(parse_dsv(boundary_filepath, delimiter=delimiter, default_edge_type="boundary"))
 
+        graph.graph["title"] = os.path.basename(core_filepath)
+        graph.graph["collection"] = os.path.basename(core_filepath)
         cn_instance = cls(graph, relation_translator)
-        cn_instance.metadata["name"] = os.path.basename(core_filepath)
         return cn_instance
 
     @classmethod
@@ -77,6 +55,13 @@ class CausalNetwork:
     @classmethod
     def from_csv(cls, core_filepath, boundary_filepath=None, relation_translator=None):
         return cls.from_dsv(core_filepath, boundary_filepath, delimiter=',', relation_translator=relation_translator)
+
+    def initialize_metadata(self):
+        # TODO: enter networks stats as metadata and forward them to results
+        if "title" not in self.metadata:
+            self.metadata["title"] = "Untitled network"
+        if "collection" not in self.metadata:
+            self.metadata["collection"] = "Untitled collection"
 
     def copy(self):
         return CausalNetwork(self._graph.copy(), self.relation_translator.copy())
@@ -130,6 +115,9 @@ class CausalNetwork:
         if self._graph.degree[trg] == 0:
             self._graph.remove_node(trg)
 
+    def infer_graph_attributes(self, verbose=True):
+        infer_graph_attributes(self._graph, verbose)
+
     def compute_npa(self, datasets: dict, alpha=0.95, permutations=('o', 'k'), p_iters=500, seed=None, verbose=True):
         if verbose:
             logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s -- %(message)s")
@@ -159,7 +147,7 @@ class CausalNetwork:
                 lap['q'], core_coefficients, core_edge_count
             )
             result_builder.set_global_attributes(dataset_id, ['NPA'], [npa])
-            result_builder.set_node_attributes(dataset_id, ['contr'], [node_contributions], fmt="{:.2%}")
+            result_builder.set_node_attributes(dataset_id, ['contr'], [node_contributions])
             result_builder.set_node_attributes(dataset_id, ['coeff'], [core_coefficients])
 
             npa_var, node_var = compute_variances(lap, dataset_reduced['stderr'].to_numpy(),
@@ -180,11 +168,26 @@ class CausalNetwork:
                                                  permutations, p_iters, seed)
             for p in distributions:
                 pv = p_value(npa, distributions[p])
-                result_builder.set_global_attributes(dataset_id, ["%s_value" % p], [pv], fmt="{:.3f}")
+                result_builder.set_global_attributes(dataset_id, ["%s_value" % p], [pv])
                 result_builder.set_distribution(dataset_id, "%s_distribution" % p, distributions[p], npa)
 
         return result_builder.build()
 
-    def display(self):
-        # TODO
-        p4c.networks.create_network_from_networkx(self._graph)
+    def display(self, cytoscape_url=DEFAULT_BASE_URL, display_boundary=False):
+        self.initialize_metadata()
+
+        network_suid = p4c.networks.create_network_from_networkx(
+            self._graph, base_url=cytoscape_url,
+            title=self.metadata['title'],
+            collection=self.metadata['collection']
+        )
+
+        # TODO: make directed
+        # TODO: update with changes
+
+        if not display_boundary:
+            boundary_nodes = {trg for src, trg in self._graph.edges if self._graph[src][trg]["type"] == "boundary"}
+            boundary_nodes = list(boundary_nodes)
+            p4c.hide_nodes(boundary_nodes, network=network_suid, base_url=cytoscape_url)
+
+        return network_suid

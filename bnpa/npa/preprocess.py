@@ -12,7 +12,7 @@ from bnpa.importer.RelationTranslator import RelationTranslator
 from typing import Optional
 
 
-def enumerate_nodes(graph: nx.DiGraph, verbose=True):
+def infer_graph_attributes(graph: nx.DiGraph, verbose=True):
     # Select nodes with outgoing edges and targets of core edges as core nodes
     core_nodes = {src for src, trg in graph.edges} | \
                  {trg for src, trg in graph.edges if graph[src][trg]["type"] == "core"}
@@ -144,7 +144,7 @@ def permute_laplacian_k(laplacian: np.ndarray, iterations=500, seed=None):
 
 
 def preprocess_network(graph, relation_translator, permutations=('k',), p_iters=500, seed=None, verbose=True):
-    enumerate_nodes(graph, verbose)
+    infer_graph_attributes(graph, verbose)
     adj_mat = adjacency_matrix(graph, relation_translator)
     lc, lb, lq = laplacian_matrices(graph, adj_mat)
     lap = {'c': lc, 'b': lb, 'q': lq}

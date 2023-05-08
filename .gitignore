@@ -16,3 +16,6 @@ __pycache__/
 
 # Exclude jupyter-lab
 *.ipynb
+
+# Exclude py4cytoscape logs
+logs/

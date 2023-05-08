@@ -21,7 +21,7 @@ class NPAResultBuilder:
     def new_builder(cls, datasets, nodes):
         return cls(datasets, nodes)
 
-    def set_global_attributes(self, dataset_id, attributes, values, fmt=None):
+    def set_global_attributes(self, dataset_id, attributes, values):
         if dataset_id not in self._datasets:
             warnings.warn("Attributes for unknown dataset %s will be ignored." % dataset_id)
             return
@@ -29,9 +29,9 @@ class NPAResultBuilder:
         for attr, val in zip(attributes, values):
             if attr not in self._global_attributes:
                 self._global_attributes[attr] = {d: np.nan for d in self._datasets}
-            self._global_attributes[attr][dataset_id] = fmt.format(val) if fmt is not None else val
+            self._global_attributes[attr][dataset_id] = val
 
-    def set_node_attributes(self, dataset_id, attributes, values, fmt=None):
+    def set_node_attributes(self, dataset_id, attributes, values):
         if dataset_id not in self._datasets:
             warnings.warn("Node attributes %s for unknown dataset %s will be ignored."
                           % (str(attributes), dataset_id))
@@ -45,7 +45,7 @@ class NPAResultBuilder:
 
             if attr not in self._node_attributes:
                 self._node_attributes[attr] = {d: np.full(len(self._nodes), np.nan) for d in self._datasets}
-            self._node_attributes[attr][dataset_id] = [fmt.format(v) for v in val] if fmt is not None else val
+            self._node_attributes[attr][dataset_id] = val
 
     def set_distribution(self, dataset_id, distribution, values, reference=None):
         if dataset_id not in self._datasets:
@@ -58,6 +58,7 @@ class NPAResultBuilder:
         self._distributions[distribution][dataset_id] = (values, reference)
 
     def build(self):
+        # Create global info dataframe
         global_info = pd.DataFrame({
             attr: [self._global_attributes[attr][d] for d in self._datasets]
             for attr in self._global_attributes
@@ -65,8 +66,10 @@ class NPAResultBuilder:
         if len(self._global_attributes.keys()) > 0:
             global_info = global_info.set_index([self._datasets])
 
-        node_indices = pd.MultiIndex.from_product([self._datasets, self._node_attributes.keys()],
-                                                  names=["data", "attr"])
+        # Create node info dataframe
+        node_indices = pd.MultiIndex.from_product(
+            [self._datasets, self._node_attributes.keys()], names=["data", "attr"]
+        )
         node_info = pd.DataFrame([
             self._node_attributes[attr][d]
             for d, attr in node_indices
