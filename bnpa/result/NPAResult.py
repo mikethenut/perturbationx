@@ -3,6 +3,7 @@ import platform
 import copy
 import warnings
 import logging
+import json
 from datetime import datetime
 from typing import Optional
 
@@ -22,24 +23,23 @@ class NPAResult:
         self._global_info = global_info
         self._node_info = node_info
         self._distributions = distributions
+        self._metadata = dict()
+        self._cytoscape_suid = dict()
 
         # System metadata
-        self._metadata = dict()
+        self._metadata["datetime_utc"] = datetime.utcnow().isoformat()
         self._metadata["python_implementation"] = platform.python_implementation()
         self._metadata["python_version"] = platform.python_version()
         self._metadata["python_executable"] = sys.executable
         self._metadata["system_name"] = platform.system()
         self._metadata["system_release"] = platform.release()
         self._metadata["system_version"] = platform.version()
-        self._metadata["datetime_utc"] = datetime.utcnow().isoformat()
 
         # Network metadata
         for k, v in graph.graph.items():
             self._metadata["network_" + k] = v
 
         # TODO: Add metadata for package and dependency versions
-
-        self._cytoscape_suid = dict()
 
     def metadata(self):
         return copy.deepcopy(self._metadata)
@@ -135,9 +135,24 @@ class NPAResult:
     def highlight_nodes(self, attribute, dataset):
         pass
 
-    def export(self):
-        # TODO
-        # allow export of results to a file, preferably in json (for now)
-        # export metadata as well: Python version, Software version, file names (network and dataset),
-        # datetime (https://en.wikipedia.org/wiki/FAIR_data)
-        pass
+    def export(self, file):
+        data = dict()
+        data["metadata"] = self._metadata.copy()
+
+        for d in self.datasets():
+            data[d] = dict()
+
+            data[d]["global_info"] = dict()
+            for column in self._global_info.columns:
+                data[d]["global_info"][column] = self._global_info.loc[d, column]
+
+            data[d]["node_info"] = dict()
+            for attr in self.node_attributes():
+                data[d]["node_info"][attr] = {n: self._node_info.loc[(d, attr), n] for n in self._node_info.columns}
+
+            data[d]["distributions"] = dict()
+            for distr in self.distributions():
+                data[d]["distributions"][distr] = self._distributions[distr][d][0]
+
+        with open(file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
