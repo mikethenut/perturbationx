@@ -2,10 +2,17 @@ import sys
 import platform
 import copy
 import warnings
+import logging
+from datetime import datetime
+from typing import Optional
 
 import matplotlib.pyplot as plt
 import seaborn as sns
 import py4cytoscape as p4c
+from py4cytoscape.py4cytoscape_utils import DEFAULT_BASE_URL
+
+from bnpa.resources.resources import DEFAULT_STYLE
+from bnpa.vis.cytoscape import init_cytoscape
 
 
 class NPAResult:
@@ -24,12 +31,15 @@ class NPAResult:
         self._metadata["system_name"] = platform.system()
         self._metadata["system_release"] = platform.release()
         self._metadata["system_version"] = platform.version()
+        self._metadata["datetime_utc"] = datetime.utcnow().isoformat()
 
         # Network metadata
         for k, v in graph.graph.items():
             self._metadata["network_" + k] = v
 
         # TODO: Add metadata for package and dependency versions
+
+        self._cytoscape_suid = dict()
 
     def metadata(self):
         return copy.deepcopy(self._metadata)
@@ -81,13 +91,53 @@ class NPAResult:
         plt.show()
         return ax
 
+    def display_network(self, display_boundary: Optional[bool] = False,
+                        style=DEFAULT_STYLE, cytoscape_url=DEFAULT_BASE_URL):
+        logging.getLogger().handlers.clear()  # Block logging to stdout
+
+        network_suid = self._cytoscape_suid[cytoscape_url] \
+            if cytoscape_url in self._cytoscape_suid else None
+        network_suid = init_cytoscape(
+            self._graph, self._metadata['network_title'], self._metadata['network_collection'],
+            self._node_info.transpose(copy=True), network_suid, cytoscape_url
+        )
+
+        boundary_nodes = list({trg for src, trg in self._graph.edges
+                               if self._graph[src][trg]["type"] == "boundary"})
+        if display_boundary:
+            p4c.style_bypasses.unhide_nodes(boundary_nodes, network=network_suid, base_url=cytoscape_url)
+        elif display_boundary is not None:
+            p4c.style_bypasses.hide_nodes(boundary_nodes, network=network_suid, base_url=cytoscape_url)
+
+        if p4c.styles.get_current_style(network=network_suid, base_url=cytoscape_url) != style:
+            p4c.styles.set_visual_style(style, network=network_suid, base_url=cytoscape_url)
+        self._cytoscape_suid[cytoscape_url] = network_suid
+        return network_suid
+
+    def limit_node_display(self, display_limit, style=DEFAULT_STYLE, cytoscape_url=DEFAULT_BASE_URL):
+        display_boundary = (display_limit is None)
+        self.display_network(display_boundary, style, cytoscape_url)
+
+        # TODO
+
+    def color_nodes(self, attribute, dataset, style=DEFAULT_STYLE, cytoscape_url=DEFAULT_BASE_URL):
+        self.display_network(display_boundary=None, style=style, cytoscape_url=cytoscape_url)
+
+        data_column = dataset + ' ' + attribute
+        data_range = [self._node_info.min(axis=1)[dataset][attribute],
+                      self._node_info.max(axis=1)[dataset][attribute]]
+
+        p4c.style_mappings.set_node_color_mapping(
+            data_column, data_range, colors=["#2B80EF", "#EF3B2C"], default_color="#FEE391",
+            style_name=style, network=self._cytoscape_suid[cytoscape_url], base_url=cytoscape_url
+        )
+
+    def highlight_nodes(self, attribute, dataset):
+        pass
+
     def export(self):
         # TODO
         # allow export of results to a file, preferably in json (for now)
         # export metadata as well: Python version, Software version, file names (network and dataset),
         # datetime (https://en.wikipedia.org/wiki/FAIR_data)
         pass
-
-    def display(self):
-        # TODO
-        p4c.networks.create_network_from_networkx(self._graph)

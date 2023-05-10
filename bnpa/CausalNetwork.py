@@ -1,5 +1,4 @@
-import os
-import pathlib
+import sys
 import warnings
 import logging
 from pathlib import Path
@@ -7,8 +6,6 @@ from typing import Optional
 
 import pandas as pd
 import networkx as nx
-import py4cytoscape as p4c
-from py4cytoscape.py4cytoscape_utils import DEFAULT_BASE_URL
 
 from bnpa.importer.RelationTranslator import RelationTranslator
 from bnpa.importer.network import parse_dsv, validate_init_graph
@@ -16,7 +13,7 @@ from bnpa.npa.core import value_inference, perturbation_amplitude_contributions
 from bnpa.npa.preprocess import preprocess_network, preprocess_dataset, infer_graph_attributes
 from bnpa.npa.statistics import compute_variances, confidence_interval
 from bnpa.npa.permutations import compute_permutations, p_value
-from bnpa.output.NPAResultBuilder import NPAResultBuilder
+from bnpa.result.NPAResultBuilder import NPAResultBuilder
 
 
 class CausalNetwork:
@@ -36,6 +33,9 @@ class CausalNetwork:
 
         self.metadata = self._graph.graph.copy()
         self.initialize_metadata()
+        self._graph.graph.clear()
+
+        self._cytoscape_suid = dict()
 
     @classmethod
     def from_dsv(cls, core_filepath=None, boundary_filepath=None, delimiter='\t', relation_translator=None):
@@ -123,15 +123,21 @@ class CausalNetwork:
             self._graph.remove_node(trg)
 
     def infer_graph_attributes(self, verbose=True):
-        infer_graph_attributes(self._graph, verbose)
+        infer_graph_attributes(self._graph, self.relation_translator, verbose)
 
     def compute_npa(self, datasets: dict, alpha=0.95, permutations=('o', 'k'), p_iters=500, seed=None, verbose=True):
         if verbose:
-            logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s -- %(message)s")
+            logging.basicConfig(stream=sys.stdout, level=logging.INFO,
+                                format="%(asctime)s %(levelname)s -- %(message)s")
             logging.info("PREPROCESSING NETWORK")
 
+        # Copy the graph and set metadata
+        prograph = self._graph.copy()
         self.initialize_metadata()
-        prograph, lap, lperms = preprocess_network(self._graph.copy(), self.relation_translator,
+        prograph.graph.update(self.metadata)
+
+        # Preprocess the graph
+        prograph, lap, lperms = preprocess_network(prograph, self.relation_translator,
                                                    permutations, p_iters, seed, verbose)
         lb_original = lap['b']
         core_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
@@ -141,37 +147,38 @@ class CausalNetwork:
             if verbose:
                 logging.info("COMPUTING NPA FOR DATASET '%s'" % dataset_id)
 
+            # Preprocess the dataset
             dataset = datasets[dataset_id]
             if type(dataset) != pd.DataFrame:
                 raise ValueError("Dataset %s is not a pandas.DataFrame." % dataset_id)
             if any(col not in dataset.columns for col in ['nodeID', 'logFC', 't']):
                 raise ValueError("Dataset %s does not contain columns "
                                  "'nodeID', 'logFC' and 't'." % dataset_id)
-
             lap['b'], dataset_reduced = preprocess_dataset(lb_original, prograph, dataset, verbose)
 
+            # Compute NPA
             core_coefficients = value_inference(lap['b'], lap['c'], dataset_reduced['logFC'].to_numpy())
             npa, node_contributions = perturbation_amplitude_contributions(
                 lap['q'], core_coefficients, core_edge_count
             )
             result_builder.set_global_attributes(dataset_id, ['NPA'], [npa])
-            result_builder.set_node_attributes(dataset_id, ['contr'], [node_contributions])
-            result_builder.set_node_attributes(dataset_id, ['coeff'], [core_coefficients])
+            result_builder.set_node_attributes(dataset_id, ['contribution'], [node_contributions])
+            result_builder.set_node_attributes(dataset_id, ['coefficient'], [core_coefficients])
 
+            # Compute variances and confidence intervals
             npa_var, node_var = compute_variances(lap, dataset_reduced['stderr'].to_numpy(),
                                                   core_coefficients, core_edge_count)
-
             npa_ci_lower, npa_ci_upper, _ = confidence_interval(npa, npa_var, alpha)
             result_builder.set_global_attributes(
-                dataset_id, ['var', 'ci_lower', 'ci_upper'], [npa_var, npa_ci_lower, npa_ci_upper]
+                dataset_id, ['variance', 'ci_lower', 'ci_upper'], [npa_var, npa_ci_lower, npa_ci_upper]
             )
-
             node_ci_lower, node_ci_upper, node_p_value = confidence_interval(core_coefficients, node_var, alpha)
             result_builder.set_node_attributes(
-                dataset_id, ['var', 'ci_lower', 'ci_upper', 'p_value'],
+                dataset_id, ['variance', 'ci_lower', 'ci_upper', 'p_value'],
                 [node_var, node_ci_lower, node_ci_upper, node_p_value]
             )
 
+            # Compute permutation test statistics
             distributions = compute_permutations(lap, lperms, core_edge_count, dataset_reduced['logFC'].to_numpy(),
                                                  permutations, p_iters, seed)
             for p in distributions:
@@ -181,21 +188,9 @@ class CausalNetwork:
 
         return result_builder.build()
 
-    def display(self, cytoscape_url=DEFAULT_BASE_URL, display_boundary=False):
-        self.initialize_metadata()
-
-        network_suid = p4c.networks.create_network_from_networkx(
-            self._graph, base_url=cytoscape_url,
-            title=self.metadata['title'],
-            collection=self.metadata['collection']
-        )
-
-        # TODO: make directed
-        # TODO: update with changes
-
-        if not display_boundary:
-            boundary_nodes = {trg for src, trg in self._graph.edges if self._graph[src][trg]["type"] == "boundary"}
-            boundary_nodes = list(boundary_nodes)
-            p4c.hide_nodes(boundary_nodes, network=network_suid, base_url=cytoscape_url)
-
-        return network_suid
+    def export(self):
+        # TODO
+        # allow export of results to a file, preferably in json (for now)
+        # export metadata as well: Python version, Software version, file names (network and dataset),
+        # datetime (https://en.wikipedia.org/wiki/FAIR_data)
+        pass

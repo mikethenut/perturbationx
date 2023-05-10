@@ -12,7 +12,7 @@ from bnpa.importer.RelationTranslator import RelationTranslator
 from typing import Optional
 
 
-def infer_graph_attributes(graph: nx.DiGraph, verbose=True):
+def infer_graph_attributes(graph: nx.DiGraph,  relation_translator: Optional[RelationTranslator] = None, verbose=True):
     # Select nodes with outgoing edges and targets of core edges as core nodes
     core_nodes = {src for src, trg in graph.edges} | \
                  {trg for src, trg in graph.edges if graph[src][trg]["type"] == "core"}
@@ -41,6 +41,26 @@ def infer_graph_attributes(graph: nx.DiGraph, verbose=True):
         raise ValueError("The network does not contain any boundary nodes.")
     # TODO: Check that the core is connected
 
+    # Compute indices and add data to graph instance
+    core_size = len(core_nodes)
+    node_idx = {node: idx for idx, node in enumerate(core_nodes)} | \
+               {node: (core_size + idx) for idx, node in enumerate(boundary_nodes)}
+    for n in graph.nodes:
+        graph.nodes[n]["idx"] = node_idx[n]
+        graph.nodes[n]["type"] = "core" if n in core_nodes else "boundary"
+
+    # Compute edge weight and regulation type
+    rt = relation_translator if relation_translator is not None else RelationTranslator()
+    for src, trg in graph.edges:
+        edge_weight = rt.translate(graph[src][trg]["relation"])
+        graph[src][trg]["weight"] = edge_weight
+        if edge_weight > 0:
+            graph[src][trg]["regulation"] = "activation"
+        elif edge_weight < 0:
+            graph[src][trg]["regulation"] = "inhibition"
+        else:
+            graph[src][trg]["regulation"] = "none"
+
     # Add stats to metadata
     inner_boundary_nodes = {src for src, trg in graph.edges if graph[src][trg]["type"] == "boundary"}
     core_edge_count = sum(1 for e in graph.edges.data() if e[2]["type"] == "core")
@@ -56,30 +76,20 @@ def infer_graph_attributes(graph: nx.DiGraph, verbose=True):
         logging.info("core nodes: %d, outer boundary nodes: %d" % (len(core_nodes), len(boundary_nodes)))
         logging.info("inner boundary nodes: %d" % len(inner_boundary_nodes))
 
-    # Compute indices and add data to graph instance
-    core_size = len(core_nodes)
-    node_idx = {node: idx for idx, node in enumerate(core_nodes)} | \
-               {node: (core_size + idx) for idx, node in enumerate(boundary_nodes)}
-    for n in graph.nodes:
-        graph.nodes[n]["idx"] = node_idx[n]
-        graph.nodes[n]["type"] = "core" if n in core_nodes else "boundary"
-
     return graph
 
 
-def adjacency_matrix(graph: nx.DiGraph, relation_translator: Optional[RelationTranslator] = None):
-    rt = relation_translator if relation_translator is not None else RelationTranslator()
-
+def adjacency_matrix(graph: nx.DiGraph):
     boundary_outdegree = {src: 0. for src, trg in graph.edges if graph.nodes[trg]["type"] == "boundary"}
     for src, trg in graph.edges:
         if graph.nodes[trg]["type"] == "boundary":
-            boundary_outdegree[src] += abs(rt.translate(graph[src][trg]["relation"]))
+            boundary_outdegree[src] += abs(graph[src][trg]["weight"])
 
     rows = [graph.nodes[src]["idx"] for src, trg in graph.edges]
     cols = [graph.nodes[trg]["idx"] for src, trg in graph.edges]
-    data = [rt.translate(graph[src][trg]["relation"])
+    data = [graph[src][trg]["weight"]
             if graph.nodes[trg]["type"] == "core" else
-            rt.translate(graph[src][trg]["relation"]) / boundary_outdegree[src]
+            graph[src][trg]["weight"] / boundary_outdegree[src]
             for src, trg in graph.edges]
     return sparse.csr_matrix((data, (rows, cols)), shape=(graph.number_of_nodes(), graph.number_of_nodes()))
 
@@ -151,8 +161,8 @@ def permute_laplacian_k(laplacian: np.ndarray, iterations=500, seed=None):
 
 
 def preprocess_network(graph, relation_translator, permutations=('k',), p_iters=500, seed=None, verbose=True):
-    infer_graph_attributes(graph, verbose)
-    adj_mat = adjacency_matrix(graph, relation_translator)
+    infer_graph_attributes(graph, relation_translator, verbose)
+    adj_mat = adjacency_matrix(graph)
     lc, lb, lq = laplacian_matrices(graph, adj_mat)
     lap = {'c': lc, 'b': lb, 'q': lq}
 
