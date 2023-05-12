@@ -1,4 +1,3 @@
-import sys
 import platform
 import copy
 import warnings
@@ -30,7 +29,6 @@ class NPAResult:
         self._metadata["datetime_utc"] = datetime.utcnow().isoformat()
         self._metadata["python_implementation"] = platform.python_implementation()
         self._metadata["python_version"] = platform.python_version()
-        self._metadata["python_executable"] = sys.executable
         self._metadata["system_name"] = platform.system()
         self._metadata["system_release"] = platform.release()
         self._metadata["system_version"] = platform.version()
@@ -135,7 +133,7 @@ class NPAResult:
     def highlight_nodes(self, attribute, dataset):
         pass
 
-    def export(self, file):
+    def to_json(self, filepath, indent):
         data = dict()
         data["metadata"] = self._metadata.copy()
 
@@ -154,5 +152,5 @@ class NPAResult:
             for distr in self.distributions():
                 data[d]["distributions"][distr] = self._distributions[distr][d][0]
 
-        with open(file, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
+        with open(filepath, 'w') as f:
+            json.dump(data, f, ensure_ascii=False, indent=indent)

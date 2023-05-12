@@ -1,5 +1,13 @@
 import os
 
+
+# io
+
+DEFAULT_DATA_COLS = ("subject", "object", "relation", "type")
+
+
+# visualisation
+
 DEFAULT_STYLE = "bnpa-default"
 STYLE_XML = "default-style.xml"
 

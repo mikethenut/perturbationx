@@ -3,12 +3,14 @@ import warnings
 import logging
 from pathlib import Path
 from typing import Optional
+import json
 
 import pandas as pd
 import networkx as nx
 
-from bnpa.importer.RelationTranslator import RelationTranslator
-from bnpa.importer.network import parse_dsv, validate_init_graph
+from bnpa.resources.resources import DEFAULT_DATA_COLS
+from bnpa.io.RelationTranslator import RelationTranslator
+from bnpa.io.network import read_dsv, validate_nx_graph, write_dsv
 from bnpa.npa.core import value_inference, perturbation_amplitude_contributions
 from bnpa.npa.preprocess import preprocess_network, preprocess_dataset, infer_graph_attributes
 from bnpa.npa.statistics import compute_variances, confidence_interval
@@ -19,7 +21,9 @@ from bnpa.result.NPAResultBuilder import NPAResultBuilder
 class CausalNetwork:
     __allowed_edge_types = ("core", "boundary", "infer")
 
-    def __init__(self, graph: nx.DiGraph = None, relation_translator: Optional[RelationTranslator] = None):
+    def __init__(self, graph: Optional[nx.DiGraph] = None,
+                 relation_translator: Optional[RelationTranslator] = None,
+                 inplace=False):
         if relation_translator is None:
             relation_translator = RelationTranslator()
         if type(relation_translator) != RelationTranslator:
@@ -28,50 +32,85 @@ class CausalNetwork:
 
         if graph is None:
             graph = nx.DiGraph()
-        validate_init_graph(graph, self.__allowed_edge_types)
+        elif type(graph) != nx.DiGraph:
+            warnings.warn("Argument graph is not a networkx.DiGraph. It will be converted.")
+            graph = nx.DiGraph(graph)
+        elif not inplace:
+            graph = graph.copy()
+
+        validate_nx_graph(graph, self.__allowed_edge_types)
         self._graph = graph
 
+        # Copy metadata from nx attributes, clear attributes and set default values
         self.metadata = self._graph.graph.copy()
-        self.initialize_metadata()
         self._graph.graph.clear()
+        self.initialize_metadata()
 
         self._cytoscape_suid = dict()
 
     @classmethod
-    def from_dsv(cls, core_filepath=None, boundary_filepath=None, delimiter='\t', relation_translator=None):
+    def from_networkx(cls, graph: nx.DiGraph,
+                      relation_translator: Optional[RelationTranslator] = None,
+                      inplace=False):
+        return cls(graph, relation_translator, inplace)
+
+    @classmethod
+    def from_dsv(cls, filepath, edge_type="infer", delimiter='\t',
+                 header_cols=DEFAULT_DATA_COLS, relation_translator=None):
         graph = nx.DiGraph()
-        if core_filepath is not None:
-            graph.add_edges_from(parse_dsv(core_filepath, delimiter=delimiter, default_edge_type="core"))
-        if boundary_filepath is not None:
-            graph.add_edges_from(parse_dsv(boundary_filepath, delimiter=delimiter, default_edge_type="boundary"))
+        graph.add_edges_from(read_dsv(filepath, default_edge_type=edge_type,
+                                      delimiter=delimiter, header_cols=header_cols))
 
-        if core_filepath is not None:
-            graph.graph["title"] = Path(core_filepath).stem
-            graph.graph["collection"] = Path(core_filepath).parent.name
-        elif boundary_filepath is not None:
-            graph.graph["title"] = Path(boundary_filepath).stem
-            graph.graph["collection"] = Path(boundary_filepath).parent.name
-
-        return cls(graph, relation_translator)
+        graph.graph["title"] = Path(filepath).stem
+        graph.graph["collection"] = Path(filepath).parent.name
+        return cls(graph, relation_translator, inplace=True)
 
     @classmethod
-    def from_tsv(cls, core_filepath, boundary_filepath=None, relation_translator=None):
-        return cls.from_dsv(core_filepath, boundary_filepath, relation_translator=relation_translator)
+    def from_tsv(cls, filepath, edge_type="infer",
+                 header_cols=DEFAULT_DATA_COLS, relation_translator=None):
+        return cls.from_dsv(filepath, edge_type, header_cols=header_cols,
+                            relation_translator=relation_translator)
 
     @classmethod
-    def from_csv(cls, core_filepath, boundary_filepath=None, relation_translator=None):
-        return cls.from_dsv(core_filepath, boundary_filepath, delimiter=',', relation_translator=relation_translator)
+    def from_csv(cls, filepath, edge_type="infer",
+                 header_cols=DEFAULT_DATA_COLS, relation_translator=None):
+        return cls.from_dsv(filepath, edge_type, delimiter=',', header_cols=header_cols,
+                            relation_translator=relation_translator)
+
+    @classmethod
+    def from_cyjs_json(cls, filepath, relation_translator=None):
+        with open(filepath) as f:
+            graph = nx.cytoscape_graph(json.load(f))
+            graph.graph["title"] = Path(filepath).stem
+            graph.graph["collection"] = Path(filepath).parent.name
+            return cls(graph, relation_translator, inplace=True)
+
+    def add_edges_from_dsv(self, filepath, edge_type="infer", delimiter='\t',
+                           header_cols=DEFAULT_DATA_COLS):
+        self._graph.add_edges_from(read_dsv(filepath, default_edge_type=edge_type,
+                                            delimiter=delimiter, header_cols=header_cols))
+        validate_nx_graph(self._graph, self.__allowed_edge_types)
+
+    def add_edges_from_tsv(self, filepath, edge_type="infer",
+                           header_cols=DEFAULT_DATA_COLS):
+        self.add_edges_from_dsv(filepath, edge_type, header_cols=header_cols)
+
+    def add_edges_from_csv(self, filepath, edge_type="infer",
+                           header_cols=DEFAULT_DATA_COLS):
+        self.add_edges_from_dsv(filepath, edge_type, delimiter=',', header_cols=header_cols)
 
     def initialize_metadata(self):
+        # The user can delete metadata dict
         if self.metadata is None:
             self.metadata = dict()
+        # Title and collection are required for Cytoscape
         if "title" not in self.metadata:
             self.metadata["title"] = "Untitled network"
         if "collection" not in self.metadata:
             self.metadata["collection"] = "Untitled collection"
 
     def copy(self):
-        return CausalNetwork(self._graph.copy(), self.relation_translator.copy())
+        return CausalNetwork(self._graph, self.relation_translator.copy(), inplace=False)
 
     def number_of_nodes(self):
         return self._graph.number_of_nodes()
@@ -188,9 +227,21 @@ class CausalNetwork:
 
         return result_builder.build()
 
-    def export(self):
-        # TODO
-        # allow export of results to a file, preferably in json (for now)
-        # export metadata as well: Python version, Software version, file names (network and dataset),
-        # datetime (https://en.wikipedia.org/wiki/FAIR_data)
-        pass
+    def to_networkx(self):
+        return self._graph.copy()
+
+    def to_dsv(self, filepath, edge_type="all", delimiter='\t',
+               data_cols=DEFAULT_DATA_COLS, header=DEFAULT_DATA_COLS):
+        write_dsv(self._graph, filepath, edge_type, delimiter, data_cols, header)
+
+    def to_tsv(self, filepath, edge_type="all",
+               data_cols=DEFAULT_DATA_COLS, header=DEFAULT_DATA_COLS):
+        self.to_dsv(filepath, edge_type, data_cols=data_cols, header=header)
+
+    def to_csv(self, filepath, edge_type="all",
+               data_cols=DEFAULT_DATA_COLS, header=DEFAULT_DATA_COLS):
+        self.to_dsv(filepath, edge_type, delimiter=",", data_cols=data_cols, header=header)
+
+    def to_cyjs_json(self, filepath, indent=4):
+        with open(filepath, 'w') as f:
+            json.dump(nx.cytoscape_data(self._graph), f, ensure_ascii=False, indent=indent)

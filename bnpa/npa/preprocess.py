@@ -8,7 +8,7 @@ import scipy.sparse as sparse
 import pandas as pd
 import networkx as nx
 
-from bnpa.importer.RelationTranslator import RelationTranslator
+from bnpa.io.RelationTranslator import RelationTranslator
 from typing import Optional
 
 
