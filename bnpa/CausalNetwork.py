@@ -231,15 +231,15 @@ class CausalNetwork:
         return self._graph.copy()
 
     def to_dsv(self, filepath, edge_type="all", delimiter='\t',
-               data_cols=DEFAULT_DATA_COLS, header=DEFAULT_DATA_COLS):
+               data_cols=DEFAULT_DATA_COLS, header=None):
         write_dsv(self._graph, filepath, edge_type, delimiter, data_cols, header)
 
     def to_tsv(self, filepath, edge_type="all",
-               data_cols=DEFAULT_DATA_COLS, header=DEFAULT_DATA_COLS):
+               data_cols=DEFAULT_DATA_COLS, header=None):
         self.to_dsv(filepath, edge_type, data_cols=data_cols, header=header)
 
     def to_csv(self, filepath, edge_type="all",
-               data_cols=DEFAULT_DATA_COLS, header=DEFAULT_DATA_COLS):
+               data_cols=DEFAULT_DATA_COLS, header=None):
         self.to_dsv(filepath, edge_type, delimiter=",", data_cols=data_cols, header=header)
 
     def to_cyjs_json(self, filepath, indent=4):

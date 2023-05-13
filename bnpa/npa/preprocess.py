@@ -49,17 +49,17 @@ def infer_graph_attributes(graph: nx.DiGraph,  relation_translator: Optional[Rel
         graph.nodes[n]["idx"] = node_idx[n]
         graph.nodes[n]["type"] = "core" if n in core_nodes else "boundary"
 
-    # Compute edge weight and regulation type
+    # Compute edge weight and interaction type
     rt = relation_translator if relation_translator is not None else RelationTranslator()
     for src, trg in graph.edges:
         edge_weight = rt.translate(graph[src][trg]["relation"])
         graph[src][trg]["weight"] = edge_weight
         if edge_weight > 0:
-            graph[src][trg]["regulation"] = "activation"
+            graph[src][trg]["interaction"] = "activation"
         elif edge_weight < 0:
-            graph[src][trg]["regulation"] = "inhibition"
+            graph[src][trg]["interaction"] = "inhibition"
         else:
-            graph[src][trg]["regulation"] = "none"
+            graph[src][trg]["interaction"] = "none"
 
     # Add stats to metadata
     inner_boundary_nodes = {src for src, trg in graph.edges if graph[src][trg]["type"] == "boundary"}
