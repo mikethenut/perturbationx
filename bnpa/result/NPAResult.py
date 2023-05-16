@@ -12,7 +12,10 @@ import py4cytoscape as p4c
 from py4cytoscape.py4cytoscape_utils import DEFAULT_BASE_URL
 
 from bnpa.resources.resources import DEFAULT_STYLE, DEFAULT_NODE_COLOR, DEFAULT_GRADIENT
-from bnpa.vis.cytoscape import init_cytoscape, load_network_data, set_boundary_display
+from bnpa.vis.cytoscape import edge_to_p4c_format, init_cytoscape, load_network_data, set_boundary_display,\
+    highlight_subgraph, display_subgraph, extract_subgraph, clear_bypass
+from bnpa.vis.paths import get_path_components
+from bnpa.vis.neighbors import get_neighborhood
 
 
 class NPAResult:
@@ -89,6 +92,39 @@ class NPAResult:
         plt.show()
         return ax
 
+    def get_leading_nodes(self, dataset, cutoff=0.2):
+        contributions = self.node_info("contribution")[dataset].sort_values(ascending=False)
+        cumulative_contributions = contributions.cumsum() / contributions.sum()
+        max_idx = 0
+        for contr in cumulative_contributions:
+            max_idx += 1
+            if contr > cutoff:
+                break
+        return set(cumulative_contributions.index[:max_idx].tolist())
+
+    def get_node_subgraph(self, nodes,  include_paths=None, directed_paths=False,
+                          include_neighbors=0, neighborhood_type="union"):
+        # Remove boundary nodes
+        graph = self._graph.copy()
+        boundary_nodes = [n for n in graph.nodes if graph.nodes[n]["type"] == "boundary"]
+        graph.remove_nodes_from(boundary_nodes)
+
+        # Find paths
+        if include_paths is not None:
+            path_nodes, path_edges = get_path_components(graph, nodes, include_paths, directed_paths)
+        else:
+            path_nodes, path_edges = set(), set()
+
+        # Find neighborhood
+        if include_neighbors > 0:
+            neigh_nodes, neigh_edges = get_neighborhood(graph, nodes, include_neighbors, neighborhood_type)
+        else:
+            neigh_nodes, neigh_edges = set(), set()
+
+        nodes = list(nodes.union(path_nodes).union(neigh_nodes))
+        edges = list(path_edges.union(neigh_edges))
+        return nodes, edges
+
     def display_network(self, display_boundary: Optional[bool] = False,
                         style=DEFAULT_STYLE, cytoscape_url=DEFAULT_BASE_URL):
         logging.getLogger().handlers.clear()  # Block logging to stdout
@@ -116,7 +152,8 @@ class NPAResult:
         self._cytoscape_suid[cytoscape_url] = network_suid
         return network_suid
 
-    def color_nodes(self, attribute, dataset, gradient=DEFAULT_GRADIENT, default_color=DEFAULT_NODE_COLOR,
+    def color_nodes(self, dataset, attribute,
+                    gradient=DEFAULT_GRADIENT, default_color=DEFAULT_NODE_COLOR,
                     style=DEFAULT_STYLE, cytoscape_url=DEFAULT_BASE_URL):
         self.display_network(display_boundary=None, style=style, cytoscape_url=cytoscape_url)
 
@@ -128,12 +165,80 @@ class NPAResult:
             data_column, data_range, colors=gradient, default_color=default_color,
             style_name=style, network=self._cytoscape_suid[cytoscape_url], base_url=cytoscape_url
         )
+        return self._cytoscape_suid[cytoscape_url]
 
-    def highlight_leading_nodes(self, include_paths, include_neighbours, neighbourhood_type="union"):
-        pass
+    def highlight_leading_nodes(self, dataset, cutoff=0.2,
+                                include_paths=None, directed_paths=False,
+                                include_neighbors=0, neighborhood_type="union",
+                                style=DEFAULT_STYLE, cytoscape_url=DEFAULT_BASE_URL):
+        self.display_network(display_boundary=None, style=style, cytoscape_url=cytoscape_url)
 
-    def extract_leading_nodes(self, include_paths, include_neighbours, neighbourhood_type="union"):
-        pass
+        # Get subgraph
+        leading_nodes = self.get_leading_nodes(dataset, cutoff)
+        nodes, edges = self.get_node_subgraph(leading_nodes, include_paths, directed_paths,
+                                              include_neighbors, neighborhood_type)
+        edges = [edge_to_p4c_format(*e) for e in edges]
+
+        # Pass nodes and edges to highlight function
+        highlight_subgraph(
+            nodes, edges,
+            network_suid=self._cytoscape_suid[cytoscape_url],
+            cytoscape_url=cytoscape_url
+        )
+        return self._cytoscape_suid[cytoscape_url]
+
+    def extract_leading_nodes(self, dataset, cutoff=0.2, inplace=True,
+                              include_paths=None, directed_paths=False,
+                              include_neighbors=0, neighborhood_type="union",
+                              style=DEFAULT_STYLE, cytoscape_url=DEFAULT_BASE_URL):
+        self.display_network(display_boundary=None, style=style, cytoscape_url=cytoscape_url)
+
+        # Get subgraph
+        leading_nodes = self.get_leading_nodes(dataset, cutoff)
+        nodes, edges = self.get_node_subgraph(leading_nodes, include_paths, directed_paths,
+                                              include_neighbors, neighborhood_type)
+        edges = [edge_to_p4c_format(*e) for e in edges]
+
+        # Set visibility
+        if inplace:
+            display_subgraph(
+                self._graph, nodes, edges,
+                network_suid=self._cytoscape_suid[cytoscape_url],
+                cytoscape_url=cytoscape_url
+            )
+            return self._cytoscape_suid[cytoscape_url]
+        else:
+            return extract_subgraph(
+                nodes, edges,
+                network_suid=self._cytoscape_suid[cytoscape_url],
+                cytoscape_url=cytoscape_url
+            )
+
+    def reset_display(self, color=True, highlight=True, visibility=True,
+                      style=DEFAULT_STYLE, cytoscape_url=DEFAULT_BASE_URL):
+        self.display_network(display_boundary=None, style=style, cytoscape_url=cytoscape_url)
+
+        # Reset edges
+        core_edges = [edge_to_p4c_format(src, trg, self._graph[src][trg]["interaction"])
+                      for src, trg in self._graph.edges if self._graph[src][trg]["type"] == "core"]
+        if visibility:
+            clear_bypass(core_edges, "edge", "EDGE_VISIBLE", self._cytoscape_suid[cytoscape_url], cytoscape_url)
+        if highlight:
+            clear_bypass(core_edges, "edge", "EDGE_WIDTH", self._cytoscape_suid[cytoscape_url], cytoscape_url)
+
+        # Reset nodes
+        core_nodes = [n for n in self._graph.nodes if self._graph.nodes[n]["type"] == "core"]
+        if visibility:
+            clear_bypass(core_nodes, "node", "NODE_VISIBLE", self._cytoscape_suid[cytoscape_url], cytoscape_url)
+        if highlight:
+            clear_bypass(core_nodes, "node", "NODE_BORDER_WIDTH", self._cytoscape_suid[cytoscape_url], cytoscape_url)
+        if color:
+            p4c.style_mappings.delete_style_mapping(
+                style_name=style,
+                visual_prop="NODE_FILL_COLOR",
+                base_url=cytoscape_url)
+
+        return self._cytoscape_suid[cytoscape_url]
 
     def to_json(self, filepath, indent):
         data = dict()

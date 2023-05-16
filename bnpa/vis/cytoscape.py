@@ -1,4 +1,7 @@
+import sys
+import io
 from typing import Optional
+from contextlib import redirect_stderr
 
 import pandas as pd
 import py4cytoscape as p4c
@@ -6,7 +9,12 @@ from py4cytoscape.exceptions import CyError
 from py4cytoscape.py4cytoscape_utils import DEFAULT_BASE_URL
 from py4cytoscape.tables import load_table_data
 
-from bnpa.resources.resources import DEFAULT_STYLE, get_style_xml_path
+from bnpa.resources.resources import DEFAULT_STYLE, get_style_xml_path, DEFAULT_EDGE_WIDTH, DEFAULT_NODE_BORDER_WIDTH
+
+
+def edge_to_p4c_format(src, trg, interaction):
+    # Edge name format used by p4c is 'source (interaction) target'
+    return "%s (%s) %s" % (src, interaction, trg)
 
 
 def init_cytoscape(graph, title, collection, init_boundary: Optional[bool] = False,
@@ -38,7 +46,7 @@ def init_cytoscape(graph, title, collection, init_boundary: Optional[bool] = Fal
 def load_network_data(dataframe, table, network_suid, cytoscape_url=DEFAULT_BASE_URL):
     dataframe = dataframe.copy()
     # Rename MultiIndex columns
-    dataframe.columns = [' '.join(col) if type(col) != str else col
+    dataframe.columns = [col if isinstance(col, str) else ' '.join(col)
                          for col in dataframe.columns]
     for c in dataframe:
         column = dataframe[[c]].dropna().reset_index()
@@ -59,7 +67,7 @@ def set_boundary_display(graph, show_boundary, network_suid, cytoscape_url=DEFAU
     elif len(boundary_nodes) > 0 and show_boundary is True:
         # The unhide function deletes the bypass, which throws an error if the bypass does not exist
         p4c.style_bypasses.set_node_property_bypass(
-            boundary_nodes, new_values='true', visual_property='NODE_VISIBLE',
+            boundary_nodes, new_values="true", visual_property="NODE_VISIBLE",
             network=network_suid, base_url=cytoscape_url
         )
     elif show_boundary is True:
@@ -88,8 +96,65 @@ def set_boundary_display(graph, show_boundary, network_suid, cytoscape_url=DEFAU
 
         # Load edge data
         edge_data = pd.DataFrame.from_dict({
-            # Edge name format used by p4c is 'source (interaction) target'
-            "%s (%s) %s" % (src, graph[src][trg]["interaction"], trg): graph[src][trg]
+            edge_to_p4c_format(src, trg, graph[src][trg]["interaction"]): graph[src][trg]
             for src, trg in boundary_edges
         }, orient="index")
         load_network_data(edge_data, "edge", network_suid, cytoscape_url)
+
+
+def highlight_subgraph(nodes, edges, network_suid, cytoscape_url=DEFAULT_BASE_URL):
+    p4c.style_bypasses.set_node_border_width_bypass(
+        nodes, DEFAULT_NODE_BORDER_WIDTH * 3,
+        network=network_suid, base_url=cytoscape_url
+    )
+    p4c.style_bypasses.set_edge_line_width_bypass(
+        edges, DEFAULT_EDGE_WIDTH * 3,
+        network=network_suid, base_url=cytoscape_url
+    )
+
+
+def display_subgraph(graph, nodes, edges, network_suid, cytoscape_url=DEFAULT_BASE_URL):
+    # Set edge visibility
+    core_edges = [edge_to_p4c_format(src, trg, graph[src][trg]["interaction"])
+                  for src, trg in graph.edges if graph[src][trg]["type"] == "core"]
+    edge_visibility = ["true" if e in edges else "false" for e in core_edges]
+    p4c.style_bypasses.set_edge_property_bypass(
+        core_edges, new_values=edge_visibility, visual_property="EDGE_VISIBLE",
+        network=network_suid, base_url=cytoscape_url
+    )
+
+    # Set node visibility
+    core_nodes = [n for n in graph.nodes if graph.nodes[n]["type"] == "core"]
+    node_visibility = ["true" if n in nodes else "false" for n in core_nodes]
+    p4c.style_bypasses.set_node_property_bypass(
+        core_nodes, new_values=node_visibility, visual_property="NODE_VISIBLE",
+        network=network_suid, base_url=cytoscape_url
+    )
+
+
+def extract_subgraph(nodes, edges, network_suid, cytoscape_url=DEFAULT_BASE_URL):
+    return p4c.networks.create_subnetwork(
+        nodes=nodes, edges=edges, exclude_edges=True,
+        network=network_suid, base_url=cytoscape_url
+    )
+
+
+def clear_bypass(components, component_type, visual_property, network_suid, cytoscape_url=DEFAULT_BASE_URL):
+    fake_logger = io.StringIO()
+    with redirect_stderr(fake_logger):
+        try:
+            match component_type:
+                case "node":
+                    p4c.style_bypasses.clear_node_property_bypass(
+                        components, visual_property, network_suid, base_url=cytoscape_url
+                    )
+                case "edge":
+                    p4c.style_bypasses.clear_edge_property_bypass(
+                        components, visual_property, network_suid, base_url=cytoscape_url
+                    )
+                case _:
+                    raise ValueError("Invalid component type: '%s'. Must be 'node' or 'edge'." % component_type)
+        except CyError as e:
+            if "Bypass Visual Property does not exist" not in str(e):
+                print(fake_logger.getvalue(), file=sys.stderr)
+                raise e

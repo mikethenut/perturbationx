@@ -17,7 +17,11 @@ if __name__ == "__main__":
         break
 
     results = my_cbn.compute_npa(datasets)
-    results.display_network()
+    results.reset_display()
+    results.highlight_leading_nodes(dataset="CS (2m) + Sham (3m)", include_paths="all",
+                                    directed_paths=True)
+    # results.extract_leading_nodes(dataset="CS (2m) + Sham (3m)", include_paths="all",
+    #                              directed_paths=True, inplace=True)
     # results.color_nodes("coefficient", "CS (2m) + Sham (3m)")
 
     output_file = "test_results.txt"

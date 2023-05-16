@@ -55,11 +55,11 @@ def infer_graph_attributes(graph: nx.DiGraph,  relation_translator: Optional[Rel
         edge_weight = rt.translate(graph[src][trg]["relation"])
         graph[src][trg]["weight"] = edge_weight
         if edge_weight > 0:
-            graph[src][trg]["interaction"] = "activation"
+            graph[src][trg]["interaction"] = "directlyIncreases"
         elif edge_weight < 0:
-            graph[src][trg]["interaction"] = "inhibition"
+            graph[src][trg]["interaction"] = "directlyDecreases"
         else:
-            graph[src][trg]["interaction"] = "none"
+            graph[src][trg]["interaction"] = "causesNoChange"
 
     # Add stats to metadata
     inner_boundary_nodes = {src for src, trg in graph.edges if graph[src][trg]["type"] == "boundary"}
@@ -185,19 +185,19 @@ def preprocess_network(graph, relation_translator, permutations=('k',), p_iters=
 def preprocess_dataset(lb: np.ndarray, graph: nx.DiGraph, dataset: pd.DataFrame, verbose=True):
     if lb.ndim != 2:
         raise ValueError("Argument lb is not two-dimensional.")
-    elif any(col not in dataset.columns for col in ['nodeID', 'logFC']):
+    elif any(col not in dataset.columns for col in ["nodeID", "logFC"]):
         raise ValueError("Dataset does not contain columns 'nodeID' and 'logFC'.")
 
-    if 'stderr' not in dataset.columns:
+    if "stderr" not in dataset.columns:
         # TODO: Add more options for computing standard error
         if 't' in dataset.columns:
-            dataset['stderr'] = np.divide(dataset['logFC'].to_numpy(), dataset['t'].to_numpy())
+            dataset["stderr"] = np.divide(dataset["logFC"].to_numpy(), dataset['t'].to_numpy())
         else:
             raise ValueError("Dataset does not contain columns 'stderr' or 't'.")
 
     core_size = lb.shape[0]
     network_idx = np.array([graph.nodes[node_name]["idx"] - core_size
-                            for node_name in dataset['nodeID'].values
+                            for node_name in dataset["nodeID"].values
                             if node_name in graph.nodes])
 
     if network_idx.ndim == 0:
@@ -206,7 +206,7 @@ def preprocess_dataset(lb: np.ndarray, graph: nx.DiGraph, dataset: pd.DataFrame,
         logging.info("boundary nodes matched with dataset: %d" % network_idx.size)
 
     lb_reduced = lb[:, network_idx]
-    dataset_reduced = dataset[dataset['nodeID'].isin(graph.nodes)]
-    dataset_reduced = dataset_reduced[['nodeID', 'logFC', 'stderr']]
+    dataset_reduced = dataset[dataset["nodeID"].isin(graph.nodes)]
+    dataset_reduced = dataset_reduced[["nodeID", "logFC", "stderr"]]
 
     return lb_reduced, dataset_reduced

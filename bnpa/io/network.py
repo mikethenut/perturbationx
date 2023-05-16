@@ -42,7 +42,7 @@ def read_dsv(filepath, default_edge_type="infer", delimiter='\t', header_cols=DE
 
 
 def validate_nx_graph(graph: nx.DiGraph, allowed_edge_types):
-    if not type(graph) == nx.DiGraph:
+    if not isinstance(graph, nx.DiGraph):
         raise TypeError("Argument graph is not a networkx.Digraph.")
 
     to_remove = []

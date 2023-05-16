@@ -121,8 +121,8 @@
             <visualProperty default="0.0" name="EDGE_LABEL_ROTATION"/>
             <visualProperty default="NONE" name="EDGE_TARGET_ARROW_SHAPE">
                 <discreteMapping attributeName="interaction" attributeType="string">
-                    <discreteMappingEntry attributeValue="inhibition" value="T"/>
-                    <discreteMappingEntry attributeValue="activation" value="DELTA"/>
+                    <discreteMappingEntry attributeValue="directlyDecreases" value="T"/>
+                    <discreteMappingEntry attributeValue="directlyIncreases" value="DELTA"/>
                 </discreteMapping>
             </visualProperty>
             <visualProperty default="false" name="EDGE_LABEL_AUTOROTATE"/>
@@ -136,9 +136,7 @@
             <visualProperty default="false" name="EDGE_SELECTED"/>
             <visualProperty default="SOLID" name="EDGE_LINE_TYPE">
                 <discreteMapping attributeName="interaction" attributeType="string">
-                    <discreteMappingEntry attributeValue="inhibition" value="SOLID"/>
-                    <discreteMappingEntry attributeValue="none" value="DOT"/>
-                    <discreteMappingEntry attributeValue="activation" value="SOLID"/>
+                    <discreteMappingEntry attributeValue="causesNoChange" value="DOT"/>
                 </discreteMapping>
             </visualProperty>
             <visualProperty default="Dialog.plain,plain,10" name="EDGE_LABEL_FONT_FACE"/>
