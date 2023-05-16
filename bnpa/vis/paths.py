@@ -28,49 +28,84 @@ def get_shortest_path_components(graph, endpoints, directed):
     return nodes, edges
 
 
-def add_node_ancestors(node_set, node, parents):
-    node_set.add(node)
-    for p in parents[node]:
-        if p in node_set:
-            continue
-        add_node_ancestors(node_set, p, parents)
+def get_all_directed_path_nodes(graph: nx.DiGraph, endpoints: set):
+    descendants = endpoints.copy()
+    out_stack = list(endpoints)
+    while len(out_stack) > 0:
+        parent = out_stack.pop()
+        for child in graph.successors(parent):
+            if child not in descendants:
+                descendants.add(child)
+                out_stack.append(child)
+
+    ancestors = endpoints.copy()
+    in_stack = list(endpoints)
+    while len(in_stack) > 0:
+        parent = in_stack.pop()
+        for child in graph.predecessors(parent):
+            if child not in ancestors:
+                ancestors.add(child)
+                in_stack.append(child)
+
+    return ancestors.intersection(descendants)
+
+
+def get_all_undirected_path_nodes(graph: nx.Graph, endpoints: set):
+    bridges = list(nx.bridges(graph))
+    for b in bridges:
+        graph.remove_edge(*b)
+    components = list(nx.connected_components(graph))
+
+    bridge_components = {b: [] for b in bridges}
+    component_neighbors = {}
+    marked_components = set()
+    root = None
+    for idx, c in enumerate(components):
+        if len(endpoints.intersection(c)) > 0:
+            marked_components.add(idx)
+            if root is None:
+                root = idx
+
+        component_neighbors[idx] = set()
+        for b in bridges:
+            if len(c.intersection(b)) > 0:
+                bridge_components[b].append(idx)
+
+    for bridge, c in bridge_components.items():
+        component_neighbors[c[0]].add(c[1])
+        component_neighbors[c[1]].add(c[0])
+
+    visited = set()
+    stack = [root]
+    parent = {root: None}
+    while len(stack) > 0:
+        component = stack.pop()
+        visited.add(component)
+        for n in component_neighbors[component]:
+            if n not in visited and n not in stack:
+                stack.append(n)
+                parent[n] = component
+
+        if component in marked_components:
+            component = parent[component]
+            while component is not None and component not in marked_components:
+                marked_components.add(component)
+                component = parent[component]
+
+    nodes = set()
+    for idx in marked_components:
+        nodes.update(components[idx])
+    return nodes
 
 
 def get_all_path_components(graph, endpoints, directed):
-    # TODO: Rewrite this to handle directed and undirected graphs separately
-    # Use bidirectional search in directed graphs
-    # Use biconnected components in undirected graphs
-
-    directed_edges = graph.edges
-    if not directed:
-        graph = graph.to_undirected()
-
-    nodes = endpoints.copy()
-    stack = list(endpoints)
-    visited = set()
-    parents = {n: set() for n in graph.nodes}
-
-    while len(stack) > 0:
-        n = stack.pop()
-        visited.add(n)
-
-        for m in graph.neighbors(n):
-            # Node is trying to connect back to the only node it was found from
-            if m in parents[n] and len(parents[n]) < 2:
-                continue
-
-            # If node connects to a node in target set, add it to the target set
-            if m in nodes:
-                add_node_ancestors(nodes, n, parents)
-                continue
-
-            if m not in visited:
-                parents[m].add(n)
-                if m not in stack:
-                    stack.append(m)
+    if directed:
+        nodes = get_all_directed_path_nodes(graph, endpoints)
+    else:
+        nodes = get_all_undirected_path_nodes(graph.to_undirected(), endpoints)
 
     edges = set()
-    for src, trg in directed_edges:
+    for src, trg in graph.edges:
         if src in nodes and trg in nodes:
             edges.add((src, trg, graph[src][trg]["interaction"]))
 

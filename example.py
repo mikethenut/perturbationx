@@ -19,7 +19,7 @@ if __name__ == "__main__":
     results = my_cbn.compute_npa(datasets)
     results.reset_display()
     results.highlight_leading_nodes(dataset="CS (2m) + Sham (3m)", include_paths="all",
-                                    directed_paths=True)
+                                    directed_paths=False)
     # results.extract_leading_nodes(dataset="CS (2m) + Sham (3m)", include_paths="all",
     #                              directed_paths=True, inplace=True)
     # results.color_nodes("coefficient", "CS (2m) + Sham (3m)")
