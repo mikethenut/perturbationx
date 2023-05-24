@@ -16,15 +16,16 @@ if __name__ == "__main__":
         datasets[dataset] = datasets[dataset].rename(columns={"nodeLabel": "nodeID", "foldChange": "logFC"})
 
     results = my_cbn.compute_npa(datasets, legacy=True)
-    result_display = results.display_network()
-    result_display.highlight_leading_nodes("CS (2m) + Sham (3m)", include_shortest_paths="directed",
-                                           path_length_tolerance=0.1)
+    # print(results.node_info("CS (2m) + Sham (3m)")["coefficient"].sort_values(ascending=False))
+    # result_display = results.display_network()
+    # result_display.highlight_leading_nodes("CS (2m) + Sham (3m)", include_shortest_paths="directed",
+    #                                       path_length_tolerance=0.1)
     # results.reset_display()
-    # results.highlight_leading_nodes(dataset="CS (2m) + Sham (3m)", include_paths="all",
+    # result_display.highlight_leading_nodes(dataset="CS (2m) + Sham (3m)", include_paths="all",
     #                                directed_paths=False)
-    # results.extract_leading_nodes(dataset="CS (2m) + Sham (3m)", include_paths="all",
+    # result_display.extract_leading_nodes(dataset="CS (2m) + Sham (3m)", include_paths="all",
     #                              directed_paths=True, inplace=True)
-    # results.color_nodes("coefficient", "CS (2m) + Sham (3m)")
+    # result_display.color_nodes("coefficient", "CS (2m) + Sham (3m)")
 
     output_file = "test_results.txt"
     with open(output_file, "w") as f:

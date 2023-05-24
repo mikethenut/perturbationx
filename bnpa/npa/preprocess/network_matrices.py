@@ -31,7 +31,7 @@ def normalize_rows(adj_b: np.ndarray):
 
 
 def generate_laplacians(adj_b, adj_c, adj_perms):
-    lap_b = normalize_rows(adj_b)
+    lap_b = - normalize_rows(adj_b)
 
     core_degrees = np.abs(adj_c).sum(axis=1)
     boundary_outdegrees = np.abs(lap_b).sum(axis=1)
