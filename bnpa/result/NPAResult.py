@@ -13,7 +13,7 @@ from py4cytoscape.py4cytoscape_utils import DEFAULT_BASE_URL
 
 from bnpa.resources.resources import DEFAULT_STYLE
 from bnpa.vis.cytoscape import init_cytoscape, load_network_data
-from bnpa.vis.paths import get_path_components
+from bnpa.vis.shortest_paths import get_shortest_path_components
 from bnpa.vis.neighbors import get_neighborhood
 from bnpa.vis.NPAResultDisplay import NPAResultDisplay
 
@@ -101,7 +101,7 @@ class NPAResult:
                 break
         return set(cumulative_contributions.index[:max_idx].tolist())
 
-    def get_node_subgraph(self, nodes,  include_paths=None, directed_paths=False,
+    def get_node_subgraph(self, nodes, include_shortest_paths="none", path_length_tolerance=0,
                           include_neighbors=0, neighborhood_type="union"):
         # Remove boundary nodes
         graph = self._graph.copy()
@@ -109,16 +109,22 @@ class NPAResult:
         graph.remove_nodes_from(boundary_nodes)
 
         # Find paths
-        if include_paths is not None:
-            path_nodes, path_edges = get_path_components(graph, nodes, include_paths, directed_paths)
-        else:
-            path_nodes, path_edges = set(), set()
+        match include_shortest_paths:
+            case "directed":
+                path_nodes, path_edges = get_shortest_path_components(
+                    graph, nodes, directed=True, length_tolerance=path_length_tolerance
+                )
+            case "undirected" | "all":
+                path_nodes, path_edges = get_shortest_path_components(
+                    graph, nodes, directed=False, length_tolerance=path_length_tolerance
+                )
+            case "none" | None:
+                path_nodes, path_edges = set(), set()
+            case _:
+                raise ValueError("Argument neighborhood_type must be 'union' or 'intersection'.")
 
         # Find neighborhood
-        if include_neighbors > 0:
-            neigh_nodes, neigh_edges = get_neighborhood(graph, nodes, include_neighbors, neighborhood_type)
-        else:
-            neigh_nodes, neigh_edges = set(), set()
+        neigh_nodes, neigh_edges = get_neighborhood(graph, nodes, include_neighbors, neighborhood_type)
 
         nodes = list(nodes.union(path_nodes).union(neigh_nodes))
         edges = list(path_edges.union(neigh_edges))

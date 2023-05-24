@@ -58,14 +58,14 @@ class NPAResultDisplay:
         return self._network_suid
 
     def highlight_leading_nodes(self, dataset, cutoff=0.2,
-                                include_paths=None, directed_paths=False,
+                                include_shortest_paths="none", path_length_tolerance=0,
                                 include_neighbors=0, neighborhood_type="union"):
         self.reset_display(reset_highlight=True)
 
         # Get subgraph
         leading_nodes = self._results.get_leading_nodes(dataset, cutoff)
         nodes, edges = self._results.get_node_subgraph(
-            leading_nodes, include_paths, directed_paths, include_neighbors, neighborhood_type
+            leading_nodes, include_shortest_paths, path_length_tolerance, include_neighbors, neighborhood_type
         )
         edges = [edge_to_p4c_format(*e) for e in edges]
 
@@ -78,14 +78,14 @@ class NPAResultDisplay:
         return self._network_suid
 
     def extract_leading_nodes(self, dataset, cutoff=0.2, inplace=True,
-                              include_paths=None, directed_paths=False,
+                              include_shortest_paths="none", path_length_tolerance=0,
                               include_neighbors=0, neighborhood_type="union"):
         self.reset_display(reset_visibility=True)
 
         # Get subgraph
         leading_nodes = self._results.get_leading_nodes(dataset, cutoff)
         nodes, edges = self._results.get_node_subgraph(
-            leading_nodes, include_paths, directed_paths, include_neighbors, neighborhood_type
+            leading_nodes, include_shortest_paths, path_length_tolerance, include_neighbors, neighborhood_type
         )
         edges = [edge_to_p4c_format(*e) for e in edges]
 

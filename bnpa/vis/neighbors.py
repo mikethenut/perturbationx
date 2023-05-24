@@ -52,6 +52,9 @@ def get_neighborhood(graph: nx.DiGraph, source_nodes: set, max_distance=0, neigh
         The edges in the neighborhood.
     """
 
+    if max_distance < 0.:
+        raise ValueError("Argument max_distance must be >= 0.")
+
     match neighborhood_type:
         case "union":
             nodes = get_all_neighbors(graph.to_undirected(), source_nodes, max_distance)
