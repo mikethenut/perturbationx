@@ -16,6 +16,8 @@ if __name__ == "__main__":
         datasets[dataset] = datasets[dataset].rename(columns={"nodeLabel": "nodeID", "foldChange": "logFC"})
 
     results = my_cbn.compute_npa(datasets, legacy=False)
+    result_display = results.display_network()
+    result_display.color_nodes("CS (2m) + Sham (3m)", "coefficient")
     # results.reset_display()
     # results.highlight_leading_nodes(dataset="CS (2m) + Sham (3m)", include_paths="all",
     #                                directed_paths=False)

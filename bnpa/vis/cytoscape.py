@@ -9,7 +9,8 @@ from py4cytoscape.exceptions import CyError
 from py4cytoscape.py4cytoscape_utils import DEFAULT_BASE_URL
 from py4cytoscape.tables import load_table_data
 
-from bnpa.resources.resources import DEFAULT_STYLE, get_style_xml_path, DEFAULT_EDGE_WIDTH, DEFAULT_NODE_BORDER_WIDTH
+from bnpa.resources.resources import DEFAULT_STYLE, get_style_xml_path, \
+    DEFAULT_EDGE_WIDTH, DEFAULT_NODE_BORDER_WIDTH, DEFAULT_NODE_COLOR, DEFAULT_GRADIENT
 
 
 def edge_to_p4c_format(src, trg, interaction):
@@ -102,6 +103,19 @@ def set_boundary_display(graph, show_boundary, network_suid, cytoscape_url=DEFAU
         load_network_data(edge_data, "edge", network_suid, cytoscape_url)
 
 
+def color_nodes_by_column(data_column, network_suid, gradient=DEFAULT_GRADIENT, default_color=DEFAULT_NODE_COLOR,
+                          style=DEFAULT_STYLE, cytoscape_url=DEFAULT_BASE_URL):
+    node_table = p4c.tables.get_table_columns(
+        table="node", columns=[data_column], network=network_suid, base_url=cytoscape_url
+    )
+    data_range = [node_table.min()[data_column], node_table.max()[data_column]]
+
+    p4c.style_mappings.set_node_color_mapping(
+        data_column, data_range, colors=list(gradient), default_color=default_color,
+        style_name=style, network=network_suid, base_url=cytoscape_url
+    )
+
+
 def highlight_subgraph(nodes, edges, network_suid, cytoscape_url=DEFAULT_BASE_URL):
     p4c.style_bypasses.set_node_border_width_bypass(
         nodes, DEFAULT_NODE_BORDER_WIDTH * 3,
@@ -113,7 +127,7 @@ def highlight_subgraph(nodes, edges, network_suid, cytoscape_url=DEFAULT_BASE_UR
     )
 
 
-def display_subgraph(graph, nodes, edges, network_suid, cytoscape_url=DEFAULT_BASE_URL):
+def isolate_subgraph(graph, nodes, edges, network_suid, cytoscape_url=DEFAULT_BASE_URL):
     # Set edge visibility
     core_edges = [edge_to_p4c_format(src, trg, graph[src][trg]["interaction"])
                   for src, trg in graph.edges if graph[src][trg]["type"] == "core"]
