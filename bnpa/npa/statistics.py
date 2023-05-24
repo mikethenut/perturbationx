@@ -20,10 +20,11 @@ def amplitude_variance(lq: np.ndarray, core_coefficients: np.ndarray,
     return unscaled_variance / core_edge_count ** 2
 
 
-def compute_variances(lap: dict, stderr: np.ndarray, core_coefficients: np.ndarray, core_edge_count: int):
-    core_covariance = core_covariance_matrix(lap['b'], lap['c'], stderr)
+def compute_variances(lap_b: np.ndarray, lap_c: np.ndarray, lap_q: np.ndarray,
+                      stderr: np.ndarray, core_coefficients: np.ndarray, core_edge_count: int):
+    core_covariance = core_covariance_matrix(lap_b, lap_c, stderr)
     node_variance = np.diag(core_covariance)
-    npa_variance = amplitude_variance(lap['q'], core_coefficients, core_covariance, core_edge_count)
+    npa_variance = amplitude_variance(lap_q, core_coefficients, core_covariance, core_edge_count)
     return npa_variance, node_variance
 
 
@@ -35,3 +36,7 @@ def confidence_interval(values, variances, alpha=0.95):
     ci_upper = values + percentile_threshold * std_dev
     p_values = np.subtract(1., norm.cdf(np.divide(np.abs(values), std_dev)))
     return ci_lower, ci_upper, p_values
+
+
+def p_value(value, distribution):
+    return sum(sample > value for sample in distribution) / len(distribution)

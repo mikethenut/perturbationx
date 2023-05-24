@@ -5,16 +5,13 @@ from pathlib import Path
 from typing import Optional
 import json
 
-import pandas as pd
 import networkx as nx
 
 from bnpa.resources.resources import DEFAULT_DATA_COLS
 from bnpa.io.RelationTranslator import RelationTranslator
-from bnpa.io.network import read_dsv, validate_nx_graph, write_dsv
-from bnpa.npa.core import value_inference, perturbation_amplitude_contributions
-from bnpa.npa.preprocess import preprocess_network, preprocess_dataset, infer_graph_attributes
-from bnpa.npa.statistics import compute_variances, confidence_interval
-from bnpa.npa.permutations import compute_permutations, p_value
+from bnpa.io.io_network import read_dsv, validate_nx_graph, write_dsv
+from bnpa.npa.preprocess import preprocess_network, preprocess_dataset, network_matrices, permute_adjacency
+from bnpa.npa import core, statistics, permutation_tests
 from bnpa.result.NPAResultBuilder import NPAResultBuilder
 
 
@@ -162,63 +159,73 @@ class CausalNetwork:
             self._graph.remove_node(trg)
 
     def infer_graph_attributes(self, verbose=True):
-        infer_graph_attributes(self._graph, self.relation_translator, verbose)
+        preprocess_network.infer_graph_attributes(self._graph, self.relation_translator, verbose)
 
-    def compute_npa(self, datasets: dict, alpha=0.95, permutations=('o', 'k'), p_iters=500, seed=None, verbose=True):
+    def compute_npa(self, datasets: dict, legacy=False, alpha=0.95,
+                    permutations=('o', 'k'), p_iters=500, seed=None, verbose=True):
         if verbose:
             logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                                 format="%(asctime)s %(levelname)s -- %(message)s")
             logging.info("PREPROCESSING NETWORK")
 
+        # Preprocess the datasets
+        for dataset_id in datasets:
+            datasets[dataset_id] = preprocess_dataset.format_dataset(datasets[dataset_id])
+
         # Copy the graph and set metadata
-        prograph = self._graph.copy()
+        prograph = self._graph.to_directed()
         self.initialize_metadata()
         prograph.graph.update(self.metadata)
 
         # Preprocess the graph
-        prograph, lap, lperms = preprocess_network(prograph, self.relation_translator,
-                                                   permutations, p_iters, seed, verbose)
-        lb_original = lap['b']
+        preprocess_network.infer_graph_attributes(prograph, self.relation_translator, verbose)
         core_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
-        result_builder = NPAResultBuilder.new_builder(prograph, list(datasets.keys()))
+        adj_b, adj_c = network_matrices.generate_adjacency(prograph)
+        adj_perms = permute_adjacency.permute_adjacency(adj_c, permutations, p_iters, seed)
 
+        result_builder = NPAResultBuilder.new_builder(prograph, list(datasets.keys()))
         for dataset_id in datasets:
+            dataset = datasets[dataset_id]
             if verbose:
                 logging.info("COMPUTING NPA FOR DATASET '%s'" % dataset_id)
 
-            # Preprocess the dataset
-            dataset = datasets[dataset_id]
-            if not isinstance(dataset, pd.DataFrame):
-                raise ValueError("Dataset %s is not a pandas.DataFrame." % dataset_id)
-            lap['b'], dataset_reduced = preprocess_dataset(lb_original, prograph, dataset, verbose)
+            # Prepare data
+            if legacy:
+                lap_b, lap_c, lap_q, lap_perms = network_matrices.generate_laplacians(adj_b, adj_c, adj_perms)
+                lap_b, dataset = preprocess_dataset.prune_network_dataset(prograph, lap_b, dataset, verbose)
+            else:
+                lap_b, dataset = preprocess_dataset.prune_network_dataset(prograph, adj_b, dataset, verbose)
+                lap_b, lap_c, lap_q, lap_perms = network_matrices.generate_laplacians(lap_b, adj_c, adj_perms)
 
             # Compute NPA
-            core_coefficients = value_inference(lap['b'], lap['c'], dataset_reduced["logFC"].to_numpy())
-            npa, node_contributions = perturbation_amplitude_contributions(
-                lap['q'], core_coefficients, core_edge_count
+            core_coefficients = core.value_inference(lap_b, lap_c, dataset["logFC"].to_numpy())
+            npa, node_contributions = core.perturbation_amplitude_contributions(
+                lap_q, core_coefficients, core_edge_count
             )
             result_builder.set_global_attributes(dataset_id, ["NPA"], [npa])
             result_builder.set_node_attributes(dataset_id, ["contribution"], [node_contributions])
             result_builder.set_node_attributes(dataset_id, ["coefficient"], [core_coefficients])
 
             # Compute variances and confidence intervals
-            npa_var, node_var = compute_variances(lap, dataset_reduced["stderr"].to_numpy(),
-                                                  core_coefficients, core_edge_count)
-            npa_ci_lower, npa_ci_upper, _ = confidence_interval(npa, npa_var, alpha)
+            npa_var, node_var = statistics.compute_variances(
+                lap_b, lap_c, lap_q, dataset["stderr"].to_numpy(), core_coefficients, core_edge_count)
+            npa_ci_lower, npa_ci_upper, _ = statistics.confidence_interval(npa, npa_var, alpha)
             result_builder.set_global_attributes(
                 dataset_id, ["variance", "ci_lower", "ci_upper"], [npa_var, npa_ci_lower, npa_ci_upper]
             )
-            node_ci_lower, node_ci_upper, node_p_value = confidence_interval(core_coefficients, node_var, alpha)
+            node_ci_lower, node_ci_upper, node_p_value = \
+                statistics.confidence_interval(core_coefficients, node_var, alpha)
             result_builder.set_node_attributes(
                 dataset_id, ["variance", "ci_lower", "ci_upper", "p_value"],
                 [node_var, node_ci_lower, node_ci_upper, node_p_value]
             )
 
             # Compute permutation test statistics
-            distributions = compute_permutations(lap, lperms, core_edge_count, dataset_reduced["logFC"].to_numpy(),
-                                                 permutations, p_iters, seed)
+            distributions = permutation_tests.permutation_tests(
+                lap_b, lap_c, lap_q, lap_perms, core_edge_count,
+                dataset["logFC"].to_numpy(), permutations, p_iters, seed)
             for p in distributions:
-                pv = p_value(npa, distributions[p])
+                pv = statistics.p_value(npa, distributions[p])
                 result_builder.set_global_attributes(dataset_id, ["%s_value" % p], [pv])
                 result_builder.set_distribution(dataset_id, "%s_distribution" % p, distributions[p], npa)
 
