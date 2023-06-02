@@ -194,11 +194,11 @@ class CausalNetwork:
             if legacy:
                 lap_b, lap_c, lap_q, lap_perms = network_matrices.generate_laplacians(adj_b, adj_c, adj_perms)
                 lap_b, dataset = preprocess_dataset.prune_network_dataset(
-                    prograph, lap_b, dataset, strict_pruning, verbose
+                    prograph, lap_b, dataset, dataset_id, strict_pruning, verbose
                 )
             else:
                 lap_b, dataset = preprocess_dataset.prune_network_dataset(
-                    prograph, adj_b, dataset, strict_pruning, verbose
+                    prograph, adj_b, dataset, dataset_id, strict_pruning, verbose
                 )
                 lap_b, lap_c, lap_q, lap_perms = network_matrices.generate_laplacians(lap_b, adj_c, adj_perms)
 
