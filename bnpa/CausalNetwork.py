@@ -161,16 +161,17 @@ class CausalNetwork:
     def infer_graph_attributes(self, verbose=True):
         preprocess_network.infer_graph_attributes(self._graph, self.relation_translator, verbose)
 
-    def compute_npa(self, datasets: dict, legacy=False, alpha=0.95,
+    def compute_npa(self, datasets: dict, legacy=False, strict_pruning=False, alpha=0.95,
                     permutations=('o', 'k'), p_iters=500, seed=None, verbose=True):
-        if verbose:
-            logging.basicConfig(stream=sys.stdout, level=logging.INFO,
-                                format="%(asctime)s %(levelname)s -- %(message)s")
-            logging.info("PREPROCESSING NETWORK")
 
         # Preprocess the datasets
         for dataset_id in datasets:
             datasets[dataset_id] = preprocess_dataset.format_dataset(datasets[dataset_id])
+
+        if verbose:
+            logging.basicConfig(stream=sys.stdout, level=logging.INFO,
+                                format="%(asctime)s %(levelname)s -- %(message)s")
+            logging.info("PREPROCESSING NETWORK")
 
         # Copy the graph and set metadata
         prograph = self._graph.to_directed()
@@ -192,9 +193,13 @@ class CausalNetwork:
             # Prepare data
             if legacy:
                 lap_b, lap_c, lap_q, lap_perms = network_matrices.generate_laplacians(adj_b, adj_c, adj_perms)
-                lap_b, dataset = preprocess_dataset.prune_network_dataset(prograph, lap_b, dataset, verbose)
+                lap_b, dataset = preprocess_dataset.prune_network_dataset(
+                    prograph, lap_b, dataset, strict_pruning, verbose
+                )
             else:
-                lap_b, dataset = preprocess_dataset.prune_network_dataset(prograph, adj_b, dataset, verbose)
+                lap_b, dataset = preprocess_dataset.prune_network_dataset(
+                    prograph, adj_b, dataset, strict_pruning, verbose
+                )
                 lap_b, lap_c, lap_q, lap_perms = network_matrices.generate_laplacians(lap_b, adj_c, adj_perms)
 
             # Compute NPA

@@ -21,7 +21,7 @@ def format_dataset(dataset: pd.DataFrame):
     return dataset[["nodeID", "logFC", "stderr"]]
 
 
-def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray, dataset: pd.DataFrame, verbose=True):
+def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray, dataset: pd.DataFrame, strict=False, verbose=True):
     if adj_b.ndim != 2:
         raise ValueError("Argument adjacency_boundary is not two-dimensional.")
     core_size = adj_b.shape[0]
@@ -29,8 +29,13 @@ def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray, dataset: pd.Data
                             for node_name in dataset["nodeID"].values
                             if node_name in graph.nodes])
 
+    if strict:
+        # TODO: implement strict pruning
+        pass
+
     if network_idx.ndim == 0:
         raise ValueError("The dataset does not contain any boundary nodes.")
+
     if verbose:
         # TODO: add metadata to info
         logging.info("boundary nodes matched with dataset: %d" % network_idx.size)

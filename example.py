@@ -15,7 +15,7 @@ if __name__ == "__main__":
         datasets[dataset] = pd.read_table("./data/COPD1/" + dataset + ".tsv")
         datasets[dataset] = datasets[dataset].rename(columns={"nodeLabel": "nodeID", "foldChange": "logFC"})
 
-    results = my_cbn.compute_npa(datasets, legacy=True)
+    results = my_cbn.compute_npa(datasets, legacy=False)
     # print(results.node_info("CS (2m) + Sham (3m)")["coefficient"].sort_values(ascending=False))
     # result_display = results.display_network()
     # result_display.highlight_leading_nodes("CS (2m) + Sham (3m)", include_shortest_paths="directed",

@@ -36,6 +36,12 @@ def read_dsv(filepath, default_edge_type="infer", delimiter='\t', header_cols=DE
 
             src, rel, trg = line[src_idx], line[rel_idx], line[trg_idx]
             typ = line[typ_idx] if typ_idx is not None else default_edge_type
+
+            if any(e[0] == src and e[1] == trg for e in edge_list):
+                warnings.warn("Duplicate edge (%s, %s) found in file %s. "
+                              "Only the first occurrence will be used." % (src, trg, filepath))
+                continue
+
             edge_list.append((src, trg, {"relation": rel, "type": typ}))
 
     return edge_list
