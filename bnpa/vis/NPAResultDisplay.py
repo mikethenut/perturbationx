@@ -10,7 +10,7 @@ from bnpa.vis.cytoscape import set_boundary_display, edge_to_p4c_format, \
 
 
 class NPAResultDisplay:
-    def __init__(self, graph, results, network_suid, network_style, cytoscape_url=DEFAULT_BASE_URL):
+    def __init__(self, graph, results, network_style, network_suid, cytoscape_url=DEFAULT_BASE_URL):
         self._graph = graph
         self._results = results
         self._network_suid = network_suid

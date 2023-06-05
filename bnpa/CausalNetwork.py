@@ -9,7 +9,7 @@ import networkx as nx
 
 from bnpa.resources.resources import DEFAULT_DATA_COLS
 from bnpa.io.RelationTranslator import RelationTranslator
-from bnpa.io.io_network import read_dsv, validate_nx_graph, write_dsv
+from bnpa.io.network_io import read_dsv, validate_nx_graph, write_dsv
 from bnpa.npa.preprocess import preprocess_network, preprocess_dataset, network_matrices, permute_adjacency
 from bnpa.npa import core, statistics, permutation_tests
 from bnpa.result.NPAResultBuilder import NPAResultBuilder

@@ -145,7 +145,7 @@ class NPAResult:
         # Load node data
         load_network_data(self._node_info.transpose(), "node", network_suid, cytoscape_url)
 
-        return NPAResultDisplay(self._graph, self, network_suid, style, cytoscape_url)
+        return NPAResultDisplay(self._graph, self, style, network_suid, cytoscape_url)
 
     def to_networkx(self):
         graph_copy = self._graph.copy()
