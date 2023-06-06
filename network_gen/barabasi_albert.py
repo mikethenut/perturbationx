@@ -81,18 +81,17 @@ if __name__ == "__main__":
             node_multiplicity.extend([center_node_id] * m)
             for _ in range(m):
                 node_id = uuid.uuid4()
-                if rng.uniform() < negative_edges_remaining / edges_remaining:
-                    relation = "-1"
-                    negative_edges_remaining -= 1
-                else:
-                    relation = "1"
+                relation = "-1" if rng.uniform() < negative_edges_remaining / edges_remaining else "1"
 
                 if rng.uniform() < 0.5:
                     dsv_file.writerow([node_id, center_node_id, relation, "core"])
                 else:
                     dsv_file.writerow([center_node_id, node_id, relation, "core"])
-                edges_remaining -= 1
+
                 node_multiplicity.append(node_id)
+                edges_remaining -= 1
+                if relation == "-1":
+                    negative_edges_remaining -= 1
 
             while nodes_added < node_count:
                 node_id = uuid.uuid4()
@@ -104,17 +103,16 @@ if __name__ == "__main__":
                     targets.update(rng.choice(node_multiplicity, m - len(targets), replace=False))
 
                 for t in targets:
-                    if rng.uniform() < negative_edges_remaining / edges_remaining:
-                        relation = "-1"
-                        negative_edges_remaining -= 1
-                    else:
-                        relation = "1"
+                    relation = "-1" if rng.uniform() < negative_edges_remaining / edges_remaining else "1"
 
                     if rng.uniform() < 0.5:
                         dsv_file.writerow([node_id, t, relation, "core"])
                     else:
                         dsv_file.writerow([t, node_id, relation, "core"])
+
                     edges_remaining -= 1
+                    if relation == "-1":
+                        negative_edges_remaining -= 1
 
                 node_multiplicity.extend(targets)
                 node_multiplicity.extend([node_id] * m)
