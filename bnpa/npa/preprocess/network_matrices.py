@@ -41,6 +41,6 @@ def generate_laplacians(adj_b, adj_c, adj_perms):
 
     lap_perms = {}
     for p in adj_perms:
-        lap_perms[p] = [adj + np.diag(np.abs(adj).sum(axis=1) + boundary_outdegrees) for adj in adj_perms[p]]
+        lap_perms[p] = [np.diag(np.abs(adj).sum(axis=1) + boundary_outdegrees) - adj for adj in adj_perms[p]]
 
     return lap_b, lap_c, lap_q, lap_perms

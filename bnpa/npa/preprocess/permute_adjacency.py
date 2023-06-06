@@ -1,4 +1,3 @@
-import time
 import warnings
 import itertools
 
@@ -45,83 +44,82 @@ def connect_adjacency_components(adj: np.ndarray, weights=(1.,), seed=None):
         del components[root_x]
 
 
-def permute_adjacency_k1(adj: np.ndarray, iterations=500, seed=None):
+def permute_adjacency_k1(adj: np.ndarray, permutation_rate=1., iterations=500, seed=None):
     if adj.ndim != 2 or adj.shape[0] != adj.shape[1]:
         raise ValueError("Argument 'adj' {} is not a square matrix.".format(str(adj.shape)))
 
     rng = np.random.default_rng(seed)
-    network_size = adj.shape[0]
-    tril_idx = np.tril_indices(network_size, -1)
+    tril_idx = np.tril_indices(adj.shape[0], -1)
     adj_tril = adj[tril_idx]
-    edge_weights = [w for w in adj_tril if w != 0]
+
+    edge_idx = np.nonzero(adj_tril)[0]
+    fixed_edges = np.floor(edge_idx.size * (1. - permutation_rate)).astype(int)
+    edge_weights = [adj[idx, idy] for idx, idy in zip(*np.nonzero(adj)) if idx < idy]
 
     permuted = []
-    permuting_time = 0.
-    connecting_time = 0.
-    while len(permuted) < iterations:
-        start_time = time.process_time_ns()
-        random_tril = rng.permutation(adj_tril)
+    for _ in range(iterations):
+        fixed_idx = rng.choice(edge_idx, size=fixed_edges, replace=False)
+        permuted_idx = np.ones(len(adj_tril), dtype=bool)
+        permuted_idx[fixed_idx] = False
+        random_tril = adj_tril.copy()
+        random_tril[permuted_idx] = rng.permutation(random_tril[permuted_idx])
+
         random_adj = np.zeros(adj.shape)
         random_adj[tril_idx] = random_tril
         random_adj += random_adj.transpose()
-        permuting_time += time.process_time_ns() - start_time
 
-        start_time = time.process_time_ns()
         connect_adjacency_components(random_adj, edge_weights, seed)
-        connecting_time += time.process_time_ns() - start_time
         permuted.append(random_adj)
-
-    print("Permuting time: %.2f s" % (permuting_time / 1e9))
-    print("Connecting time: %.2f s" % (connecting_time / 1e9))
 
     return permuted
 
 
-def permute_adjacency_k2(adj: np.ndarray, iterations=500, seed=None):
+def permute_adjacency_k2(adj: np.ndarray, permutation_rate=1., iterations=500, seed=None):
     if adj.ndim != 2 or adj.shape[0] != adj.shape[1]:
         raise ValueError("Argument 'adj' {} is not a square matrix.".format(str(adj.shape)))
 
     rng = np.random.default_rng(seed)
-    edge_counts = np.count_nonzero(adj, axis=0)
-    edge_stubs = list(itertools.chain.from_iterable([idx] * edge_counts[idx] for idx in range(adj.shape[0])))
-    edge_weights = [adj[idx, idy] for idx in range(adj.shape[0]) for idy in range(idx) if adj[idx, idy] != 0]
-    edge_count = len(edge_stubs) // 2
+    edge_stubs = np.array([[idx, idy] for idx, idy in zip(*np.nonzero(adj)) if idx < idy])
+
+    total_edges = edge_stubs.shape[0]
+    permuted_edges = np.ceil(total_edges * permutation_rate).astype(int)
+    edge_weights = np.array([adj[idx, idy] for idx, idy in edge_stubs])
 
     permuted = []
-    permuting_time = 0.
-    connecting_time = 0.
-    while len(permuted) < iterations:
-        start_time = time.process_time_ns()
-        rng.shuffle(edge_stubs)
-        permuted_edge_weights = list(rng.permutation(edge_weights))
+    for _ in range(iterations):
+        permuted_idx = rng.choice(total_edges, size=permuted_edges, replace=False)
+        permuted_stubs = edge_stubs.copy()
+        permuted_stubs[permuted_idx, :] = \
+            rng.permutation(permuted_stubs[permuted_idx, :].flatten()).reshape(-1, 2)
+
+        permuted_edge_weights = edge_weights.copy()
+        permuted_edge_weights[permuted_idx] = rng.permutation(permuted_edge_weights[permuted_idx])
+        permuted_edge_weights = list(permuted_edge_weights)
+
         random_adj = np.zeros(adj.shape)
-
-        for src, trg in zip(edge_stubs[:edge_count], edge_stubs[edge_count:]):
-            edge_weight = permuted_edge_weights.pop()
+        for (src, trg), weight in zip(permuted_stubs, permuted_edge_weights):
             if src != trg:
-                random_adj[src, trg] += edge_weight
-                random_adj[trg, src] += edge_weight
-        permuting_time += time.process_time_ns() - start_time
+                random_adj[src, trg] += weight
+                random_adj[trg, src] += weight
 
-        start_time = time.process_time_ns()
         connect_adjacency_components(random_adj, edge_weights, seed)
-        connecting_time += time.process_time_ns() - start_time
         permuted.append(random_adj)
-
-    print("Permuting time: %.2f s" % (permuting_time / 1e9))
-    print("Connecting time: %.2f s" % (connecting_time / 1e9))
 
     return permuted
 
 
-def permute_adjacency(adj: np.ndarray, permutations=('k2',), p_iters=500, seed=None):
+def permute_adjacency(adj: np.ndarray, permutations=('k2',), permutation_rate=1., iterations=500, seed=None):
     adj_perms = dict()
     for p in set(permutations):
         match p.lower():
             case 'k1':
-                adj_perms[p] = permute_adjacency_k1(adj, p_iters, seed)
+                adj_perms[p] = permute_adjacency_k1(
+                    adj, permutation_rate=permutation_rate, iterations=iterations, seed=seed
+                )
             case 'k2':
-                adj_perms[p] = permute_adjacency_k2(adj, p_iters, seed)
+                adj_perms[p] = permute_adjacency_k2(
+                    adj, permutation_rate=permutation_rate, iterations=iterations, seed=seed
+                )
             case 'o':
                 # Permutation 'o' is not applied to the laplacian.
                 continue

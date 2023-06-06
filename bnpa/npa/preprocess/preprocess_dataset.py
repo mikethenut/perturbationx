@@ -52,9 +52,10 @@ def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray, dataset: pd.Data
         logging.info("boundary edges remaining: %d" % boundary_edge_count)
         logging.info("core nodes with boundary edges remaining: %d" % inner_boundary_node_count)
 
-    dataset_id_underscored = dataset_id.replace(" ", "_")
-    graph.graph[dataset_id_underscored + "_outer_boundary_nodes"] = outer_boundary_node_count
-    graph.graph[dataset_id_underscored + "_boundary_edges"] = boundary_edge_count
-    graph.graph[dataset_id_underscored + "_inner_boundary_nodes"] = inner_boundary_node_count
+    graph.graph[dataset_id] = {
+        "matched_outer_boundary_nodes": int(outer_boundary_node_count),
+        "matched_boundary_edges": int(boundary_edge_count),
+        "matched_inner_boundary_nodes": int(inner_boundary_node_count)
+    }
 
     return adjacency_boundary_pruned, dataset_pruned

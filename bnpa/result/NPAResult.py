@@ -60,8 +60,8 @@ class NPAResult:
         level = "data" if accessor in self._datasets else "attr"
         return self._node_info.xs(accessor, level=level).transpose(copy=True)
 
-    def get_distribution(self, distribution):
-        return copy.deepcopy(self._distributions[distribution])
+    def get_distribution(self, distribution, dataset):
+        return copy.deepcopy(self._distributions[distribution][dataset][0])
 
     def plot_distribution(self, distribution, datasets=None):
         if datasets is None:
@@ -162,7 +162,7 @@ class NPAResult:
 
         return graph_copy
 
-    def to_json(self, filepath, indent):
+    def to_json(self, filepath, indent=4):
         data = dict()
         data["metadata"] = self._metadata.copy()
 

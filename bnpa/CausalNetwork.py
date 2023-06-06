@@ -162,7 +162,7 @@ class CausalNetwork:
         preprocess_network.infer_graph_attributes(self._graph, self.relation_translator, verbose)
 
     def compute_npa(self, datasets: dict, legacy=False, strict_pruning=False, alpha=0.95,
-                    permutations=('o', 'k2'), p_iters=500, seed=None, verbose=True):
+                    permutations=('o', 'k2'), p_iters=500, p_rate=1., seed=None, verbose=True):
 
         # Preprocess the datasets
         for dataset_id in datasets:
@@ -182,7 +182,9 @@ class CausalNetwork:
         preprocess_network.infer_graph_attributes(prograph, self.relation_translator, verbose)
         core_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
         adj_b, adj_c = network_matrices.generate_adjacency(prograph)
-        adj_perms = permute_adjacency.permute_adjacency(adj_c, permutations, p_iters, seed)
+        adj_perms = permute_adjacency.permute_adjacency(
+            adj_c, permutations=permutations, permutation_rate=p_rate, iterations=p_iters, seed=seed
+        )
 
         result_builder = NPAResultBuilder.new_builder(prograph, list(datasets.keys()))
         for dataset_id in datasets:
@@ -228,11 +230,13 @@ class CausalNetwork:
             # Compute permutation test statistics
             distributions = permutation_tests.permutation_tests(
                 lap_b, lap_c, lap_q, lap_perms, core_edge_count,
-                dataset["logFC"].to_numpy(), permutations, p_iters, seed)
+                dataset["logFC"].to_numpy(), permutations,
+                permutation_rate=p_rate, iterations=p_iters, seed=seed
+            )
             for p in distributions:
                 pv = statistics.p_value(npa, distributions[p])
                 result_builder.set_global_attributes(dataset_id, ["%s_value" % p], [pv])
-                result_builder.set_distribution(dataset_id, "%s_distribution" % p, distributions[p], npa)
+                result_builder.set_distribution(dataset_id, p, distributions[p], npa)
 
         return result_builder.build()
 
