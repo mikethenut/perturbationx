@@ -58,8 +58,8 @@ if __name__ == "__main__":
 
     # CORE
 
-    # Edge count vs. node count
-    print("\nCore edge count vs. node count")
+    # Node count vs. edge count
+    print("\nCore node count vs. edge count")
     x = [net_stats[network]["core_node_count"]
          for network in net_stats if network != "Dr_ORG_Heart"]
     y = [net_stats[network]["core_edge_count"]
