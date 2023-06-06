@@ -11,7 +11,7 @@ from bnpa.npa.preprocess.permute_adjacency import permute_adjacency_k1, permute_
 def scatter_plot_stacked(datasets, title, show_plot=True, output_file=None):
     plt.clf()
     fig, ax = plt.subplots(nrows=len(datasets), figsize=(6, 3 * len(datasets)),
-                           constrained_layout=True, sharex=True)
+                           constrained_layout=True, sharex=True, sharey=True)
     plt.suptitle(title)
 
     if len(datasets) == 1:

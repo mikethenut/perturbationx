@@ -162,7 +162,7 @@ class CausalNetwork:
         preprocess_network.infer_graph_attributes(self._graph, self.relation_translator, verbose)
 
     def compute_npa(self, datasets: dict, legacy=False, strict_pruning=False, alpha=0.95,
-                    permutations=('o', 'k'), p_iters=500, seed=None, verbose=True):
+                    permutations=('o', 'k2'), p_iters=500, seed=None, verbose=True):
 
         # Preprocess the datasets
         for dataset_id in datasets:
