@@ -5,12 +5,13 @@ from pathlib import Path
 from typing import Optional
 import json
 
+import numpy as np
 import networkx as nx
 
 from bnpa.resources.resources import DEFAULT_DATA_COLS
 from bnpa.io.RelationTranslator import RelationTranslator
 from bnpa.io.network_io import read_dsv, validate_nx_graph, write_dsv
-from bnpa.npa.preprocess import preprocess_network, preprocess_dataset, network_matrices, permute_adjacency
+from bnpa.npa.preprocess import preprocess_network, preprocess_dataset, network_matrices, permute_network
 from bnpa.npa import core, statistics, permutation_tests
 from bnpa.result.NPAResultBuilder import NPAResultBuilder
 
@@ -134,7 +135,7 @@ class CausalNetwork:
         else:
             warnings.warn("Unknown type %s of edge %s will be "
                           "replaced with \"infer\"." % (typ, str((src, trg))))
-            self._graph.add_edge(src, trg, relation=rel, type=typ)
+            self._graph.add_edge(src, trg, relation=rel, type="infer")
 
     def modify_edge(self, src, trg, rel=None, typ=None):
         if not self._graph.has_edge(src, trg):
@@ -158,20 +159,153 @@ class CausalNetwork:
         if self._graph.degree[trg] == 0:
             self._graph.remove_node(trg)
 
+    def modify_network(self, edge_list):
+        for src, trg, rel, typ in edge_list:
+            if rel is None:
+                self.remove_edge(src, trg)
+            elif typ in self.__allowed_edge_types:
+                self._graph.add_edge(src, trg, relation=rel, type=typ)
+            elif self._graph.has_edge(src, trg):
+                warnings.warn("Unknown type %s of edge %s "
+                              "will be ignored." % (typ, str((src, trg))))
+                self._graph[src][trg]["relation"] = rel
+            else:
+                warnings.warn("Unknown type %s of edge %s will be "
+                              "replaced with \"infer\"." % (typ, str((src, trg))))
+                self._graph.add_edge(src, trg, relation=rel, type="infer")
+
+    def rewire_edges(self, nodes, iterations, datasets, method='k1', p_rate=1.,
+                     legacy=False, strict_pruning=False, seed=None, verbose=True):
+        if verbose:
+            logging.basicConfig(stream=sys.stdout, level=logging.INFO,
+                                format="%(asctime)s %(levelname)s -- %(message)s")
+            logging.info("REWIRING EDGES")
+
+        # Find existing edges
+        existing_edges = []
+        for src, trg in self._graph.edges(nodes):
+            if trg in nodes:
+                existing_edges.append((src, trg, self._graph[src][trg]["relation"]))
+
+        # Permute edges
+        modifications = permute_network.permute_edge_list(
+            np.array(existing_edges), nodes, iterations,
+            method=method, permutation_rate=p_rate, seed=seed
+        )
+        for idx in range(len(modifications)):
+            modifications[idx] = [(*edge, "core") for edge in modifications[idx]]
+
+        # If no datasets were given, return the permutations
+        if datasets is None:
+            return modifications
+
+        # Otherwise, compute NPAs for each dataset
+        return self._evaluate_modifications(modifications, nodes, datasets, legacy, strict_pruning, seed, verbose)
+
+    def wire_edges(self, number_of_edges, nodes, edge_relations, iterations, datasets,
+                   legacy=False, strict_pruning=False, seed=None, verbose=True):
+        if verbose:
+            logging.basicConfig(stream=sys.stdout, level=logging.INFO,
+                                format="%(asctime)s %(levelname)s -- %(message)s")
+            logging.info("WIRING EDGES")
+
+        rng = np.random.default_rng(seed)
+        modifications = []
+        for _ in range(iterations):
+            src_nodes = rng.choice(nodes, size=number_of_edges, replace=True)
+            trg_nodes = rng.choice(nodes, size=number_of_edges, replace=True)
+            for src, trg in zip(src_nodes, trg_nodes):
+                while trg == src:
+                    trg = rng.choice(nodes)
+
+            relations = rng.choice(edge_relations, size=number_of_edges, replace=True)
+            modifications.append([(src, trg, rel, "core") for src, trg, rel in zip(src_nodes, trg_nodes, relations)])
+
+        # If no datasets were given, return the modifications
+        if datasets is None:
+            return modifications
+
+        # Otherwise, compute NPAs for each dataset
+        return self._evaluate_modifications(modifications, nodes, datasets, legacy, strict_pruning, seed, verbose)
+
+    def _evaluate_modifications(self, modifications, nodes, datasets,
+                                legacy=False, strict_pruning=False, seed=None, verbose=True):
+        if verbose:
+            logging.basicConfig(stream=sys.stdout, level=logging.INFO,
+                                format="%(asctime)s %(levelname)s -- %(message)s")
+            logging.info("PREPROCESSING NETWORK")
+
+        # Preprocess the datasets
+        if datasets is not None:
+            for dataset_id in datasets:
+                datasets[dataset_id] = preprocess_dataset.format_dataset(datasets[dataset_id])
+
+        # Preprocess the graph
+        prograph = self._graph.to_directed()
+        preprocess_network.infer_graph_attributes(prograph, self.relation_translator, verbose=False)
+        core_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
+
+        # Construct modified adjacency matrices
+        adj_b, adj_c = network_matrices.generate_adjacency(prograph)
+        adj_c_perms = [adj_c.copy() for _ in range(len(modifications))]
+        rt = self.relation_translator if self.relation_translator is not None \
+            else RelationTranslator()
+
+        for modification, adj_c_perm in zip(modifications, adj_c_perms):
+            edge_weights = []
+
+            for src, trg, rel, _ in modification:
+                src_idx = prograph.nodes[src]["idx"]
+                trg_idx = prograph.nodes[trg]["idx"]
+
+                weight = rt.translate(rel) if rel is not None else 0
+                adj_c_perm[src_idx, trg_idx] = weight
+                edge_weights.append(weight)
+
+            permute_network.connect_adjacency_components(
+                adj_c_perm, nodes, weights=edge_weights, seed=seed
+            )
+
+        # Compute NPAs for each dataset
+        modifications = [(m, {}) for m in modifications]
+        for dataset_id in datasets:
+            dataset = datasets[dataset_id]
+            if verbose:
+                logging.info("COMPUTING NPA FOR DATASET '%s'" % dataset_id)
+
+            for idx, adj_c_perm in enumerate(adj_c_perms):
+                # Prepare data
+                if legacy:
+                    lap_b, lap_c, lap_q, _ = network_matrices.generate_laplacians(adj_b, adj_c_perm, {})
+                    lap_b, dataset = preprocess_dataset.prune_network_dataset(
+                        prograph, lap_b, dataset, dataset_id, strict_pruning, verbose=False
+                    )
+                else:
+                    lap_b, dataset = preprocess_dataset.prune_network_dataset(
+                        prograph, adj_b, dataset, dataset_id, strict_pruning, verbose=False
+                    )
+                    lap_b, lap_c, lap_q, _ = network_matrices.generate_laplacians(lap_b, adj_c_perm, {})
+
+                # Compute NPA
+                core_coefficients = core.value_inference(lap_b, lap_c, dataset["logFC"].to_numpy())
+                npa = core.perturbation_amplitude(lap_q, core_coefficients, core_edge_count)
+                modifications[idx][1][dataset_id] = npa
+
+        return modifications
+
     def infer_graph_attributes(self, verbose=True):
         preprocess_network.infer_graph_attributes(self._graph, self.relation_translator, verbose)
 
     def compute_npa(self, datasets: dict, legacy=False, strict_pruning=False, alpha=0.95,
                     permutations=('o', 'k2'), p_iters=500, p_rate=1., seed=None, verbose=True):
-
-        # Preprocess the datasets
-        for dataset_id in datasets:
-            datasets[dataset_id] = preprocess_dataset.format_dataset(datasets[dataset_id])
-
         if verbose:
             logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                                 format="%(asctime)s %(levelname)s -- %(message)s")
             logging.info("PREPROCESSING NETWORK")
+
+        # Preprocess the datasets
+        for dataset_id in datasets:
+            datasets[dataset_id] = preprocess_dataset.format_dataset(datasets[dataset_id])
 
         # Copy the graph and set metadata
         prograph = self._graph.to_directed()
@@ -182,8 +316,8 @@ class CausalNetwork:
         preprocess_network.infer_graph_attributes(prograph, self.relation_translator, verbose)
         core_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
         adj_b, adj_c = network_matrices.generate_adjacency(prograph)
-        adj_perms = permute_adjacency.permute_adjacency(
-            adj_c, permutations=permutations, permutation_rate=p_rate, iterations=p_iters, seed=seed
+        adj_perms = permute_network.permute_adjacency(
+            adj_c, permutations=permutations, iterations=p_iters, permutation_rate=p_rate, seed=seed
         )
 
         result_builder = NPAResultBuilder.new_builder(prograph, list(datasets.keys()))
@@ -231,7 +365,7 @@ class CausalNetwork:
             distributions = permutation_tests.permutation_tests(
                 lap_b, lap_c, lap_q, lap_perms, core_edge_count,
                 dataset["logFC"].to_numpy(), permutations,
-                permutation_rate=p_rate, iterations=p_iters, seed=seed
+                iterations=p_iters, permutation_rate=p_rate, seed=seed
             )
             for p in distributions:
                 pv = statistics.p_value(npa, distributions[p])

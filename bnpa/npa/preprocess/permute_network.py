@@ -1,5 +1,4 @@
 import warnings
-import itertools
 
 import numpy as np
 
@@ -9,8 +8,7 @@ def get_root(node, parents: dict):
     return parent if parent == node else get_root(parent, parents)
 
 
-def connect_adjacency_components(adj: np.ndarray, weights=(1.,), seed=None):
-    # Find connected components
+def find_connected_components(adj: np.ndarray):
     num_nodes = len(adj)
     parents = {idx: idx for idx in range(num_nodes)}
     for idx, idy in zip(*np.nonzero(adj)):
@@ -25,26 +23,44 @@ def connect_adjacency_components(adj: np.ndarray, weights=(1.,), seed=None):
     for idx in range(num_nodes):
         root = get_root(idx, parents)
         if root not in components:
-            components[root] = []
-        components[root].append(idx)
+            components[root] = set()
+        components[root].add(idx)
 
-    # Randomly connect components
+    return components
+
+
+def connect_adjacency_components(adj: np.ndarray, nodes=None, weights=(1.,), seed=None):
+    components = find_connected_components(adj)
+
     rng = np.random.default_rng(seed)
     component_roots = rng.permutation(list(components.keys()))
     weights = list(rng.choice(weights, size=len(components) - 1, replace=True))
+
     for root_x, root_y in zip(component_roots[:-1], component_roots[1:]):
-        node_x = rng.choice(components[root_x])
-        node_y = rng.choice(components[root_y])
+        if nodes is not None:
+            component_x = components[root_x].intersection(nodes)
+            if len(component_x) == 0:
+                component_x = components[root_x]
+
+            component_y = components[root_y].intersection(nodes)
+            if len(component_y) == 0:
+                component_y = components[root_y]
+        else:
+            component_x = components[root_x]
+            component_y = components[root_y]
+
+        node_x = rng.choice(component_x)
+        node_y = rng.choice(component_y)
 
         weight = weights.pop()
         adj[node_x, node_y] = weight
         adj[node_y, node_x] = weight
 
-        components[root_y].extend(components[root_x])
+        components[root_y].update(components[root_x])
         del components[root_x]
 
 
-def permute_adjacency_k1(adj: np.ndarray, permutation_rate=1., iterations=500, seed=None):
+def permute_adjacency_k1(adj: np.ndarray, iterations=500, permutation_rate=1., ensure_connectedness=True, seed=None):
     if adj.ndim != 2 or adj.shape[0] != adj.shape[1]:
         raise ValueError("Argument 'adj' {} is not a square matrix.".format(str(adj.shape)))
 
@@ -68,13 +84,14 @@ def permute_adjacency_k1(adj: np.ndarray, permutation_rate=1., iterations=500, s
         random_adj[tril_idx] = random_tril
         random_adj += random_adj.transpose()
 
-        connect_adjacency_components(random_adj, edge_weights, seed)
+        if ensure_connectedness:
+            connect_adjacency_components(random_adj, weights=edge_weights, seed=seed)
         permuted.append(random_adj)
 
     return permuted
 
 
-def permute_adjacency_k2(adj: np.ndarray, permutation_rate=1., iterations=500, seed=None):
+def permute_adjacency_k2(adj: np.ndarray, iterations=500, permutation_rate=1., ensure_connectedness=True, seed=None):
     if adj.ndim != 2 or adj.shape[0] != adj.shape[1]:
         raise ValueError("Argument 'adj' {} is not a square matrix.".format(str(adj.shape)))
 
@@ -102,23 +119,26 @@ def permute_adjacency_k2(adj: np.ndarray, permutation_rate=1., iterations=500, s
                 random_adj[src, trg] += weight
                 random_adj[trg, src] += weight
 
-        connect_adjacency_components(random_adj, edge_weights, seed)
+        if ensure_connectedness:
+            connect_adjacency_components(random_adj, weights=edge_weights, seed=seed)
         permuted.append(random_adj)
 
     return permuted
 
 
-def permute_adjacency(adj: np.ndarray, permutations=('k2',), permutation_rate=1., iterations=500, seed=None):
+def permute_adjacency(adj: np.ndarray, permutations=('k2',), iterations=500, permutation_rate=1., seed=None):
     adj_perms = dict()
     for p in set(permutations):
         match p.lower():
             case 'k1':
                 adj_perms[p] = permute_adjacency_k1(
-                    adj, permutation_rate=permutation_rate, iterations=iterations, seed=seed
+                    adj, iterations=iterations, permutation_rate=permutation_rate,
+                    ensure_connectedness=True, seed=seed
                 )
             case 'k2':
                 adj_perms[p] = permute_adjacency_k2(
-                    adj, permutation_rate=permutation_rate, iterations=iterations, seed=seed
+                    adj, iterations=iterations, permutation_rate=permutation_rate,
+                    ensure_connectedness=True, seed=seed
                 )
             case 'o':
                 # Permutation 'o' is not applied to the laplacian.
@@ -127,3 +147,45 @@ def permute_adjacency(adj: np.ndarray, permutations=('k2',), permutation_rate=1.
                 warnings.warn("Permutation %s is unknown and will be skipped." % p)
 
     return adj_perms
+
+
+def permute_edge_list(edge_list: np.ndarray, node_list, iterations, method='k1', permutation_rate=1., seed=None):
+    if node_list is None:
+        node_list = np.unique(edge_list[:, :2])
+
+    permuted_edge_count = np.ceil(edge_list.shape[0] * permutation_rate).astype(int)
+    rng = np.random.default_rng(seed)
+
+    permutations = []
+    for _ in range(iterations):
+        permutation = []
+        permutations.append(permutation)
+
+        permuted_edge_idx = rng.choice(edge_list.shape[0], size=permuted_edge_count, replace=False, axis=0)
+        permuted_edges = edge_list[permuted_edge_idx, :].copy()
+        fixed_edges = np.delete(edge_list, permuted_edge_idx, axis=0)
+
+        match method.lower():
+            case 'k1':
+                permuted_edges[:, 0] = rng.choice(node_list, size=permuted_edge_count, replace=True)
+                permuted_edges[:, 1] = rng.choice(node_list, size=permuted_edge_count, replace=True)
+            case 'k2':
+                permuted_edges[:, 0] = rng.permutation(permuted_edges[:, 0])
+                permuted_edges[:, 1] = rng.permutation(permuted_edges[:, 1])
+            case _:
+                raise ValueError("Unknown permutation %s." % permutation)
+
+        permuted_edges[:, 2] = rng.permutation(permuted_edges[:, 2])
+        permuted_edges = np.concatenate([permuted_edges, fixed_edges], axis=0)
+
+        for i in range(permuted_edges.shape[0]):
+            src, trg, rel = permuted_edges[i, :]
+            if not any(e[0] == src and e[1] == trg for e in permutation):
+                permutation.append((src, trg, rel))
+
+        for i in range(edge_list.shape[0]):
+            src, trg, rel = edge_list[i, :]
+            if not any(e[0] == src and e[1] == trg for e in permutation):
+                permutation.append((src, trg, None))
+
+    return permutations
