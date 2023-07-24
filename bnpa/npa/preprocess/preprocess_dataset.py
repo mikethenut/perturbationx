@@ -21,8 +21,17 @@ def format_dataset(dataset: pd.DataFrame):
     return dataset[["nodeID", "logFC", "stderr"]]
 
 
+def normalize_rows(adj_b: np.ndarray):
+    if adj_b.ndim != 2:
+        raise ValueError("Argument adjacency_boundary is not two-dimensional.")
+
+    row_sums = np.abs(adj_b).sum(axis=1)
+    row_sums[row_sums == 0] = 1
+    return adj_b / row_sums[:, np.newaxis]
+
+
 def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray, dataset: pd.DataFrame, dataset_id,
-                          strict=False, verbose=True):
+                          strict=False, legacy=False, verbose=True):
     if adj_b.ndim != 2:
         raise ValueError("Argument adjacency_boundary is not two-dimensional.")
     core_size = adj_b.shape[0]
@@ -30,20 +39,25 @@ def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray, dataset: pd.Data
                             for node_name in dataset["nodeID"].values
                             if node_name in graph.nodes])
 
+    if network_idx.ndim == 0:
+        raise ValueError("The dataset does not contain any boundary nodes.")
+
     if strict:
         # TODO: implement strict pruning
         pass
 
-    if network_idx.ndim == 0:
-        raise ValueError("The dataset does not contain any boundary nodes.")
-
-    adjacency_boundary_pruned = adj_b[:, network_idx]
     dataset_pruned = dataset[dataset["nodeID"].isin(graph.nodes)]
+    if legacy:
+        lap_b = - normalize_rows(adj_b)
+        laplacian_boundary_pruned = lap_b[:, network_idx]
+    else:
+        laplacian_boundary_pruned = adj_b[:, network_idx]
+        laplacian_boundary_pruned = - normalize_rows(laplacian_boundary_pruned)
 
     # Infer dataset-specific metadata
     outer_boundary_node_count = network_idx.size
     # Count non-zero elements per row
-    non_zero_row_count = np.count_nonzero(adjacency_boundary_pruned, axis=1)
+    non_zero_row_count = np.count_nonzero(laplacian_boundary_pruned, axis=1)
     boundary_edge_count = np.sum(non_zero_row_count)
     inner_boundary_node_count = np.count_nonzero(non_zero_row_count)
 
@@ -58,4 +72,4 @@ def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray, dataset: pd.Data
         "matched_inner_boundary_nodes": int(inner_boundary_node_count)
     }
 
-    return adjacency_boundary_pruned, dataset_pruned
+    return laplacian_boundary_pruned, dataset_pruned

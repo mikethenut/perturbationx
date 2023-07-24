@@ -28,7 +28,7 @@ class NPAResultDisplay:
             set_boundary_display(self._graph, display_boundary, self._network_suid, self._cytoscape_url)
 
         # Reset nodes
-        core_nodes = [n for n in self._graph.get_nodes if self._graph.get_nodes[n]["type"] == "core"]
+        core_nodes = [n for n in self._graph.nodes if self._graph.nodes[n]["type"] == "core"]
         if reset_visibility:
             clear_bypass(core_nodes, "node", "NODE_VISIBLE", self._network_suid, self._cytoscape_url)
         if reset_highlight:
@@ -40,7 +40,7 @@ class NPAResultDisplay:
 
         # Reset edges
         core_edges = [edge_to_p4c_format(src, trg, self._graph[src][trg]["interaction"])
-                      for src, trg in self._graph.get_edges if self._graph[src][trg]["type"] == "core"]
+                      for src, trg in self._graph.edges if self._graph[src][trg]["type"] == "core"]
         if reset_visibility:
             clear_bypass(core_edges, "edge", "EDGE_VISIBLE", self._network_suid, self._cytoscape_url)
         if reset_highlight:

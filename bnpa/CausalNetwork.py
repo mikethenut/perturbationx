@@ -259,7 +259,7 @@ class CausalNetwork:
         # Preprocess the graph
         prograph = self._graph.to_directed()
         preprocess_network.infer_graph_attributes(prograph, self.relation_translator, verbose=False)
-        core_edge_count = sum(1 for src, trg in prograph.get_edges if prograph[src][trg]["type"] == "core")
+        core_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
 
         # Construct modified adjacency matrices
         adj_b, adj_c = network_matrices.generate_adjacency(prograph)
@@ -271,8 +271,8 @@ class CausalNetwork:
             edge_weights = []
 
             for src, trg, rel, _ in modification:
-                src_idx = prograph.get_nodes[src]["idx"]
-                trg_idx = prograph.get_nodes[trg]["idx"]
+                src_idx = prograph.nodes[src]["idx"]
+                trg_idx = prograph.nodes[trg]["idx"]
 
                 weight = rt.translate(rel) if rel is not None else 0
                 adj_c_perm[src_idx, trg_idx] = weight
@@ -353,7 +353,7 @@ class CausalNetwork:
 
         # Preprocess the graph
         preprocess_network.infer_graph_attributes(prograph, self.relation_translator, verbose)
-        core_edge_count = sum(1 for src, trg in prograph.get_edges if prograph[src][trg]["type"] == "core")
+        core_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
         adj_b, adj_c = network_matrices.generate_adjacency(prograph)
         adj_perms = permute_network.permute_adjacency(
             adj_c, permutations=permutations, iterations=p_iters, permutation_rate=p_rate, seed=seed
@@ -366,16 +366,11 @@ class CausalNetwork:
                 logging.info("COMPUTING NPA FOR DATASET '%s'" % dataset_id)
 
             # Prepare data
-            if legacy:
-                lap_b, lap_c, lap_q, lap_perms = network_matrices.generate_laplacians(adj_b, adj_c, adj_perms)
-                lap_b, dataset = preprocess_dataset.prune_network_dataset(
-                    prograph, lap_b, dataset, dataset_id, strict_pruning, verbose
-                )
-            else:
-                lap_b, dataset = preprocess_dataset.prune_network_dataset(
-                    prograph, adj_b, dataset, dataset_id, strict_pruning, verbose
-                )
-                lap_b, lap_c, lap_q, lap_perms = network_matrices.generate_laplacians(lap_b, adj_c, adj_perms)
+            lap_b, dataset = preprocess_dataset.prune_network_dataset(
+                prograph, adj_b, dataset, dataset_id,
+                strict=strict_pruning, legacy=legacy, verbose=verbose
+            )
+            lap_b, lap_c, lap_q, lap_perms = network_matrices.generate_laplacians(lap_b, adj_c, adj_perms)
 
             # Compute NPA
             core_coefficients = core.value_inference(lap_b, lap_c, dataset["logFC"].to_numpy())

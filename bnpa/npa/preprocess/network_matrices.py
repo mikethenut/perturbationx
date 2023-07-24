@@ -21,18 +21,7 @@ def generate_adjacency(graph: nx.DiGraph, directed=False):
     return adj_b, adj_c
 
 
-def normalize_rows(adj_b: np.ndarray):
-    if adj_b.ndim != 2:
-        raise ValueError("Argument adjacency_boundary is not two-dimensional.")
-
-    row_sums = np.abs(adj_b).sum(axis=1)
-    row_sums[row_sums == 0] = 1
-    return adj_b / row_sums[:, np.newaxis]
-
-
-def generate_laplacians(adj_b, adj_c, adj_perms):
-    lap_b = - normalize_rows(adj_b)
-
+def generate_core_laplacians(lap_b, adj_c, adj_perms):
     core_degrees = np.abs(adj_c).sum(axis=1)
     boundary_outdegrees = np.abs(lap_b).sum(axis=1)
 
@@ -41,6 +30,7 @@ def generate_laplacians(adj_b, adj_c, adj_perms):
 
     lap_perms = {}
     for p in adj_perms:
-        lap_perms[p] = [np.diag(np.abs(adj).sum(axis=1) + boundary_outdegrees) - adj for adj in adj_perms[p]]
+        lap_perms[p] = [np.diag(np.abs(adj).sum(axis=1) + boundary_outdegrees) - adj
+                        for adj in adj_perms[p]]
 
     return lap_b, lap_c, lap_q, lap_perms
