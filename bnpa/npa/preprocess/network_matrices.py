@@ -21,9 +21,11 @@ def generate_adjacency(graph: nx.DiGraph, directed=False):
     return adj_b, adj_c
 
 
-def generate_core_laplacians(lap_b, adj_c, adj_perms):
+def generate_core_laplacians(lap_b, adj_c, adj_perms, legacy=False):
     core_degrees = np.abs(adj_c).sum(axis=1)
     boundary_outdegrees = np.abs(lap_b).sum(axis=1)
+    if legacy:  # Fix the boundary outdegrees to 1 if they are non-zero
+        boundary_outdegrees[boundary_outdegrees > 0] = 1
 
     lap_c = np.diag(core_degrees + boundary_outdegrees) - adj_c
     lap_q = np.diag(core_degrees) + adj_c
@@ -33,4 +35,4 @@ def generate_core_laplacians(lap_b, adj_c, adj_perms):
         lap_perms[p] = [np.diag(np.abs(adj).sum(axis=1) + boundary_outdegrees) - adj
                         for adj in adj_perms[p]]
 
-    return lap_b, lap_c, lap_q, lap_perms
+    return lap_c, lap_q, lap_perms

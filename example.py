@@ -3,9 +3,9 @@ import pandas as pd
 from bnpa.CausalNetwork import CausalNetwork
 
 
-def example_run(causalbionet, datasets):
+def example_run(causalbionet, datasets, legacy):
     results = causalbionet.compute_npa(
-        datasets, legacy=False, permutations=("o", "k1", "k2"), verbose=True
+        datasets, legacy=legacy, permutations=("o", "k1", "k2"), verbose=True
     )
 
     results.plot_distribution("k2")
@@ -67,4 +67,4 @@ if __name__ == "__main__":
         data[file] = data[file].rename(columns={"nodeLabel": "nodeID", "foldChange": "logFC"})
         continue
 
-    example_run(my_cbn, data)
+    example_run(my_cbn, data, legacy=True)

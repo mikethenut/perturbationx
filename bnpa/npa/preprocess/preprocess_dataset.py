@@ -51,8 +51,8 @@ def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray, dataset: pd.Data
         lap_b = - normalize_rows(adj_b)
         laplacian_boundary_pruned = lap_b[:, network_idx]
     else:
-        laplacian_boundary_pruned = adj_b[:, network_idx]
-        laplacian_boundary_pruned = - normalize_rows(laplacian_boundary_pruned)
+        adj_b_pruned = adj_b[:, network_idx]
+        laplacian_boundary_pruned = - normalize_rows(adj_b_pruned)
 
     # Infer dataset-specific metadata
     outer_boundary_node_count = network_idx.size

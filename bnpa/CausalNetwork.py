@@ -370,7 +370,10 @@ class CausalNetwork:
                 prograph, adj_b, dataset, dataset_id,
                 strict=strict_pruning, legacy=legacy, verbose=verbose
             )
-            lap_b, lap_c, lap_q, lap_perms = network_matrices.generate_laplacians(lap_b, adj_c, adj_perms)
+            lap_c, lap_q, lap_perms = \
+                network_matrices.generate_core_laplacians(
+                    lap_b, adj_c, adj_perms, legacy=legacy
+                )
 
             # Compute NPA
             core_coefficients = core.value_inference(lap_b, lap_c, dataset["logFC"].to_numpy())
