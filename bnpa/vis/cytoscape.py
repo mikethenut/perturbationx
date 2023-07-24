@@ -31,7 +31,7 @@ def init_cytoscape(graph, title, collection, init_boundary: Optional[bool] = Fal
         # If boundary nodes should not be included, remove them from the graph
         if not init_boundary:
             graph = graph.copy()
-            boundary_nodes = [n for n in graph.nodes if graph.nodes[n]["type"] == "boundary"]
+            boundary_nodes = [n for n in graph.get_nodes if graph.get_nodes[n]["type"] == "boundary"]
             graph.remove_nodes_from(boundary_nodes)
         network_suid = p4c.networks.create_network_from_networkx(
             graph, base_url=cytoscape_url, title=title, collection=collection
@@ -73,11 +73,11 @@ def set_boundary_display(graph, show_boundary, network_suid, cytoscape_url=DEFAU
         )
     elif show_boundary is True:
         # No boundary nodes in Cytoscape :( We need to load them in
-        boundary_nodes = [n for n in graph.nodes if graph.nodes[n]["type"] == "boundary"]
+        boundary_nodes = [n for n in graph.get_nodes if graph.get_nodes[n]["type"] == "boundary"]
         p4c.networks.add_cy_nodes(boundary_nodes, network=network_suid, base_url=cytoscape_url)
 
         # Find boundary edges and all interaction types
-        boundary_edges = [(src, trg) for src, trg in graph.edges
+        boundary_edges = [(src, trg) for src, trg in graph.get_edges
                           if graph[src][trg]["type"] == "boundary"]
         interactions = {graph[src][trg]["interaction"] for src, trg in boundary_edges}
 
@@ -91,7 +91,7 @@ def set_boundary_display(graph, show_boundary, network_suid, cytoscape_url=DEFAU
 
         # Load node data
         node_data = pd.DataFrame.from_dict({
-            n: graph.nodes[n] for n in boundary_nodes
+            n: graph.get_nodes[n] for n in boundary_nodes
         }, orient="index")
         load_network_data(node_data, "node", network_suid, cytoscape_url)
 
@@ -130,7 +130,7 @@ def highlight_subgraph(nodes, edges, network_suid, cytoscape_url=DEFAULT_BASE_UR
 def isolate_subgraph(graph, nodes, edges, network_suid, cytoscape_url=DEFAULT_BASE_URL):
     # Set edge visibility
     core_edges = [edge_to_p4c_format(src, trg, graph[src][trg]["interaction"])
-                  for src, trg in graph.edges if graph[src][trg]["type"] == "core"]
+                  for src, trg in graph.get_edges if graph[src][trg]["type"] == "core"]
     edge_visibility = ["true" if e in edges else "false" for e in core_edges]
     p4c.style_bypasses.set_edge_property_bypass(
         core_edges, new_values=edge_visibility, visual_property="EDGE_VISIBLE",
@@ -138,7 +138,7 @@ def isolate_subgraph(graph, nodes, edges, network_suid, cytoscape_url=DEFAULT_BA
     )
 
     # Set node visibility
-    core_nodes = [n for n in graph.nodes if graph.nodes[n]["type"] == "core"]
+    core_nodes = [n for n in graph.get_nodes if graph.get_nodes[n]["type"] == "core"]
     node_visibility = ["true" if n in nodes else "false" for n in core_nodes]
     p4c.style_bypasses.set_node_property_bypass(
         core_nodes, new_values=node_visibility, visual_property="NODE_VISIBLE",

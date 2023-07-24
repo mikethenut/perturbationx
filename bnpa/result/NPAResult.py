@@ -105,7 +105,7 @@ class NPAResult:
                           include_neighbors=0, neighborhood_type="union"):
         # Remove boundary nodes
         graph = self._graph.copy()
-        boundary_nodes = [n for n in graph.nodes if graph.nodes[n]["type"] == "boundary"]
+        boundary_nodes = [n for n in graph.get_nodes if graph.get_nodes[n]["type"] == "boundary"]
         graph.remove_nodes_from(boundary_nodes)
 
         # Find paths
@@ -150,8 +150,8 @@ class NPAResult:
     def to_networkx(self):
         graph_copy = self._graph.copy()
         graph_copy.graph.update(self._metadata)
-        for n in graph_copy.nodes:
-            graph_copy.nodes[n].update(self._node_info.loc[(n, "data")].to_dict())
+        for n in graph_copy.get_nodes:
+            graph_copy.get_nodes[n].update(self._node_info.loc[(n, "data")].to_dict())
 
         node_dataframe = self._node_info.transpose(copy=True)
         # Rename MultiIndex columns

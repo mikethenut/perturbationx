@@ -106,7 +106,7 @@ def infer_metadata(graph: nx.DiGraph, verbose=True):
         logging.info("core edges: %d" % core_edge_count)
         logging.info("boundary edges: %d" % boundary_edge_count)
         logging.info("core nodes: %d" % len(core_nodes))
-        logging.info("(outer) boundary nodes: %d" % len(boundary_nodes))
+        logging.info("outer boundary nodes: %d" % len(boundary_nodes))
         logging.info("core nodes with boundary edges (inner boundary): %d" % len(inner_boundary_nodes))
 
 

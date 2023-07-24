@@ -5,7 +5,7 @@ from bnpa.CausalNetwork import CausalNetwork
 
 def example_run(causalbionet, datasets):
     results = causalbionet.compute_npa(
-        datasets, legacy=False, permutations=("o", "k1", "k2"), verbose=True, p_rate=0.15
+        datasets, legacy=False, permutations=("o", "k1", "k2"), verbose=True
     )
 
     results.plot_distribution("k2")
@@ -67,4 +67,4 @@ if __name__ == "__main__":
         data[file] = data[file].rename(columns={"nodeLabel": "nodeID", "foldChange": "logFC"})
         continue
 
-    test_rewiring(my_cbn, data)
+    example_run(my_cbn, data)

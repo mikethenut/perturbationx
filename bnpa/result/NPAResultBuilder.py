@@ -10,8 +10,8 @@ class NPAResultBuilder:
     def __init__(self, graph, datasets):
         self._graph = graph
         self._datasets = datasets
-        self._nodes = sorted([n for n in graph.nodes if graph.nodes[n]["type"] == "core"],
-                             key=lambda n: graph.nodes[n]["idx"])
+        self._nodes = sorted([n for n in graph.get_nodes if graph.get_nodes[n]["type"] == "core"],
+                             key=lambda n: graph.get_nodes[n]["idx"])
 
         self._global_attributes = {}  # One score per dataset
         self._node_attributes = {}  # N scores per dataset, where N is number of nodes

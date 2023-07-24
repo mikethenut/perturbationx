@@ -49,8 +49,8 @@ def connect_adjacency_components(adj: np.ndarray, nodes=None, weights=(1.,), see
             component_x = components[root_x]
             component_y = components[root_y]
 
-        node_x = rng.choice(component_x)
-        node_y = rng.choice(component_y)
+        node_x = rng.choice(list(component_x))
+        node_y = rng.choice(list(component_y))
 
         weight = weights.pop()
         adj[node_x, node_y] = weight
@@ -106,8 +106,8 @@ def permute_adjacency_k2(adj: np.ndarray, iterations=500, permutation_rate=1., e
     for _ in range(iterations):
         permuted_idx = rng.choice(total_edges, size=permuted_edges, replace=False)
         permuted_stubs = edge_stubs.copy()
-        permuted_stubs[permuted_idx, :] = \
-            rng.permutation(permuted_stubs[permuted_idx, :].flatten()).reshape(-1, 2)
+        permuted_stubs[permuted_idx, 0] = rng.permutation(permuted_stubs[permuted_idx, 0])
+        permuted_stubs[permuted_idx, 1] = rng.permutation(permuted_stubs[permuted_idx, 1])
 
         permuted_edge_weights = edge_weights.copy()
         permuted_edge_weights[permuted_idx] = rng.permutation(permuted_edge_weights[permuted_idx])
@@ -180,12 +180,12 @@ def permute_edge_list(edge_list: np.ndarray, node_list, iterations, method='k1',
 
         for i in range(permuted_edges.shape[0]):
             src, trg, rel = permuted_edges[i, :]
-            if not any(e[0] == src and e[1] == trg for e in permutation):
+            if src != trg and not any(e[0] == src and e[1] == trg for e in permutation):
                 permutation.append((src, trg, rel))
 
         for i in range(edge_list.shape[0]):
             src, trg, rel = edge_list[i, :]
-            if not any(e[0] == src and e[1] == trg for e in permutation):
+            if src != trg and not any(e[0] == src and e[1] == trg for e in permutation):
                 permutation.append((src, trg, None))
 
     return permutations

@@ -110,21 +110,36 @@ class CausalNetwork:
     def copy(self):
         return CausalNetwork(self._graph, self.relation_translator.copy(), inplace=False)
 
-    def number_of_nodes(self):
+    def number_of_nodes(self, typ=None):
+        if typ is not None:
+            return sum(1 for n, d in self._graph.nodes(data=True) if d["type"] == typ)
         return self._graph.number_of_nodes()
 
-    def nodes(self):
-        return list(self._graph.nodes(data=True))
+    def get_nodes(self, typ=None, data=True):
+        if typ is not None:
+            if data:
+                return [(n, d) for n, d in self._graph.nodes(data=True) if d["type"] == typ]
+            else:
+                return [n for n, d in self._graph.nodes(data=True) if d["type"] == typ]
+
+        return list(self._graph.nodes(data=data))
 
     def number_of_edges(self, typ=None):
         if typ is not None:
             return sum(1 for e in self._graph.edges.data() if e[2]["type"] == typ)
         return self._graph.number_of_edges()
 
-    def edges(self, typ=None):
+    def get_edges(self, typ=None, data=True):
         if typ is not None:
-            return [e for e in self._graph.edges.data() if e[2]["type"] == typ]
-        return list(self._graph.edges.data())
+            if data:
+                return [(src, trg, d) for src, trg, d in self._graph.edges.data() if d["type"] == typ]
+            else:
+                return [(src, trg) for src, trg, d in self._graph.edges.data() if d["type"] == typ]
+
+        if data:
+            return list(self._graph.edges.data())
+        else:
+            return list(self._graph.edges)
 
     def add_edge(self, src, trg, rel, typ="infer"):
         if self._graph.has_edge(src, trg):
@@ -214,9 +229,10 @@ class CausalNetwork:
         for _ in range(iterations):
             src_nodes = rng.choice(nodes, size=number_of_edges, replace=True)
             trg_nodes = rng.choice(nodes, size=number_of_edges, replace=True)
-            for src, trg in zip(src_nodes, trg_nodes):
+            for idx, (src, trg) in enumerate(zip(src_nodes, trg_nodes)):
                 while trg == src:
                     trg = rng.choice(nodes)
+                trg_nodes[idx] = trg
 
             relations = rng.choice(edge_relations, size=number_of_edges, replace=True)
             modifications.append([(src, trg, rel, "core") for src, trg, rel in zip(src_nodes, trg_nodes, relations)])
@@ -243,7 +259,7 @@ class CausalNetwork:
         # Preprocess the graph
         prograph = self._graph.to_directed()
         preprocess_network.infer_graph_attributes(prograph, self.relation_translator, verbose=False)
-        core_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
+        core_edge_count = sum(1 for src, trg in prograph.get_edges if prograph[src][trg]["type"] == "core")
 
         # Construct modified adjacency matrices
         adj_b, adj_c = network_matrices.generate_adjacency(prograph)
@@ -255,12 +271,14 @@ class CausalNetwork:
             edge_weights = []
 
             for src, trg, rel, _ in modification:
-                src_idx = prograph.nodes[src]["idx"]
-                trg_idx = prograph.nodes[trg]["idx"]
+                src_idx = prograph.get_nodes[src]["idx"]
+                trg_idx = prograph.get_nodes[trg]["idx"]
 
                 weight = rt.translate(rel) if rel is not None else 0
                 adj_c_perm[src_idx, trg_idx] = weight
-                edge_weights.append(weight)
+                adj_c_perm[trg_idx, src_idx] = weight
+                if weight > 0:
+                    edge_weights.append(weight)
 
             permute_network.connect_adjacency_components(
                 adj_c_perm, nodes, weights=edge_weights, seed=seed
@@ -293,8 +311,29 @@ class CausalNetwork:
 
         return modifications
 
-    def infer_graph_attributes(self, verbose=True):
-        preprocess_network.infer_graph_attributes(self._graph, self.relation_translator, verbose)
+    def infer_graph_attributes(self, verbose=True, inplace=False):
+        if inplace:
+            preprocess_network.infer_graph_attributes(self._graph, self.relation_translator, verbose)
+            return self
+        else:
+            graph = self._graph.to_directed()
+            preprocess_network.infer_graph_attributes(graph, self.relation_translator, verbose)
+            return CausalNetwork(graph, self.relation_translator, inplace=True)
+
+    def get_laplacians(self, verbose=True):
+        if verbose:
+            logging.basicConfig(stream=sys.stdout, level=logging.INFO,
+                                format="%(asctime)s %(levelname)s -- %(message)s")
+            logging.info("PREPROCESSING NETWORK")
+
+        # Preprocess the graph
+        prograph = self._graph.to_directed()
+        preprocess_network.infer_graph_attributes(prograph, self.relation_translator, verbose)
+
+        # Construct laplacian matrices
+        adj_b, adj_c = network_matrices.generate_adjacency(prograph)
+        lap_b, lap_c, lap_q, _ = network_matrices.generate_laplacians(adj_b, adj_c, {})
+        return lap_b, lap_c, lap_q
 
     def compute_npa(self, datasets: dict, legacy=False, strict_pruning=False, alpha=0.95,
                     permutations=('o', 'k2'), p_iters=500, p_rate=1., seed=None, verbose=True):
@@ -314,7 +353,7 @@ class CausalNetwork:
 
         # Preprocess the graph
         preprocess_network.infer_graph_attributes(prograph, self.relation_translator, verbose)
-        core_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
+        core_edge_count = sum(1 for src, trg in prograph.get_edges if prograph[src][trg]["type"] == "core")
         adj_b, adj_c = network_matrices.generate_adjacency(prograph)
         adj_perms = permute_network.permute_adjacency(
             adj_c, permutations=permutations, iterations=p_iters, permutation_rate=p_rate, seed=seed
