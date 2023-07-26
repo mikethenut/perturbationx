@@ -19,7 +19,7 @@ def generate_mask(array, value):
     return array_mask
 
 
-def generate_dataset(network_name, core_file, boundary_file, population_size,
+def generate_dataset(network_name, causalbionet, population_size,
                      max_iterations, target_fitness, mutation_rate, directionality=None,
                      verbose=True, log_frequency=0.01, seed=None):
     # Create generator, instance id and set up logging
@@ -28,26 +28,18 @@ def generate_dataset(network_name, core_file, boundary_file, population_size,
     logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                         format="%(asctime)s %(levelname)s -- %(message)s")
 
-    # Load and process network
-    my_cbn = CausalNetwork.from_tsv(core_file, edge_type="core")
-    my_cbn.add_edges_from_tsv(boundary_file, edge_type="boundary")
-    my_cbn.infer_graph_attributes(verbose=False, inplace=True)
-
     # Get laplacian matrices
-    core_edge_count = my_cbn.number_of_edges("core")
-    lap_b, lap_c, lap_q = my_cbn.get_laplacians()
+    core_edge_count = causalbionet.number_of_edges("core")
+    lap_b, lap_c, lap_q, node_ordering = causalbionet.get_laplacians(verbose=False)
     inference_matrix = - np.matmul(la.inv(lap_c), lap_b)
 
     # Determine boundary node labels
-    boundary_nodes = my_cbn.get_nodes(typ="boundary")
+    boundary_nodes = causalbionet.get_nodes(typ="boundary")
     boundary_node_count = len(boundary_nodes)
-    boundary_node_labels = [None] * boundary_node_count
-    for bn in boundary_nodes:
-        bn_idx = bn[1]["idx"] - boundary_node_count
-        boundary_node_labels[bn_idx] = bn[0]
+    boundary_node_labels = node_ordering[-boundary_node_count:]
 
     # Determine number of mutations
-    boundary_node_count = my_cbn.number_of_nodes("boundary")
+    boundary_node_count = causalbionet.number_of_nodes("boundary")
     mutation_node_count = np.rint(boundary_node_count * mutation_rate).astype(int)
 
     # Determine sign of boundary edges
@@ -58,6 +50,12 @@ def generate_dataset(network_name, core_file, boundary_file, population_size,
     positive_boundary_mask = generate_mask(boundary_direction, "1")
     negative_boundary_mask = generate_mask(boundary_direction, "-1")
     neutral_boundary_mask = generate_mask(boundary_direction, "0")
+
+    """
+    logging.info("Positive boundary edges: %d", np.sum(positive_boundary_mask))
+    logging.info("Negative boundary edges: %d", np.sum(negative_boundary_mask))
+    logging.info("Neutral boundary edges: %d", np.sum(neutral_boundary_mask))
+    """
 
     # Load data samples
     positive_data_samples = pd.read_table("../../data/ExpressionExamples/positive_samples.csv", sep=",")
@@ -201,33 +199,44 @@ def generate_dataset(network_name, core_file, boundary_file, population_size,
     # Save best dataset
     best_dataset = pd.DataFrame(best_dataset_overall, columns=["logFC"])
     best_dataset["nodeID"] = boundary_node_labels
-    best_dataset = best_dataset[best_dataset["logFC"].notnull()]
-    best_dataset.to_csv("../../data/ExpressionExamplesGen01/" + network_name +
+    best_dataset.to_csv("../../data/ExpressionExamplesGen02/" + network_name +
                         "_(" + str(directionality) + ")_dataset_" +
                         instance_id + ".csv", index=False)
 
 
 if __name__ == "__main__":
-    datasets_per_network = 3
     logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                         format="%(asctime)s %(levelname)s -- %(message)s")
 
     # Network
-    network_folder = "../../data/BAGen03/"
-    for file_name in os.listdir(network_folder):
-        if file_name.endswith("_core.tsv"):
-            network_title = file_name[:-9]
-            core_suffix = "_core.tsv"
-            boundary_suffix = "_boundary.tsv"
+    network_folder = "../../data/NPANetworks/"
+    core_suffix = "_backbone.tsv"
+    boundary_suffix = "_downstream.tsv"
+    directions = ["0", "1", "-1"]
+    datasets_per_direction = 1
 
-            for direction in ["1", "-1", "0"]:
-                for i in range(datasets_per_network):
-                    logging.info("Generating (%s) dataset %d for %s", direction, i+1, network_title)
+    for file_name in os.listdir(network_folder):
+        if file_name.endswith(core_suffix):
+            network_title = file_name[:-len(core_suffix)]
+            logging.info("Generating datasets for %s", network_title)
+
+            core_file = network_folder + network_title + core_suffix
+            boundary_file = network_folder + network_title + boundary_suffix
+
+            my_cbn = CausalNetwork.from_tsv(core_file, edge_type="core")
+            my_cbn.add_edges_from_tsv(boundary_file, edge_type="boundary")
+            my_cbn.infer_graph_attributes(verbose=False, inplace=True)
+
+            for didx, direction in enumerate(directions):
+                for i in range(datasets_per_direction):
+                    logging.info("Generating dataset %d/%d for %s",
+                                 didx*datasets_per_direction + i + 1,
+                                 len(directions)*datasets_per_direction,
+                                 network_title)
 
                     generate_dataset(
-                        network_title, network_folder + network_title + core_suffix,
-                        network_folder + network_title + boundary_suffix,
-                        population_size=500, max_iterations=2000, target_fitness=None,
+                        network_title, my_cbn,
+                        population_size=5, max_iterations=20, target_fitness=None,
                         directionality=direction, mutation_rate=0.002,
                         verbose=True, log_frequency=0.1, seed=(i+1)*72
                     )

@@ -24,6 +24,7 @@ def generate_adjacency(graph: nx.DiGraph, directed=False):
 def generate_core_laplacians(lap_b, adj_c, adj_perms, legacy=False):
     core_degrees = np.abs(adj_c).sum(axis=1)
     boundary_outdegrees = np.abs(lap_b).sum(axis=1)
+
     if legacy:  # Fix the boundary outdegrees to 1 if they are non-zero
         boundary_outdegrees[boundary_outdegrees > 0] = 1
 

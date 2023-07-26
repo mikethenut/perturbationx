@@ -62,16 +62,16 @@ def remove_invalid_graph_elements(graph: nx.DiGraph):
     self_loops = list(nx.selfloop_edges(graph))
     if len(self_loops) > 0:
         warnings.warn("The network contains self-loops. "
-                      "They cannot be processed by the algorithm and will be removed.")
+                      "They cannot be processed by the algorithm and will be removed. "
+                      "Found self-loops on nodes: %s" % str(set(loop[0] for loop in self_loops)))
         graph.remove_edges_from(self_loops)
-        warnings.warn("Removed self-loops on nodes: %s" % str(set(loop[0] for loop in self_loops)))
 
     # Check that the graph has no opposing edges
-    opposing_edges = set({(src, trg), (trg, src)} for src, trg in graph.edges if (trg, src) in graph.edges)
+    opposing_edges = [(src, trg) for src, trg in graph.edges if (trg, src) in graph.edges]
     if len(opposing_edges) > 0:
         warnings.warn("The network contains opposing edges. "
-                      "They will be collapsed into a single edge with their weights added.")
-        warnings.warn("Opposing edges found: %s" % str(opposing_edges))
+                      "They will be collapsed into a single edge with their weights added. "
+                      "Opposing edges found: %s" % str(opposing_edges))
 
 
 def infer_edge_attributes(graph: nx.DiGraph, relation_translator: Optional[RelationTranslator] = None):

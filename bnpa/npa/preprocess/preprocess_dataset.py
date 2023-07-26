@@ -21,13 +21,13 @@ def format_dataset(dataset: pd.DataFrame):
     return dataset[["nodeID", "logFC", "stderr"]]
 
 
-def normalize_rows(adj_b: np.ndarray):
-    if adj_b.ndim != 2:
-        raise ValueError("Argument adjacency_boundary is not two-dimensional.")
+def normalize_rows(x: np.ndarray):
+    if x.ndim != 2:
+        raise ValueError("Argument x is not two-dimensional.")
 
-    row_sums = np.abs(adj_b).sum(axis=1)
+    row_sums = np.abs(x).sum(axis=1)
     row_sums[row_sums == 0] = 1
-    return adj_b / row_sums[:, np.newaxis]
+    return x / row_sums[:, np.newaxis]
 
 
 def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray, dataset: pd.DataFrame, dataset_id,

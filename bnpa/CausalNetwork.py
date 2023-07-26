@@ -320,7 +320,7 @@ class CausalNetwork:
             preprocess_network.infer_graph_attributes(graph, self.relation_translator, verbose)
             return CausalNetwork(graph, self.relation_translator, inplace=True)
 
-    def get_laplacians(self, verbose=True):
+    def get_adjacencies(self, verbose=True):
         if verbose:
             logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                                 format="%(asctime)s %(levelname)s -- %(message)s")
@@ -330,10 +330,21 @@ class CausalNetwork:
         prograph = self._graph.to_directed()
         preprocess_network.infer_graph_attributes(prograph, self.relation_translator, verbose)
 
-        # Construct laplacian matrices
+        # Construct adjacency matrices
         adj_b, adj_c = network_matrices.generate_adjacency(prograph)
-        lap_b, lap_c, lap_q, _ = network_matrices.generate_laplacians(adj_b, adj_c, {})
-        return lap_b, lap_c, lap_q
+
+        # Determine node ordering
+        node_ordering = [None] * len(prograph.nodes)
+        for node in prograph.nodes:
+            node_ordering[prograph.nodes[node]["idx"]] = node
+
+        return adj_b, adj_c, node_ordering
+
+    def get_laplacians(self, verbose=True):
+        adj_b, adj_c, node_ordering = self.get_adjacencies(verbose)
+        lap_b = - preprocess_dataset.normalize_rows(adj_b)
+        lap_c, lap_q, _ = network_matrices.generate_core_laplacians(lap_b, adj_c, {})
+        return lap_b, lap_c, lap_q, node_ordering
 
     def compute_npa(self, datasets: dict, legacy=False, strict_pruning=False, alpha=0.95,
                     permutations=('o', 'k2'), p_iters=500, p_rate=1., seed=None, verbose=True):

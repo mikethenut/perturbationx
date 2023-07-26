@@ -40,7 +40,7 @@ class NPAResultBuilder:
         for attr, val in zip(attributes, values):
             if len(val) != len(self._nodes):
                 warnings.warn("Node attribute %s for dataset %s is of incorrect length "
-                              "and will be ignores" % (attr, dataset_id))
+                              "and will be ignored" % (attr, dataset_id))
                 continue
 
             if attr not in self._node_attributes:

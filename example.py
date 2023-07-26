@@ -8,9 +8,9 @@ def example_run(causalbionet, datasets, legacy):
         datasets, legacy=legacy, permutations=("o", "k1", "k2"), verbose=True
     )
 
-    results.plot_distribution("k2")
-    results.plot_distribution("k1")
-    results.plot_distribution("o")
+    # results.plot_distribution("k2")
+    # results.plot_distribution("k1")
+    # results.plot_distribution("o")
     results.to_json("results.json")
     # print(results.metadata())
 
