@@ -7,20 +7,23 @@ import networkx as nx
 from bnpa.npa.preprocess import network_matrices
 
 
-def format_dataset(dataset: pd.DataFrame):
+def format_dataset(dataset: pd.DataFrame, computing_statistics=True):
     if not isinstance(dataset, pd.DataFrame):
         raise ValueError("Dataset is not a pandas.DataFrame.")
     if any(col not in dataset.columns for col in ["nodeID", "logFC"]):
         raise ValueError("Dataset does not contain columns 'nodeID' and 'logFC'.")
 
-    if "stderr" not in dataset.columns:
-        # TODO: Add more options for computing standard error
+    if computing_statistics and "stderr" not in dataset.columns:
         if 't' in dataset.columns:
             dataset["stderr"] = np.divide(dataset["logFC"].to_numpy(), dataset['t'].to_numpy())
         else:
             raise ValueError("Dataset does not contain columns 'stderr' or 't'.")
 
-    return dataset[["nodeID", "logFC", "stderr"]]
+    reduced_dataset = dataset[["nodeID", "logFC", "stderr"]] \
+        if computing_statistics \
+        else dataset[["nodeID", "logFC"]]
+
+    return reduced_dataset
 
 
 def remove_opposing_edges(adjacency: np.ndarray, dataset: pd.DataFrame):

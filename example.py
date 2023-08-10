@@ -68,7 +68,14 @@ if __name__ == "__main__":
     my_cbn = CausalNetwork.from_tsv("data/BAGen03Large/10000_3062_247405_core.tsv", edge_type="core")
     my_cbn.add_edges_from_tsv("data/BAGen03Large/10000_3062_247405_boundary.tsv", edge_type="boundary")
     import_end = time.time()
+    print("Import time: ", import_end - import_start)
 
+    import_start = time.time()
+    edge_df = pd.read_table("data/Arabidopsis/ckn-directed.tsv", header=None)
+    edge_df.columns = ["source", "target"]
+    edge_df["relation"] = "1."
+    my_cbn = CausalNetwork.from_pandas(edge_df)
+    import_end = time.time()
     print("Import time: ", import_end - import_start)
 
     # my_cbn.add_edge("p(MGI:Bcl2)", "p(MGI:Bcl2a1b)", "0.", "core")

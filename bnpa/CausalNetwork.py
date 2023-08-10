@@ -10,7 +10,7 @@ import networkx as nx
 
 from bnpa.resources.resources import DEFAULT_DATA_COLS
 from bnpa.io.RelationTranslator import RelationTranslator
-from bnpa.io.network_io import read_dsv, validate_nx_graph, write_dsv
+from bnpa.io.network_io import read_dsv, parse_pandas, validate_nx_graph, write_dsv
 from bnpa.npa.preprocess import preprocess_network, preprocess_dataset, network_matrices, permute_network
 from bnpa.npa import core, statistics, permutation_tests
 from bnpa.result.NPAResultBuilder import NPAResultBuilder
@@ -83,6 +83,15 @@ class CausalNetwork:
             graph.graph["collection"] = Path(filepath).parent.name
             return cls(graph, relation_translator, inplace=True)
 
+    @classmethod
+    def from_pandas(cls, df, default_edge_type="infer",
+                    header_cols=DEFAULT_DATA_COLS, relation_translator=None):
+        edge_list = parse_pandas(df, default_edge_type=default_edge_type,
+                                header_cols=header_cols)
+        graph = nx.DiGraph()
+        graph.add_edges_from(edge_list)
+        return cls(graph, relation_translator, inplace=True)
+
     def add_edges_from_dsv(self, filepath, edge_type="infer", delimiter='\t',
                            header_cols=DEFAULT_DATA_COLS):
         self._graph.add_edges_from(read_dsv(filepath, default_edge_type=edge_type,
@@ -96,6 +105,12 @@ class CausalNetwork:
     def add_edges_from_csv(self, filepath, edge_type="infer",
                            header_cols=DEFAULT_DATA_COLS):
         self.add_edges_from_dsv(filepath, edge_type, delimiter=',', header_cols=header_cols)
+
+    def add_edges_from_pandas(self, df, default_edge_type="infer",
+                              header_cols=DEFAULT_DATA_COLS):
+        self._graph.add_edges_from(parse_pandas(df, default_edge_type=default_edge_type,
+                                               header_cols=header_cols))
+        validate_nx_graph(self._graph, self.__allowed_edge_types)
 
     def initialize_metadata(self):
         # The user can delete metadata dict
@@ -344,19 +359,19 @@ class CausalNetwork:
 
         return adj_b, adj_c, node_ordering
 
-    def get_laplacians(self, boundary_outdegree_minimum=6, boundary_outdegree_type="continuous", verbose=True):
+    def get_laplacians(self, boundary_outdegree_minimum=6, exact_boundary_outdegree=True, verbose=True):
         adj_b, adj_c, node_ordering = self.get_adjacencies(verbose)
         lap_b = - network_matrices.generate_boundary_laplacian(
             adj_b, boundary_edge_minimum=boundary_outdegree_minimum
         )
         lap_c, lap_q, _ = network_matrices.generate_core_laplacians(
             lap_b, adj_c, {},
-            boundary_outdegree_type=boundary_outdegree_type
+            exact_boundary_outdegree=exact_boundary_outdegree
         )
         return lap_b, lap_c, lap_q, node_ordering
 
     def compute_npa(self, datasets: dict, missing_value_pruning_mode="remove", opposing_value_pruning_mode="remove",
-                    boundary_edge_minimum=6, boundary_outdegree_type="continuous", alpha=0.95,
+                    boundary_edge_minimum=6, exact_boundary_outdegree=True, compute_statistics=True, alpha=0.95,
                     permutations=('o', 'k2'), p_iters=500, p_rate=1., seed=None, verbose=True):
         if verbose:
             logging.basicConfig(stream=sys.stdout, level=logging.INFO,
@@ -365,7 +380,9 @@ class CausalNetwork:
 
         # Preprocess the datasets
         for dataset_id in datasets:
-            datasets[dataset_id] = preprocess_dataset.format_dataset(datasets[dataset_id])
+            datasets[dataset_id] = preprocess_dataset.format_dataset(
+                datasets[dataset_id], computing_statistics=compute_statistics
+            )
 
         # Copy the graph and set metadata
         prograph = self._graph.to_directed()
@@ -400,7 +417,7 @@ class CausalNetwork:
             )
             lap_c, lap_q, lap_perms = network_matrices.generate_core_laplacians(
                 lap_b, adj_c, adj_perms,
-                boundary_outdegree_type=boundary_outdegree_type
+                exact_boundary_outdegree=exact_boundary_outdegree
             )
 
             # Compute NPA
@@ -413,18 +430,19 @@ class CausalNetwork:
             result_builder.set_node_attributes(dataset_id, ["coefficient"], [core_coefficients])
 
             # Compute variances and confidence intervals
-            npa_var, node_var = statistics.compute_variances(
-                lap_b, lap_c, lap_q, dataset["stderr"].to_numpy(), core_coefficients, core_edge_count)
-            npa_ci_lower, npa_ci_upper, _ = statistics.confidence_interval(npa, npa_var, alpha)
-            result_builder.set_global_attributes(
-                dataset_id, ["variance", "ci_lower", "ci_upper"], [npa_var, npa_ci_lower, npa_ci_upper]
-            )
-            node_ci_lower, node_ci_upper, node_p_value = \
-                statistics.confidence_interval(core_coefficients, node_var, alpha)
-            result_builder.set_node_attributes(
-                dataset_id, ["variance", "ci_lower", "ci_upper", "p_value"],
-                [node_var, node_ci_lower, node_ci_upper, node_p_value]
-            )
+            if compute_statistics:
+                npa_var, node_var = statistics.compute_variances(
+                    lap_b, lap_c, lap_q, dataset["stderr"].to_numpy(), core_coefficients, core_edge_count)
+                npa_ci_lower, npa_ci_upper, _ = statistics.confidence_interval(npa, npa_var, alpha)
+                result_builder.set_global_attributes(
+                    dataset_id, ["variance", "ci_lower", "ci_upper"], [npa_var, npa_ci_lower, npa_ci_upper]
+                )
+                node_ci_lower, node_ci_upper, node_p_value = \
+                    statistics.confidence_interval(core_coefficients, node_var, alpha)
+                result_builder.set_node_attributes(
+                    dataset_id, ["variance", "ci_lower", "ci_upper", "p_value"],
+                    [node_var, node_ci_lower, node_ci_upper, node_p_value]
+                )
 
             # Compute permutation test statistics
             distributions = permutation_tests.permutation_tests(

@@ -36,14 +36,11 @@ def generate_boundary_laplacian(adj_b, boundary_edge_minimum=6):
     return adj_b / row_sums[:, np.newaxis]
 
 
-def generate_core_laplacians(lap_b, adj_c, adj_perms, boundary_outdegree_type="continuous"):
-    if boundary_outdegree_type not in ["continuous", "binary"]:
-        raise ValueError("Invalid boundary outdegree type. Must be one of 'continuous' or 'binary'.")
-
+def generate_core_laplacians(lap_b, adj_c, adj_perms, exact_boundary_outdegree=True):
     core_degrees = np.abs(adj_c).sum(axis=1)
     boundary_outdegrees = np.abs(lap_b).sum(axis=1)
 
-    if boundary_outdegree_type == "binary":
+    if not exact_boundary_outdegree:
         # Fix the boundary outdegrees to 1 if they are non-zero
         boundary_outdegrees[boundary_outdegrees != 0] = 1
 

@@ -165,9 +165,7 @@ def generate_dataset(network_name, causalbionet, population_size,
             )
 
         else:
-            new_population[
-                mutation_mask
-            ] = rng.choice(
+            new_population[mutation_mask] = rng.choice(
                 combined_data_samples['log_fc'],
                 size=population_size * mutation_node_count,
                 replace=True
@@ -194,7 +192,7 @@ def generate_dataset(network_name, causalbionet, population_size,
     # Save best dataset
     best_dataset = pd.DataFrame(best_dataset_overall, columns=["logFC"])
     best_dataset["nodeID"] = boundary_node_labels
-    best_dataset.to_csv("../../data/ExpressionExamplesGen02/" + network_name +
+    best_dataset.to_csv("../../data/ExpressionExamplesGen04/" + network_name +
                         "_(" + str(directionality) + ")_dataset_" +
                         instance_id + ".csv", index=False)
 
@@ -204,11 +202,11 @@ if __name__ == "__main__":
                         format="%(asctime)s %(levelname)s -- %(message)s")
 
     # Network
-    network_folder = "../../data/BAGen03/"
+    network_folder = "../../data/BAGen03Large/"
     core_suffix = "_core.tsv"
     boundary_suffix = "_boundary.tsv"
-    directions = ["-1"]
-    datasets_per_direction = 3
+    directions = ["0"]
+    datasets_per_direction = 1
     pop_size = 500
     iters = 2000
 

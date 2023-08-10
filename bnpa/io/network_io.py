@@ -49,6 +49,28 @@ def read_dsv(filepath, default_edge_type="infer", delimiter='\t', header_cols=DE
     return edge_list
 
 
+def parse_pandas(df, default_edge_type="infer", header_cols=DEFAULT_DATA_COLS):
+    if header_cols is not None and set(header_cols[0:2]).issubset(df.columns):
+        src_col, trg_col, rel_col, typ_col = header_cols[0], header_cols[1], header_cols[2], None
+        if len(header_cols) > 3 and header_cols[3] in df.columns:
+            typ_col = header_cols[3]
+    else:
+        src_col, trg_col, rel_col, typ_col = df.columns[0], df.columns[1], df.columns[2], None
+        if len(df.columns) > 3:
+            typ_col = df.columns[3]
+
+    df_copy = df.copy()
+    if typ_col is None:
+        df_copy["type"] = default_edge_type
+        typ_col = "type"
+    else:
+        df_copy[typ_col][df_copy[typ_col].isna()] = default_edge_type
+
+    edge_list = df_copy[[src_col, trg_col, rel_col, typ_col]].to_records(index=False)
+    edge_list = [(s, t, {"relation": r, "type": t}) for s, t, r, t in edge_list]
+    return edge_list
+
+
 def validate_nx_graph(graph: nx.DiGraph, allowed_edge_types):
     if not isinstance(graph, nx.DiGraph):
         raise TypeError("Argument graph is not a networkx.Digraph.")

@@ -72,7 +72,7 @@ def test_networks(network_folder, core_suffix, boundary_suffix, out_file):
                             datasets[network],
                             opposing_value_pruning_mode=opposing_pruning_mode,
                             boundary_edge_minimum=boundary_edge_min,
-                            boundary_outdegree_type=boundary_outdegree_type,
+                            exact_boundary_outdegree=boundary_outdegree_type,
                             permutations=None, verbose=False
                         )
 

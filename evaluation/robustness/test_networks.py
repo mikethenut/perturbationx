@@ -124,7 +124,7 @@ def test_copd1(argument_product, signal_to_noise_ratio, missing_value_ratio, shu
                 missing_value_pruning_mode=mvm,
                 opposing_value_pruning_mode=opm,
                 boundary_edge_minimum=bem,
-                boundary_outdegree_type=bot,
+                exact_boundary_outdegree=bot,
                 permutations=None, verbose=False
             )
 
@@ -276,7 +276,7 @@ def test_generated_data(network_folder, core_suffix, boundary_suffix, argument_p
                     missing_value_pruning_mode=mvm,
                     opposing_value_pruning_mode=opm,
                     boundary_edge_minimum=bem,
-                    boundary_outdegree_type=bot,
+                    exact_boundary_outdegree=bot,
                     permutations=None, verbose=False
                 )
 
