@@ -127,6 +127,9 @@ def permute_adjacency_k2(adj: np.ndarray, iterations=500, permutation_rate=1., e
 
 
 def permute_adjacency(adj: np.ndarray, permutations=('k2',), iterations=500, permutation_rate=1., seed=None):
+    if type(permutations) is str:
+        permutations = [permutations]
+
     adj_perms = dict()
     for p in set(permutations):
         match p.lower():

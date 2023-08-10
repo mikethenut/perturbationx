@@ -3,9 +3,9 @@ import pandas as pd
 from bnpa.CausalNetwork import CausalNetwork
 
 
-def example_run(causalbionet, datasets, legacy):
+def example_run(causalbionet, datasets, permutations=("o", "k1", "k2")):
     results = causalbionet.compute_npa(
-        datasets, legacy=legacy, permutations=("o", "k1", "k2"), verbose=True
+        datasets, permutations=permutations, verbose=True
     )
 
     # results.plot_distribution("k2")
@@ -55,16 +55,16 @@ def test_rewiring(causalbionet, datasets):
 
 
 if __name__ == "__main__":
-    my_cbn = CausalNetwork.from_tsv("data/NPANetworks/Hs_CFA_Apoptosis_backbone.tsv", edge_type="core")
-    my_cbn.add_edges_from_tsv("data/NPANetworks/Hs_CFA_Apoptosis_downstream.tsv", edge_type="boundary")
-    # my_cbn.add_edge("p(MGI:Bcl2)", "p(MGI:Bcl2a1b)", "0.", "core")
-    # my_cbn.to_dsv("test.tsv", delimiter=";", data_cols=["subject", "relation"], header=("src", "reg"))
     dataset_files = ["CS (2m) + Sham (3m)", "CS (2m) + Sham (5m)", "CS (4m) + Sham (1m)",
                      "CS (4m) + Sham (3m)", "CS (5m)", "CS (7m)"]
-    data = dict()
+    copd1_data = dict()
     for file in dataset_files:
-        data[file] = pd.read_table("./data/COPD1/" + file + ".tsv")
-        data[file] = data[file].rename(columns={"nodeLabel": "nodeID", "foldChange": "logFC"})
-        continue
+        copd1_data[file] = pd.read_table("./data/COPD1/" + file + ".tsv")
+        copd1_data[file] = copd1_data[file].rename(columns={"nodeLabel": "nodeID", "foldChange": "logFC"})
 
-    example_run(my_cbn, data, legacy=True)
+    my_cbn = CausalNetwork.from_tsv("data/NPANetworks/Mm_CFA_Apoptosis_backbone.tsv", edge_type="core")
+    my_cbn.add_edges_from_tsv("data/NPANetworks/Mm_CFA_Apoptosis_downstream.tsv", edge_type="boundary")
+    # my_cbn.add_edge("p(MGI:Bcl2)", "p(MGI:Bcl2a1b)", "0.", "core")
+    # my_cbn.to_dsv("test.tsv", delimiter=";", data_cols=["subject", "relation"], header=("src", "reg"))
+
+    example_run(my_cbn, copd1_data, permutations=[])

@@ -107,9 +107,14 @@ if __name__ == "__main__":
                   """
 
     generated_files = {}
-    generated_folder = "../../data/COPD1Gen01"
+    generated_folder = "../../data/ExpressionExamplesGen02"
     for file_name in os.listdir(generated_folder):
         if file_name.endswith(".csv"):
-            generated_files[file_name[:-4]] = os.path.join(generated_folder, file_name)
-    plot_datasets(generated_files, header_labels=('logFC', None, None, 'nodeID'),
-                  filename="dataset_analysis_plots/copd1_gen01", separator=',')
+            file_name_start = file_name[:10]
+            if file_name_start not in generated_files:
+                generated_files[file_name_start] = {}
+            generated_files[file_name_start][file_name[:-4]] = os.path.join(generated_folder, file_name)
+
+    for file_name_start in generated_files:
+        plot_datasets(generated_files[file_name_start], header_labels=('logFC', None, None, 'nodeID'),
+                      filename="dataset_analysis_plots/" + file_name_start + "_gen02", separator=',')

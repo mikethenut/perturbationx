@@ -215,7 +215,7 @@ class CausalNetwork:
             return modifications
 
         # Otherwise, compute NPAs for each dataset
-        return self._evaluate_modifications(modifications, nodes, datasets, legacy, strict_pruning, seed, verbose)
+        return self._evaluate_wiring(modifications, nodes, datasets, legacy, strict_pruning, seed, verbose)
 
     def wire_edges(self, number_of_edges, nodes, edge_relations, iterations, datasets,
                    legacy=False, strict_pruning=False, seed=None, verbose=True):
@@ -242,10 +242,10 @@ class CausalNetwork:
             return modifications
 
         # Otherwise, compute NPAs for each dataset
-        return self._evaluate_modifications(modifications, nodes, datasets, legacy, strict_pruning, seed, verbose)
+        return self._evaluate_wiring(modifications, nodes, datasets, legacy, strict_pruning, seed, verbose)
 
-    def _evaluate_modifications(self, modifications, nodes, datasets,
-                                legacy=False, strict_pruning=False, seed=None, verbose=True):
+    def _evaluate_wiring(self, modifications, nodes, datasets,
+                         legacy=False, strict_pruning=False, seed=None, verbose=True):
         if verbose:
             logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                                 format="%(asctime)s %(levelname)s -- %(message)s")
@@ -312,6 +312,10 @@ class CausalNetwork:
         return modifications
 
     def infer_graph_attributes(self, verbose=True, inplace=False):
+        if verbose:
+            logging.basicConfig(stream=sys.stdout, level=logging.INFO,
+                                format="%(asctime)s %(levelname)s -- %(message)s")
+
         if inplace:
             preprocess_network.infer_graph_attributes(self._graph, self.relation_translator, verbose)
             return self
@@ -340,13 +344,19 @@ class CausalNetwork:
 
         return adj_b, adj_c, node_ordering
 
-    def get_laplacians(self, verbose=True):
+    def get_laplacians(self, boundary_outdegree_minimum=6, boundary_outdegree_type="continuous", verbose=True):
         adj_b, adj_c, node_ordering = self.get_adjacencies(verbose)
-        lap_b = - preprocess_dataset.normalize_rows(adj_b)
-        lap_c, lap_q, _ = network_matrices.generate_core_laplacians(lap_b, adj_c, {})
+        lap_b = - network_matrices.generate_boundary_laplacian(
+            adj_b, boundary_edge_minimum=boundary_outdegree_minimum
+        )
+        lap_c, lap_q, _ = network_matrices.generate_core_laplacians(
+            lap_b, adj_c, {},
+            boundary_outdegree_type=boundary_outdegree_type
+        )
         return lap_b, lap_c, lap_q, node_ordering
 
-    def compute_npa(self, datasets: dict, legacy=False, strict_pruning=False, alpha=0.95,
+    def compute_npa(self, datasets: dict, missing_value_pruning_mode="remove", opposing_value_pruning_mode="remove",
+                    boundary_edge_minimum=6, boundary_outdegree_type="continuous", alpha=0.95,
                     permutations=('o', 'k2'), p_iters=500, p_rate=1., seed=None, verbose=True):
         if verbose:
             logging.basicConfig(stream=sys.stdout, level=logging.INFO,
@@ -366,9 +376,13 @@ class CausalNetwork:
         preprocess_network.infer_graph_attributes(prograph, self.relation_translator, verbose)
         core_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
         adj_b, adj_c = network_matrices.generate_adjacency(prograph)
-        adj_perms = permute_network.permute_adjacency(
-            adj_c, permutations=permutations, iterations=p_iters, permutation_rate=p_rate, seed=seed
-        )
+        if permutations is not None:
+            adj_perms = permute_network.permute_adjacency(
+                adj_c, permutations=permutations, iterations=p_iters,
+                permutation_rate=p_rate, seed=seed
+            )
+        else:
+            adj_perms = {}
 
         result_builder = NPAResultBuilder.new_builder(prograph, list(datasets.keys()))
         for dataset_id in datasets:
@@ -379,12 +393,15 @@ class CausalNetwork:
             # Prepare data
             lap_b, dataset = preprocess_dataset.prune_network_dataset(
                 prograph, adj_b, dataset, dataset_id,
-                strict=strict_pruning, legacy=legacy, verbose=verbose
+                missing_value_pruning_mode=missing_value_pruning_mode,
+                opposing_value_pruning_mode=opposing_value_pruning_mode,
+                boundary_edge_minimum=boundary_edge_minimum,
+                verbose=verbose
             )
-            lap_c, lap_q, lap_perms = \
-                network_matrices.generate_core_laplacians(
-                    lap_b, adj_c, adj_perms, legacy=legacy
-                )
+            lap_c, lap_q, lap_perms = network_matrices.generate_core_laplacians(
+                lap_b, adj_c, adj_perms,
+                boundary_outdegree_type=boundary_outdegree_type
+            )
 
             # Compute NPA
             core_coefficients = core.value_inference(lap_b, lap_c, dataset["logFC"].to_numpy())

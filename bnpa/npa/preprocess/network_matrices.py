@@ -21,12 +21,31 @@ def generate_adjacency(graph: nx.DiGraph, directed=False):
     return adj_b, adj_c
 
 
-def generate_core_laplacians(lap_b, adj_c, adj_perms, legacy=False):
+def generate_boundary_laplacian(adj_b, boundary_edge_minimum=6):
+    if adj_b.ndim != 2:
+        raise ValueError("Argument adj_b is not two-dimensional.")
+    if boundary_edge_minimum < 0:
+        raise ValueError("Boundary edge minimum must be non-negative.")
+
+    # Clip edges where boundary outdegree is below threshold
+    row_nonzero_counts = np.count_nonzero(adj_b, axis=1)
+    adj_b[row_nonzero_counts < boundary_edge_minimum, :] = 0
+
+    row_sums = np.abs(adj_b).sum(axis=1)
+    row_sums[row_sums == 0] = 1
+    return adj_b / row_sums[:, np.newaxis]
+
+
+def generate_core_laplacians(lap_b, adj_c, adj_perms, boundary_outdegree_type="continuous"):
+    if boundary_outdegree_type not in ["continuous", "binary"]:
+        raise ValueError("Invalid boundary outdegree type. Must be one of 'continuous' or 'binary'.")
+
     core_degrees = np.abs(adj_c).sum(axis=1)
     boundary_outdegrees = np.abs(lap_b).sum(axis=1)
 
-    if legacy:  # Fix the boundary outdegrees to 1 if they are non-zero
-        boundary_outdegrees[boundary_outdegrees > 0] = 1
+    if boundary_outdegree_type == "binary":
+        # Fix the boundary outdegrees to 1 if they are non-zero
+        boundary_outdegrees[boundary_outdegrees != 0] = 1
 
     lap_c = np.diag(core_degrees + boundary_outdegrees) - adj_c
     lap_q = np.diag(core_degrees) + adj_c

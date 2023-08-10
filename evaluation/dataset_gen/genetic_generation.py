@@ -42,20 +42,14 @@ def generate_dataset(network_name, causalbionet, population_size,
     boundary_node_count = causalbionet.number_of_nodes("boundary")
     mutation_node_count = np.rint(boundary_node_count * mutation_rate).astype(int)
 
-    # Determine sign of boundary edges
-    positive_boundary_edge_counts = np.sum(lap_b > 0, axis=0)
-    negative_boundary_edge_counts = np.sum(lap_b < 0, axis=0)
-    boundary_direction = np.array(["1" if p > n else "-1" if n > p else "0" for p, n in
+    # Determine sign of boundary edges (laplacian has opposite sign of adjacency matrix)
+    positive_boundary_edge_counts = np.sum(lap_b < 0, axis=0)
+    negative_boundary_edge_counts = np.sum(lap_b > 0, axis=0)
+    boundary_direction = np.array([1 if p > n else -1 if n > p else 0 for p, n in
                                    zip(positive_boundary_edge_counts, negative_boundary_edge_counts)])
-    positive_boundary_mask = generate_mask(boundary_direction, "1")
-    negative_boundary_mask = generate_mask(boundary_direction, "-1")
-    neutral_boundary_mask = generate_mask(boundary_direction, "0")
-
-    """
-    logging.info("Positive boundary edges: %d", np.sum(positive_boundary_mask))
-    logging.info("Negative boundary edges: %d", np.sum(negative_boundary_mask))
-    logging.info("Neutral boundary edges: %d", np.sum(neutral_boundary_mask))
-    """
+    positive_boundary_mask = generate_mask(boundary_direction, 1)
+    negative_boundary_mask = generate_mask(boundary_direction, -1)
+    neutral_boundary_mask = generate_mask(boundary_direction, 0)
 
     # Load data samples
     positive_data_samples = pd.read_table("../../data/ExpressionExamples/positive_samples.csv", sep=",")
@@ -113,8 +107,9 @@ def generate_dataset(network_name, causalbionet, population_size,
             best_dataset_overall = population[np.argmax(scores)]
 
         if verbose and ga_iter >= next_log * max_iterations:
+            completion = ga_iter / max_iterations if max_iterations > 0 else 1
             logging.info("Iteration %d best score: %f (%.2f%% done)",
-                         ga_iter, best_score, ga_iter / max_iterations * 100)
+                         ga_iter, best_score, completion * 100)
             next_log += log_frequency
 
         if ga_iter == max_iterations or \
@@ -148,7 +143,7 @@ def generate_dataset(network_name, causalbionet, population_size,
         mutation_mask = np.zeros((population_size, boundary_node_count), dtype=bool)
         mutation_mask[np.arange(population_size)[:, None], mutation_indices] = True
 
-        if directionality in ["consistent", "1"]:
+        if directionality in ["consistent", "1", "opposing", "-1"]:
             positive_mutation_mask = np.logical_and(mutation_mask, positive_boundary_mask)
             negative_mutation_mask = np.logical_and(mutation_mask, negative_boundary_mask)
             neutral_mutation_mask = np.logical_and(mutation_mask, neutral_boundary_mask)
@@ -209,14 +204,16 @@ if __name__ == "__main__":
                         format="%(asctime)s %(levelname)s -- %(message)s")
 
     # Network
-    network_folder = "../../data/NPANetworks/"
-    core_suffix = "_backbone.tsv"
-    boundary_suffix = "_downstream.tsv"
-    directions = ["0", "1", "-1"]
-    datasets_per_direction = 1
+    network_folder = "../../data/BAGen03/"
+    core_suffix = "_core.tsv"
+    boundary_suffix = "_boundary.tsv"
+    directions = ["-1"]
+    datasets_per_direction = 3
+    pop_size = 500
+    iters = 2000
 
     for file_name in os.listdir(network_folder):
-        if file_name.endswith(core_suffix):
+        if file_name.endswith(core_suffix) and not file_name.startswith("Hs_CST_Xenobiotic"):
             network_title = file_name[:-len(core_suffix)]
             logging.info("Generating datasets for %s", network_title)
 
@@ -236,7 +233,7 @@ if __name__ == "__main__":
 
                     generate_dataset(
                         network_title, my_cbn,
-                        population_size=5, max_iterations=20, target_fitness=None,
+                        population_size=pop_size, max_iterations=iters, target_fitness=None,
                         directionality=direction, mutation_rate=0.002,
                         verbose=True, log_frequency=0.1, seed=(i+1)*72
                     )

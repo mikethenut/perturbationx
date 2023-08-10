@@ -63,7 +63,7 @@ class NPAResult:
     def get_distribution(self, distribution, dataset):
         return copy.deepcopy(self._distributions[distribution][dataset][0])
 
-    def plot_distribution(self, distribution, datasets=None):
+    def plot_distribution(self, distribution, datasets=None, show=True):
         if datasets is None:
             datasets = self._datasets
         else:
@@ -74,24 +74,26 @@ class NPAResult:
             return
 
         plt.clf()
-        fig, ax = plt.subplots(nrows=len(datasets), figsize=(6, 3*len(datasets)))
+        fig, ax = plt.subplots(nrows=len(datasets), figsize=(8, 4*len(datasets)))
         if len(datasets) == 1:
             ax = [ax]
-        plt.suptitle(distribution)
+        plt.suptitle("Permutation '%s'" % distribution)
 
         for idx, d in enumerate(datasets):
             distr = self._distributions[distribution][d]
             ax[idx].set_ylabel(d)
 
-            sns.histplot(distr[0], ax=ax[idx], color='lightblue', stat='density', bins=25)
-            sns.kdeplot(distr[0], ax=ax[idx], color='navy')
+            sns.histplot(distr[0], ax=ax[idx], bins=25, stat="density")
+            sns.kdeplot(distr[0], ax=ax[idx], color="tab:blue")
             if distr[1] is not None:
-                ax[idx].axvline(x=distr[1], color='red')
+                ax[idx].axvline(x=distr[1], color="tab:red")
 
-        plt.show()
+        plt.tight_layout(rect=[0.01, 0.01, 1, 0.97])
+        if show:
+            plt.show()
         return ax
 
-    def get_leading_nodes(self, dataset, cutoff=0.2):
+    def get_leading_nodes(self, dataset, cutoff=0.8):
         contributions = self.node_info("contribution")[dataset].sort_values(ascending=False)
         cumulative_contributions = contributions.cumsum() / contributions.sum()
         max_idx = 0
