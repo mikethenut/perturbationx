@@ -1,3 +1,5 @@
+import time
+
 import pandas as pd
 
 from bnpa.CausalNetwork import CausalNetwork
@@ -62,9 +64,14 @@ if __name__ == "__main__":
         copd1_data[file] = pd.read_table("./data/COPD1/" + file + ".tsv")
         copd1_data[file] = copd1_data[file].rename(columns={"nodeLabel": "nodeID", "foldChange": "logFC"})
 
-    my_cbn = CausalNetwork.from_tsv("data/NPANetworks/Mm_CFA_Apoptosis_backbone.tsv", edge_type="core")
-    my_cbn.add_edges_from_tsv("data/NPANetworks/Mm_CFA_Apoptosis_downstream.tsv", edge_type="boundary")
+    import_start = time.time()
+    my_cbn = CausalNetwork.from_tsv("data/BAGen03Large/10000_3062_247405_core.tsv", edge_type="core")
+    my_cbn.add_edges_from_tsv("data/BAGen03Large/10000_3062_247405_boundary.tsv", edge_type="boundary")
+    import_end = time.time()
+
+    print("Import time: ", import_end - import_start)
+
     # my_cbn.add_edge("p(MGI:Bcl2)", "p(MGI:Bcl2a1b)", "0.", "core")
     # my_cbn.to_dsv("test.tsv", delimiter=";", data_cols=["subject", "relation"], header=("src", "reg"))
 
-    example_run(my_cbn, copd1_data, permutations=[])
+    # example_run(my_cbn, copd1_data, permutations=[])

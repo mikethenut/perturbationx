@@ -9,7 +9,7 @@ from bnpa.resources.resources import DEFAULT_DATA_COLS
 def read_dsv(filepath, default_edge_type="infer", delimiter='\t', header_cols=DEFAULT_DATA_COLS):
     if default_edge_type is None:
         default_edge_type = "infer"
-    edge_list = []
+    edge_dict = dict()
 
     with open(filepath, newline='') as input_file:
         dsv_file = csv.reader(input_file, delimiter=delimiter)
@@ -37,13 +37,15 @@ def read_dsv(filepath, default_edge_type="infer", delimiter='\t', header_cols=DE
             src, rel, trg = line[src_idx], line[rel_idx], line[trg_idx]
             typ = line[typ_idx] if typ_idx is not None else default_edge_type
 
-            if any(e[0] == src and e[1] == trg for e in edge_list):
+            if (src, trg) in edge_dict:
                 warnings.warn("Duplicate edge (%s, %s) found in file %s. "
                               "Only the first occurrence will be used." % (src, trg, filepath))
                 continue
 
-            edge_list.append((src, trg, {"relation": rel, "type": typ}))
+            edge_dict[(src, trg)] = (rel, typ)
 
+    edge_list = [(src, trg, {"relation": rel, "type": typ})
+                 for (src, trg), (rel, typ) in edge_dict.items()]
     return edge_list
 
 
