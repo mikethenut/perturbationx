@@ -77,6 +77,14 @@ if __name__ == "__main__":
     my_cbn = CausalNetwork.from_pandas(edge_df)
     import_end = time.time()
     print("Import time: ", import_end - import_start)
+    print(my_cbn.number_of_nodes())
+    my_cbn.infer_graph_attributes(inplace=True)
+    print(my_cbn.number_of_nodes(),
+          my_cbn.number_of_nodes(typ="core"),
+          my_cbn.number_of_nodes(typ="boundary"))
+    print(my_cbn.number_of_edges(),
+          my_cbn.number_of_edges(typ="core"),
+          my_cbn.number_of_edges(typ="boundary"))
 
     # my_cbn.add_edge("p(MGI:Bcl2)", "p(MGI:Bcl2a1b)", "0.", "core")
     # my_cbn.to_dsv("test.tsv", delimiter=";", data_cols=["subject", "relation"], header=("src", "reg"))

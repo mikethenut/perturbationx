@@ -50,28 +50,34 @@ def remove_invalid_graph_elements(graph: nx.DiGraph):
         warnings.warn("The network core is not weakly connected. Automatically selecting the largest component.")
         weak_components = sorted(nx.weakly_connected_components(core_graph), key=len, reverse=True)
         core_nodes_to_remove = set(itertools.chain.from_iterable(weak_components[1:]))
+        removed_edge_count = sum(1 for src, trg in graph.edges
+                                 if src in core_nodes_to_remove
+                                 or trg in core_nodes_to_remove)
         graph.remove_nodes_from(core_nodes_to_remove)
 
         # Some boundary nodes may have become isolated
         boundary_nodes_to_remove = set(nx.isolates(graph))
         graph.remove_nodes_from(boundary_nodes_to_remove)
-        warnings.warn("Removed nodes and all associated edges: %s"
-                      % str(core_nodes_to_remove.union(boundary_nodes_to_remove)))
+        warnings.warn("Removed %d nodes and %d associated edges: %s"
+                      % (len(core_nodes_to_remove) + len(boundary_nodes_to_remove),
+                         removed_edge_count, str(core_nodes_to_remove.union(boundary_nodes_to_remove))))
 
     # Check that the graph has no self-loops
     self_loops = list(nx.selfloop_edges(graph))
     if len(self_loops) > 0:
         warnings.warn("The network contains self-loops. "
                       "They cannot be processed by the algorithm and will be removed. "
-                      "Found self-loops on nodes: %s" % str(set(loop[0] for loop in self_loops)))
+                      "Found %d self-loops on nodes: %s" %
+                      (len(self_loops), str(set(loop[0] for loop in self_loops))))
         graph.remove_edges_from(self_loops)
 
     # Check that the graph has no opposing edges
-    opposing_edges = [(src, trg) for src, trg in graph.edges if (trg, src) in graph.edges]
+    opposing_edges = set((src, trg) for src, trg in graph.edges
+                         if (trg, src) in graph.edges and src >= trg)
     if len(opposing_edges) > 0:
         warnings.warn("The network contains opposing edges. "
                       "They will be collapsed into a single edge with their weights added. "
-                      "Opposing edges found: %s" % str(opposing_edges))
+                      "Found %d pairs of opposing edges: %s" % (len(opposing_edges), str(opposing_edges)))
 
 
 def infer_edge_attributes(graph: nx.DiGraph, relation_translator: Optional[RelationTranslator] = None):

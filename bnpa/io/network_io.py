@@ -67,7 +67,7 @@ def parse_pandas(df, default_edge_type="infer", header_cols=DEFAULT_DATA_COLS):
         df_copy[typ_col][df_copy[typ_col].isna()] = default_edge_type
 
     edge_list = df_copy[[src_col, trg_col, rel_col, typ_col]].to_records(index=False)
-    edge_list = [(s, t, {"relation": r, "type": t}) for s, t, r, t in edge_list]
+    edge_list = [(src, trg, {"relation": rel, "type": typ}) for src, trg, rel, typ in edge_list]
     return edge_list
 
 
