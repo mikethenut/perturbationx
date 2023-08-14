@@ -9,8 +9,7 @@ from py4cytoscape.exceptions import CyError
 from py4cytoscape.py4cytoscape_utils import DEFAULT_BASE_URL
 from py4cytoscape.tables import load_table_data
 
-from bnpa.resources.resources import DEFAULT_STYLE, get_style_xml_path, \
-    DEFAULT_EDGE_WIDTH, DEFAULT_NODE_BORDER_WIDTH, DEFAULT_NODE_COLOR, DEFAULT_GRADIENT
+from bnpa.resources import *
 
 
 def edge_to_p4c_format(src, trg, interaction):

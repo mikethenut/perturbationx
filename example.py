@@ -86,6 +86,8 @@ if __name__ == "__main__":
           my_cbn.number_of_edges(typ="core"),
           my_cbn.number_of_edges(typ="boundary"))
 
+    my_cbn.to_dsv("test.tsv", delimiter=";", data_cols=["subject", "relation"], header=("src", "reg"))
+
     # my_cbn.add_edge("p(MGI:Bcl2)", "p(MGI:Bcl2a1b)", "0.", "core")
     # my_cbn.to_dsv("test.tsv", delimiter=";", data_cols=["subject", "relation"], header=("src", "reg"))
 

@@ -1,11 +1,11 @@
 import logging
 import warnings
 import itertools
+from typing import Optional
 
 import networkx as nx
 
-from bnpa.io.RelationTranslator import RelationTranslator
-from typing import Optional
+from bnpa.io import RelationTranslator
 
 
 def infer_node_type(graph: nx.DiGraph):
@@ -115,27 +115,3 @@ def infer_metadata(graph: nx.DiGraph, verbose=True):
         logging.info("outer boundary nodes: %d" % len(boundary_nodes))
         logging.info("core nodes with boundary edges (inner boundary): %d" % len(inner_boundary_nodes))
 
-
-def infer_graph_attributes(graph: nx.DiGraph, relation_translator: Optional[RelationTranslator] = None, verbose=True):
-    # Quietly remove nodes without edges
-    graph.remove_nodes_from(list(nx.isolates(graph)))
-
-    # Partition core and boundary nodes
-    boundary_nodes, core_nodes = infer_node_type(graph)
-    if len(core_nodes) == 0:
-        raise ValueError("The network does not contain any core nodes.")
-    if len(boundary_nodes) == 0:
-        raise ValueError("The network does not contain any boundary nodes.")
-
-    # Compute node type and indices, add data to graph instance
-    enumerate_nodes(graph, boundary_nodes, core_nodes)
-
-    remove_invalid_graph_elements(graph)
-
-    # Compute edge weight and interaction type
-    infer_edge_attributes(graph, relation_translator)
-
-    # Add stats to metadata
-    infer_metadata(graph, verbose)
-
-    return graph

@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 from bnpa.io.network_io import read_dsv
 from bnpa.io.RelationTranslator import RelationTranslator
-from bnpa.npa.preprocess import preprocess_dataset, preprocess_network, network_matrices, permute_network
-from bnpa.npa import core
+from bnpa.toponpa.preprocessing import preprocess_dataset, preprocess_network, network_matrices, permute_network
+from bnpa.toponpa import core
 from bnpa.result.NPAResultBuilder import NPAResultBuilder
 
 

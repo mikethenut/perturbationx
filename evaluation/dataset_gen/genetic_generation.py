@@ -9,7 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from bnpa.CausalNetwork import CausalNetwork
-from bnpa.npa.core import perturbation_amplitude
+from bnpa.toponpa.core import perturbation_amplitude
 
 
 def generate_mask(array, value):

@@ -6,6 +6,9 @@ import networkx as nx
 from bnpa.resources.resources import DEFAULT_DATA_COLS
 
 
+__all__ = ["read_dsv", "parse_pandas", "validate_nx_graph", "to_edge_list", "write_dsv"]
+
+
 def read_dsv(filepath, default_edge_type="infer", delimiter='\t', header_cols=DEFAULT_DATA_COLS):
     if default_edge_type is None:
         default_edge_type = "infer"
@@ -98,12 +101,7 @@ def validate_nx_graph(graph: nx.DiGraph, allowed_edge_types):
             graph.remove_node(trg)
 
 
-def write_dsv(graph, filepath, edge_type="all", delimiter='\t',
-              data_cols=DEFAULT_DATA_COLS, header=None):
-    if header is not None and len(header) != len(data_cols):
-        raise ValueError("Please pass header values for all columns.")
-
-    # get edge list from graph
+def to_edge_list(graph, edge_type="all", data_cols=DEFAULT_DATA_COLS):
     edge_list = nx.to_edgelist(graph)
 
     # ensure that data_cols contains valid values,
@@ -113,22 +111,36 @@ def write_dsv(graph, filepath, edge_type="all", delimiter='\t',
                       "Please use 'subject', 'object', 'relation' and 'type'."
                       % str(tuple(c for c in data_cols if c not in d_cols)))
 
-    # shorten header by skipping ignored columns
-    if header is not None:
-        header = [h for h, c in zip(header, data_cols) if c in d_cols]
-
     # compute data index to ease line construction
     d_idx = [DEFAULT_DATA_COLS.index(c) for c in d_cols]
+
+    # filter edge list based on edge type
+    if edge_type != "all":
+        edge_list = [e for e in edge_list if e[2]["type"] == edge_type]
+
+    # format edge list
+    edge_list = [(e[0], e[1], e[2]["relation"], e[2]["type"]) for e in edge_list]
+    edge_list = [tuple([e[i] for i in d_idx]) for e in edge_list]
+
+    return edge_list
+
+
+def write_dsv(graph, filepath, edge_type="all", delimiter='\t',
+              data_cols=DEFAULT_DATA_COLS, header=None):
+    if header is not None and len(header) != len(data_cols):
+        raise ValueError("Please pass header values for all columns.")
+
+    # construct edge list
+    edge_list = to_edge_list(graph, edge_type=edge_type, data_cols=data_cols)
+
+    # shorten header by skipping ignored columns
+    d_cols = [c for c in data_cols if c in DEFAULT_DATA_COLS]
+    if header is not None:
+        header = [h for h, c in zip(header, data_cols) if c in d_cols]
 
     with open(filepath, 'w', newline='') as output_file:
         dsv_file = csv.writer(output_file, delimiter=delimiter)
         if header is not None:
             dsv_file.writerow(header)
 
-        for e in edge_list:
-            if edge_type != "all" and edge_type != e[2]["type"]:
-                continue
-
-            # construct dummy line and then reorder it based on specified columns
-            line = [e[0], e[1], e[2]["relation"], e[2]["type"]]
-            dsv_file.writerow([line[i] for i in d_idx])
+        dsv_file.writerows(edge_list)

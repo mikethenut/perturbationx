@@ -2,6 +2,9 @@ import numpy as np
 import numpy.linalg as la
 
 
+__all__ = ["value_inference", "perturbation_amplitude", "perturbation_amplitude_contributions"]
+
+
 def value_inference(lap_b: np.ndarray, lap_c: np.ndarray, boundary_coefficients: np.ndarray):
     if lap_b.ndim != 2:
         raise ValueError("Argument lap_b is not two-dimensional.")

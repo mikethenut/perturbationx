@@ -1,10 +1,16 @@
 import logging
+from typing import Optional
 
 import numpy as np
 import pandas as pd
 import networkx as nx
 
-from bnpa.npa.preprocess import network_matrices
+from bnpa.io import RelationTranslator
+from ..matrices import generate_boundary_laplacian
+from .preprocess_network import infer_node_type, enumerate_nodes, remove_invalid_graph_elements, \
+    infer_edge_attributes, infer_metadata
+
+__all__ = ["format_dataset", "prune_network_dataset", "infer_graph_attributes"]
 
 
 def format_dataset(dataset: pd.DataFrame, computing_statistics=True):
@@ -71,7 +77,7 @@ def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray, dataset: pd.Data
     if opposing_value_pruning_mode == "remove":
         lap_b = remove_opposing_edges(lap_b, dataset_pruned)
 
-    lap_b = network_matrices.generate_boundary_laplacian(lap_b, boundary_edge_minimum)
+    lap_b = generate_boundary_laplacian(lap_b, boundary_edge_minimum)
 
     if missing_value_pruning_mode == "nullify":
         lap_b = lap_b[:, network_idx]
@@ -99,3 +105,28 @@ def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray, dataset: pd.Data
     }
 
     return lap_b_pruned, dataset_pruned
+
+
+def infer_graph_attributes(graph: nx.DiGraph, relation_translator: Optional[RelationTranslator] = None, verbose=True):
+    # Quietly remove nodes without edges
+    graph.remove_nodes_from(list(nx.isolates(graph)))
+
+    # Partition core and boundary nodes
+    boundary_nodes, core_nodes = infer_node_type(graph)
+    if len(core_nodes) == 0:
+        raise ValueError("The network does not contain any core nodes.")
+    if len(boundary_nodes) == 0:
+        raise ValueError("The network does not contain any boundary nodes.")
+
+    # Compute node type and indices, add data to graph instance
+    enumerate_nodes(graph, boundary_nodes, core_nodes)
+
+    remove_invalid_graph_elements(graph)
+
+    # Compute edge weight and interaction type
+    infer_edge_attributes(graph, relation_translator)
+
+    # Add stats to metadata
+    infer_metadata(graph, verbose)
+
+    return graph

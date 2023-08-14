@@ -7,8 +7,8 @@ import pandas as pd
 import networkx as nx
 
 from bnpa.CausalNetwork import CausalNetwork
-from bnpa.npa.preprocess import preprocess_dataset, network_matrices, permute_network
-from bnpa.npa import core
+from bnpa.toponpa.preprocessing import preprocess_dataset, network_matrices, permute_network
+from bnpa.toponpa import core
 
 
 def create_networkx_from_adjacency(adjacency, nodes):

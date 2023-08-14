@@ -8,12 +8,12 @@ import json
 import numpy as np
 import networkx as nx
 
-from bnpa.resources.resources import DEFAULT_DATA_COLS
-from bnpa.io.RelationTranslator import RelationTranslator
-from bnpa.io.network_io import read_dsv, parse_pandas, validate_nx_graph, write_dsv
-from bnpa.npa.preprocess import preprocess_network, preprocess_dataset, network_matrices, permute_network
-from bnpa.npa import core, statistics, permutation_tests
-from bnpa.result.NPAResultBuilder import NPAResultBuilder
+import bnpa.io as px_io
+from bnpa.io import RelationTranslator
+import bnpa.toponpa as toponpa
+from bnpa.result import NPAResultBuilder
+import bnpa.util as util
+from bnpa.resources import DEFAULT_DATA_COLS
 
 
 class CausalNetwork:
@@ -36,7 +36,7 @@ class CausalNetwork:
         elif not inplace:
             graph = graph.copy()
 
-        validate_nx_graph(graph, self.__allowed_edge_types)
+        px_io.validate_nx_graph(graph, self.__allowed_edge_types)
         self._graph = graph
 
         # Copy metadata from nx attributes, clear attributes and set default values
@@ -56,7 +56,7 @@ class CausalNetwork:
     def from_dsv(cls, filepath, edge_type="infer", delimiter='\t',
                  header_cols=DEFAULT_DATA_COLS, relation_translator=None):
         graph = nx.DiGraph()
-        graph.add_edges_from(read_dsv(filepath, default_edge_type=edge_type,
+        graph.add_edges_from(px_io.read_dsv(filepath, default_edge_type=edge_type,
                                       delimiter=delimiter, header_cols=header_cols))
 
         graph.graph["title"] = Path(filepath).stem
@@ -86,7 +86,7 @@ class CausalNetwork:
     @classmethod
     def from_pandas(cls, df, default_edge_type="infer",
                     header_cols=DEFAULT_DATA_COLS, relation_translator=None):
-        edge_list = parse_pandas(df, default_edge_type=default_edge_type,
+        edge_list = px_io.parse_pandas(df, default_edge_type=default_edge_type,
                                 header_cols=header_cols)
         graph = nx.DiGraph()
         graph.add_edges_from(edge_list)
@@ -94,9 +94,9 @@ class CausalNetwork:
 
     def add_edges_from_dsv(self, filepath, edge_type="infer", delimiter='\t',
                            header_cols=DEFAULT_DATA_COLS):
-        self._graph.add_edges_from(read_dsv(filepath, default_edge_type=edge_type,
+        self._graph.add_edges_from(px_io.read_dsv(filepath, default_edge_type=edge_type,
                                             delimiter=delimiter, header_cols=header_cols))
-        validate_nx_graph(self._graph, self.__allowed_edge_types)
+        px_io.validate_nx_graph(self._graph, self.__allowed_edge_types)
 
     def add_edges_from_tsv(self, filepath, edge_type="infer",
                            header_cols=DEFAULT_DATA_COLS):
@@ -108,9 +108,9 @@ class CausalNetwork:
 
     def add_edges_from_pandas(self, df, default_edge_type="infer",
                               header_cols=DEFAULT_DATA_COLS):
-        self._graph.add_edges_from(parse_pandas(df, default_edge_type=default_edge_type,
+        self._graph.add_edges_from(px_io.parse_pandas(df, default_edge_type=default_edge_type,
                                                header_cols=header_cols))
-        validate_nx_graph(self._graph, self.__allowed_edge_types)
+        px_io.validate_nx_graph(self._graph, self.__allowed_edge_types)
 
     def initialize_metadata(self):
         # The user can delete metadata dict
@@ -218,7 +218,7 @@ class CausalNetwork:
                 existing_edges.append((src, trg, self._graph[src][trg]["relation"]))
 
         # Permute edges
-        modifications = permute_network.permute_edge_list(
+        modifications = toponpa.permute_edge_list(
             np.array(existing_edges), nodes, iterations,
             method=method, permutation_rate=p_rate, seed=seed
         )
@@ -269,15 +269,15 @@ class CausalNetwork:
         # Preprocess the datasets
         if datasets is not None:
             for dataset_id in datasets:
-                datasets[dataset_id] = preprocess_dataset.format_dataset(datasets[dataset_id])
+                datasets[dataset_id] = toponpa.format_dataset(datasets[dataset_id])
 
         # Preprocess the graph
         prograph = self._graph.to_directed()
-        preprocess_network.infer_graph_attributes(prograph, self.relation_translator, verbose=False)
+        toponpa.infer_graph_attributes(prograph, self.relation_translator, verbose=False)
         core_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
 
         # Construct modified adjacency matrices
-        adj_b, adj_c = network_matrices.generate_adjacency(prograph)
+        adj_b, adj_c = toponpa.generate_adjacency(prograph)
         adj_c_perms = [adj_c.copy() for _ in range(len(modifications))]
         rt = self.relation_translator if self.relation_translator is not None \
             else RelationTranslator()
@@ -295,7 +295,7 @@ class CausalNetwork:
                 if weight > 0:
                     edge_weights.append(weight)
 
-            permute_network.connect_adjacency_components(
+            util.connect_adjacency_components(
                 adj_c_perm, nodes, weights=edge_weights, seed=seed
             )
 
@@ -309,19 +309,19 @@ class CausalNetwork:
             for idx, adj_c_perm in enumerate(adj_c_perms):
                 # Prepare data
                 if legacy:
-                    lap_b, lap_c, lap_q, _ = network_matrices.generate_laplacians(adj_b, adj_c_perm, {})
-                    lap_b, dataset = preprocess_dataset.prune_network_dataset(
+                    lap_b, lap_c, lap_q, _ = toponpa.generate_laplacians(adj_b, adj_c_perm, {})
+                    lap_b, dataset = toponpa.prune_network_dataset(
                         prograph, lap_b, dataset, dataset_id, strict_pruning, verbose=False
                     )
                 else:
-                    lap_b, dataset = preprocess_dataset.prune_network_dataset(
+                    lap_b, dataset = toponpa.prune_network_dataset(
                         prograph, adj_b, dataset, dataset_id, strict_pruning, verbose=False
                     )
-                    lap_b, lap_c, lap_q, _ = network_matrices.generate_laplacians(lap_b, adj_c_perm, {})
+                    lap_b, lap_c, lap_q, _ = toponpa.generate_laplacians(lap_b, adj_c_perm, {})
 
                 # Compute NPA
-                core_coefficients = core.value_inference(lap_b, lap_c, dataset["logFC"].to_numpy())
-                npa = core.perturbation_amplitude(lap_q, core_coefficients, core_edge_count)
+                core_coefficients = toponpa.value_inference(lap_b, lap_c, dataset["logFC"].to_numpy())
+                npa = toponpa.perturbation_amplitude(lap_q, core_coefficients, core_edge_count)
                 modifications[idx][1][dataset_id] = npa
 
         return modifications
@@ -332,11 +332,11 @@ class CausalNetwork:
                                 format="%(asctime)s %(levelname)s -- %(message)s")
 
         if inplace:
-            preprocess_network.infer_graph_attributes(self._graph, self.relation_translator, verbose)
+            toponpa.infer_graph_attributes(self._graph, self.relation_translator, verbose)
             return self
         else:
             graph = self._graph.to_directed()
-            preprocess_network.infer_graph_attributes(graph, self.relation_translator, verbose)
+            toponpa.infer_graph_attributes(graph, self.relation_translator, verbose)
             return CausalNetwork(graph, self.relation_translator, inplace=True)
 
     def get_adjacencies(self, verbose=True):
@@ -347,10 +347,10 @@ class CausalNetwork:
 
         # Preprocess the graph
         prograph = self._graph.to_directed()
-        preprocess_network.infer_graph_attributes(prograph, self.relation_translator, verbose)
+        toponpa.infer_graph_attributes(prograph, self.relation_translator, verbose)
 
         # Construct adjacency matrices
-        adj_b, adj_c = network_matrices.generate_adjacency(prograph)
+        adj_b, adj_c = toponpa.generate_adjacency(prograph)
 
         # Determine node ordering
         node_ordering = [None] * len(prograph.nodes)
@@ -361,10 +361,10 @@ class CausalNetwork:
 
     def get_laplacians(self, boundary_outdegree_minimum=6, exact_boundary_outdegree=True, verbose=True):
         adj_b, adj_c, node_ordering = self.get_adjacencies(verbose)
-        lap_b = - network_matrices.generate_boundary_laplacian(
+        lap_b = - toponpa.generate_boundary_laplacian(
             adj_b, boundary_edge_minimum=boundary_outdegree_minimum
         )
-        lap_c, lap_q, _ = network_matrices.generate_core_laplacians(
+        lap_c, lap_q, _ = toponpa.generate_core_laplacians(
             lap_b, adj_c, {},
             exact_boundary_outdegree=exact_boundary_outdegree
         )
@@ -380,7 +380,7 @@ class CausalNetwork:
 
         # Preprocess the datasets
         for dataset_id in datasets:
-            datasets[dataset_id] = preprocess_dataset.format_dataset(
+            datasets[dataset_id] = toponpa.format_dataset(
                 datasets[dataset_id], computing_statistics=compute_statistics
             )
 
@@ -390,11 +390,11 @@ class CausalNetwork:
         prograph.graph.update(self.metadata)
 
         # Preprocess the graph
-        preprocess_network.infer_graph_attributes(prograph, self.relation_translator, verbose)
+        toponpa.infer_graph_attributes(prograph, self.relation_translator, verbose)
         core_edge_count = sum(1 for src, trg in prograph.edges if prograph[src][trg]["type"] == "core")
-        adj_b, adj_c = network_matrices.generate_adjacency(prograph)
+        adj_b, adj_c = toponpa.generate_adjacency(prograph)
         if permutations is not None:
-            adj_perms = permute_network.permute_adjacency(
+            adj_perms = toponpa.permute_adjacency(
                 adj_c, permutations=permutations, iterations=p_iters,
                 permutation_rate=p_rate, seed=seed
             )
@@ -408,21 +408,21 @@ class CausalNetwork:
                 logging.info("COMPUTING NPA FOR DATASET '%s'" % dataset_id)
 
             # Prepare data
-            lap_b, dataset = preprocess_dataset.prune_network_dataset(
+            lap_b, dataset = toponpa.prune_network_dataset(
                 prograph, adj_b, dataset, dataset_id,
                 missing_value_pruning_mode=missing_value_pruning_mode,
                 opposing_value_pruning_mode=opposing_value_pruning_mode,
                 boundary_edge_minimum=boundary_edge_minimum,
                 verbose=verbose
             )
-            lap_c, lap_q, lap_perms = network_matrices.generate_core_laplacians(
+            lap_c, lap_q, lap_perms = toponpa.generate_core_laplacians(
                 lap_b, adj_c, adj_perms,
                 exact_boundary_outdegree=exact_boundary_outdegree
             )
 
             # Compute NPA
-            core_coefficients = core.value_inference(lap_b, lap_c, dataset["logFC"].to_numpy())
-            npa, node_contributions = core.perturbation_amplitude_contributions(
+            core_coefficients = toponpa.value_inference(lap_b, lap_c, dataset["logFC"].to_numpy())
+            npa, node_contributions = toponpa.perturbation_amplitude_contributions(
                 lap_q, core_coefficients, core_edge_count
             )
             result_builder.set_global_attributes(dataset_id, ["NPA"], [npa])
@@ -431,27 +431,27 @@ class CausalNetwork:
 
             # Compute variances and confidence intervals
             if compute_statistics:
-                npa_var, node_var = statistics.compute_variances(
+                npa_var, node_var = toponpa.compute_variances(
                     lap_b, lap_c, lap_q, dataset["stderr"].to_numpy(), core_coefficients, core_edge_count)
-                npa_ci_lower, npa_ci_upper, _ = statistics.confidence_interval(npa, npa_var, alpha)
+                npa_ci_lower, npa_ci_upper, _ = toponpa.confidence_interval(npa, npa_var, alpha)
                 result_builder.set_global_attributes(
                     dataset_id, ["variance", "ci_lower", "ci_upper"], [npa_var, npa_ci_lower, npa_ci_upper]
                 )
                 node_ci_lower, node_ci_upper, node_p_value = \
-                    statistics.confidence_interval(core_coefficients, node_var, alpha)
+                    toponpa.confidence_interval(core_coefficients, node_var, alpha)
                 result_builder.set_node_attributes(
                     dataset_id, ["variance", "ci_lower", "ci_upper", "p_value"],
                     [node_var, node_ci_lower, node_ci_upper, node_p_value]
                 )
 
             # Compute permutation test statistics
-            distributions = permutation_tests.permutation_tests(
+            distributions = toponpa.test_permutations(
                 lap_b, lap_c, lap_q, lap_perms, core_edge_count,
                 dataset["logFC"].to_numpy(), permutations,
                 iterations=p_iters, permutation_rate=p_rate, seed=seed
             )
             for p in distributions:
-                pv = statistics.p_value(npa, distributions[p])
+                pv = toponpa.p_value(npa, distributions[p])
                 result_builder.set_global_attributes(dataset_id, ["%s_value" % p], [pv])
                 result_builder.set_distribution(dataset_id, p, distributions[p], npa)
 
@@ -460,9 +460,12 @@ class CausalNetwork:
     def to_networkx(self):
         return self._graph.copy()
 
+    def to_edge_list(self, edge_type="all", data_cols=DEFAULT_DATA_COLS,):
+        return px_io.to_edge_list(self._graph, edge_type, data_cols)
+
     def to_dsv(self, filepath, edge_type="all", delimiter='\t',
                data_cols=DEFAULT_DATA_COLS, header=None):
-        write_dsv(self._graph, filepath, edge_type, delimiter, data_cols, header)
+        px_io.write_dsv(self._graph, filepath, edge_type, delimiter, data_cols, header)
 
     def to_tsv(self, filepath, edge_type="all",
                data_cols=DEFAULT_DATA_COLS, header=None):

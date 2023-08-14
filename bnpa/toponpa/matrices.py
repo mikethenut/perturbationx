@@ -1,6 +1,8 @@
 import numpy as np
 import networkx as nx
 
+__all__ = ["generate_adjacency", "generate_boundary_laplacian", "generate_core_laplacians"]
+
 
 def generate_adjacency(graph: nx.DiGraph, directed=False):
     core_size = sum(1 for n in graph.nodes if graph.nodes[n]["type"] == "core")

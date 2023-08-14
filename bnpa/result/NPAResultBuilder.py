@@ -3,7 +3,7 @@ import warnings
 import numpy as np
 import pandas as pd
 
-from bnpa.result.NPAResult import NPAResult
+from .NPAResult import NPAResult
 
 
 class NPAResultBuilder:
