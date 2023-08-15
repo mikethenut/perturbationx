@@ -2,7 +2,7 @@ import warnings
 
 import numpy as np
 
-from .adjacency_permutations import adjacency_permutation_k1, adjacency_permutation_k1
+from .adjacency_permutation import adjacency_permutation_k1, adjacency_permutation_k2
 
 __all__ = ["permute_adjacency", "permute_edge_list"]
 
@@ -20,7 +20,7 @@ def permute_adjacency(adj: np.ndarray, permutations=('k2',), iterations=500, per
                     ensure_connectedness=True, seed=seed
                 )
             case 'k2':
-                adj_perms[p] = adjacency_permutation_k1(
+                adj_perms[p] = adjacency_permutation_k2(
                     adj, iterations=iterations, permutation_rate=permutation_rate,
                     ensure_connectedness=True, seed=seed
                 )

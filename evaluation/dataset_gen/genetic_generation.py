@@ -34,7 +34,7 @@ def generate_dataset(network_name, causalbionet, population_size,
     inference_matrix = - np.matmul(la.inv(lap_c), lap_b)
 
     # Determine boundary node labels
-    boundary_nodes = causalbionet.get_nodes(typ="boundary")
+    boundary_nodes = causalbionet.nodes(typ="boundary")
     boundary_node_count = len(boundary_nodes)
     boundary_node_labels = node_ordering[-boundary_node_count:]
 

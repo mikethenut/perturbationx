@@ -1,12 +1,14 @@
+import logging
 import time
 
 import pandas as pd
 
-from bnpa.CausalNetwork import CausalNetwork
+from bnpa.resources import DEFAULT_LOGGING_KWARGS
+from bnpa import CausalNetwork
 
 
 def example_run(causalbionet, datasets, permutations=("o", "k1", "k2")):
-    results = causalbionet.compute_npa(
+    results = causalbionet.toponpa(
         datasets, permutations=permutations, verbose=True
     )
 
@@ -64,7 +66,14 @@ if __name__ == "__main__":
         copd1_data[file] = pd.read_table("./data/COPD1/" + file + ".tsv")
         copd1_data[file] = copd1_data[file].rename(columns={"nodeLabel": "nodeID", "foldChange": "logFC"})
 
-    import_start = time.time()
+    logging.basicConfig(**DEFAULT_LOGGING_KWARGS)
+    my_cbn = CausalNetwork.from_tsv("data/NPANetworks/Mm_CFA_Apoptosis_backbone.tsv", edge_type="core")
+    my_cbn.add_edges_from_tsv("data/NPANetworks/Mm_CFA_Apoptosis_downstream.tsv", edge_type="boundary")
+    example_run(my_cbn, copd1_data, permutations=["o", "k1", "k2"])
+    logging.info("Finished run")
+    test_rewiring(my_cbn, copd1_data)
+    logging.info("Finished rewiring")
+
     my_cbn = CausalNetwork.from_tsv("data/BAGen03Large/10000_3062_247405_core.tsv", edge_type="core")
     my_cbn.add_edges_from_tsv("data/BAGen03Large/10000_3062_247405_boundary.tsv", edge_type="boundary")
     import_end = time.time()

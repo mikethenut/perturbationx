@@ -1,13 +1,20 @@
+import sys
 import os
+import logging
 
 __all__ = [
-    "DEFAULT_DATA_COLS", "STYLE_XML", "DEFAULT_STYLE", "DEFAULT_NODE_COLOR", "DEFAULT_GRADIENT",
-    "DEFAULT_EDGE_WIDTH", "DEFAULT_NODE_BORDER_WIDTH", "get_style_xml_path"
+    "DEFAULT_DATA_COLS", "DEFAULT_LOGGING_KWARGS", "STYLE_XML", "DEFAULT_STYLE", "DEFAULT_NODE_COLOR",
+    "DEFAULT_GRADIENT", "DEFAULT_EDGE_WIDTH", "DEFAULT_NODE_BORDER_WIDTH", "get_style_xml_path"
 ]
 
 
 # io
 DEFAULT_DATA_COLS = ("subject", "object", "relation", "type")
+DEFAULT_LOGGING_KWARGS = {
+    "stream": sys.stdout,
+    "level": logging.INFO,
+    "format": "%(asctime)s %(levelname)s -- %(message)s",
+}
 
 
 # visualisation

@@ -1,6 +1,6 @@
 from .preprocessing import *
 from .matrices import *
-from .permutations import *
+from .permutation import *
 from .core import *
 from .statistics import *
-
+from .toponpa import *

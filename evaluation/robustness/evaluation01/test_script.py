@@ -68,7 +68,7 @@ def test_networks(network_folder, core_suffix, boundary_suffix, out_file):
                         len(results) % evaluations_per_network + 1, evaluations_per_network))
                     with warnings.catch_warnings():
                         warnings.simplefilter("ignore")
-                        result = networks[network].compute_npa(
+                        result = networks[network].toponpa(
                             datasets[network],
                             opposing_value_pruning_mode=opposing_pruning_mode,
                             boundary_edge_minimum=boundary_edge_min,

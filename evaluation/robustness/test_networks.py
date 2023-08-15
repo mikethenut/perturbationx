@@ -49,7 +49,7 @@ def test_copd1(argument_product, signal_to_noise_ratio, missing_value_ratio, shu
         data_id = str(uuid.uuid4())[:8]
         base_dataset = datasets[data_name].copy()
         base_dataset = base_dataset[~base_dataset["logFC"].isna()]
-        base_dataset = base_dataset[base_dataset["nodeID"].isin(causalbionet.get_nodes(data=False))]
+        base_dataset = base_dataset[base_dataset["nodeID"].isin(causalbionet.nodes(data=False))]
         dataset_base_mvr = 1 - len(base_dataset) / boundary_node_count
         base_dataset.reset_index(inplace=True, drop=True)
 
@@ -119,7 +119,7 @@ def test_copd1(argument_product, signal_to_noise_ratio, missing_value_ratio, shu
 
         with (warnings.catch_warnings()):
             warnings.simplefilter("ignore")
-            result = causalbionet.compute_npa(
+            result = causalbionet.toponpa(
                 perturbed_datasets,
                 missing_value_pruning_mode=mvm,
                 opposing_value_pruning_mode=opm,
@@ -271,7 +271,7 @@ def test_generated_data(network_folder, core_suffix, boundary_suffix, argument_p
 
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
-                result = networks[network].compute_npa(
+                result = networks[network].toponpa(
                     perturbed_datasets,
                     missing_value_pruning_mode=mvm,
                     opposing_value_pruning_mode=opm,

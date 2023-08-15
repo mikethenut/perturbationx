@@ -1,10 +1,10 @@
 import numpy as np
 import networkx as nx
 
-__all__ = ["generate_adjacency", "generate_boundary_laplacian", "generate_core_laplacians"]
+__all__ = ["generate_adjacencies", "generate_boundary_laplacian", "generate_core_laplacians"]
 
 
-def generate_adjacency(graph: nx.DiGraph, directed=False):
+def generate_adjacencies(graph: nx.DiGraph, directed=False):
     core_size = sum(1 for n in graph.nodes if graph.nodes[n]["type"] == "core")
     network_size = graph.number_of_nodes()
     adj = np.zeros((core_size, network_size))
