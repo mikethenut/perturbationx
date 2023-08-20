@@ -87,7 +87,17 @@ def toponpa(graph, relation_translator, datasets: dict, missing_value_pruning_mo
             result_builder.set_global_attributes(dataset_id, ["%s_value" % p], [pv])
             result_builder.set_distribution(dataset_id, p, distributions[p], npa)
 
-    return result_builder.build()
+    args_metadata = {
+        "missing_value_pruning_mode": missing_value_pruning_mode,
+        "opposing_value_pruning_mode": opposing_value_pruning_mode,
+        "boundary_edge_minimum": boundary_edge_minimum,
+        "exact_boundary_outdegree": exact_boundary_outdegree,
+        "alpha": alpha,
+        "permutation_iterations": p_iters,
+        "permutation_rate": p_rate,
+        "seed": seed
+    }
+    return result_builder.build(args_metadata)
 
 
 def evaluate_modifications(graph, relation_translator, modifications, nodes, datasets,
