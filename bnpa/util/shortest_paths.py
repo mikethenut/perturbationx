@@ -1,5 +1,7 @@
 import networkx as nx
 
+__all__ = ["get_shortest_path_components"]
+
 
 def get_shortest_path_components(graph: nx.DiGraph, endpoints: set, directed=False, length_tolerance=0):
     """

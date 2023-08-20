@@ -25,8 +25,9 @@ def hierarchical_clustering(data, labels, method='average', color_threshold=None
 def barplot(data, filename=None):
     fig = plt.figure(figsize=(6, 4))
     fig.patch.set_facecolor('white')
-    plt.bar(range(len(data)), data, align='center')
-    plt.ylabel('Explained variance percentage')
+    plt.bar(range(1, len(data)+1), data, align='center')
+    plt.xlabel('Principal component')
+    plt.ylabel('Explained variance ratio')
     fig.tight_layout()
     if filename is not None:
         plt.savefig("clustering_plots/" + filename)

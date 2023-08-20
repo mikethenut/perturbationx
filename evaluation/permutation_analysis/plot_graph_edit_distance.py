@@ -40,9 +40,6 @@ def plot_copd1_k_perms(in_file):
 
         for dataset in results_by_permutation[permutation]:
             base_ged, ref_npa = base_results[dataset][0][0]
-            permutation_rates.append(0.)
-            graph_edit_distances.append(base_ged)
-            relative_npa.append(1.)
 
             if base_ged != 0:
                 print("Base GED is not zero for %s." % dataset)
@@ -63,10 +60,12 @@ def plot_copd1_k_perms(in_file):
                 graph_edit_distances.append(avg_ged / count)
                 relative_npa.append(rel_npa / count)
 
-
-        sns.lineplot(x=permutation_rates, y=relative_npa, ax=ax[0], color="tab:green")
-        sns.lineplot(x=permutation_rates, y=graph_edit_distances, ax=ax[1], color="tab:green")
-        sns.lineplot(x=graph_edit_distances, y=relative_npa, ax=ax[2], color="tab:green")
+        sns.violinplot(x=permutation_rates, y=relative_npa, ax=ax[0],
+                       color="tab:green", inner="stick")
+        sns.violinplot(x=permutation_rates, y=graph_edit_distances, ax=ax[1],
+                       color="tab:green", inner="stick")
+        sns.violinplot(x=graph_edit_distances, y=relative_npa, ax=ax[2],
+                       color="tab:green", inner="stick")
 
         ax[0].set_xlabel("Permutation Rate")
         ax[0].set_ylabel("Relative NPA")
@@ -75,9 +74,9 @@ def plot_copd1_k_perms(in_file):
         ax[2].set_xlabel("Graph Edit Distance")
         ax[2].set_ylabel("Relative NPA")
 
-        ax[0].set_ylim([0.25, 1.05])
+        ax[0].set_ylim([-0.05, 1.05])
         ax[1].set_ylim([-20, 520])
-        ax[2].set_ylim([0.25, 1.05])
+        ax[2].set_ylim([-0.1, 1.05])
 
         plt.tight_layout()
         out_file = in_file.replace(".json", "_%s.png" % permutation)
@@ -146,9 +145,10 @@ def plot_gen_k_perms(in_file, stat_file):
                 relative_graph_edit_distances.append(avg_rel_ged / count)
                 relative_npa.append(rel_npa / count)
 
-        sns.violinplot(x=permutation_rates, y=relative_npa, ax=ax[0], color="tab:green",
-                       inner="stick")
-        sns.lineplot(x=permutation_rates, y=relative_graph_edit_distances, ax=ax[1], color="tab:green")
+        sns.violinplot(x=permutation_rates, y=relative_npa, ax=ax[0],
+                       color="tab:green", inner="stick")
+        sns.violinplot(x=permutation_rates, y=relative_graph_edit_distances, ax=ax[1],
+                       color="tab:green", inner="stick")
 
         ax[0].set_xlabel("Permutation Rate")
         ax[0].set_ylabel("Relative NPA")
@@ -164,9 +164,153 @@ def plot_gen_k_perms(in_file, stat_file):
         plt.clf()
 
 
+def plot_all_k_perms(in_files, stat_files):
+    fig, axs = plt.subplots(1, len(in_files), figsize=(4 * len(in_files), 6))
+    if len(in_files) == 1:
+        axs = [axs]
+
+    results_by_permutation = dict()
+    for file_idx, in_file in enumerate(in_files):
+        with open(in_file) as f:
+            results = json.load(f)
+
+        if in_files[in_file] == "COPD1":
+            for result in results:
+                permutation = result["permutation"]
+                p_rate = result["permutation_rate"]
+                ged = result["ged"]
+
+                for dataset in result["npa"]:
+                    score = result["npa"][dataset]
+
+                    if permutation not in results_by_permutation:
+                        results_by_permutation[permutation] = dict()
+                    if in_file not in results_by_permutation[permutation]:
+                        results_by_permutation[permutation][in_file] = dict()
+                    if dataset not in results_by_permutation[permutation][in_file]:
+                        results_by_permutation[permutation][in_file][dataset] = dict()
+                    if p_rate not in results_by_permutation[permutation][in_file][dataset]:
+                        results_by_permutation[permutation][in_file][dataset][p_rate] = []
+
+                    results_by_permutation[permutation][in_file][dataset][p_rate].append((ged, score))
+
+        else:
+            stat_file = stat_files[in_file]
+            with open(stat_file) as f:
+                stats = json.load(f)
+
+            for result in results:
+                network = result["network"]
+                permutation = result["permutation"]
+                p_rate = result["permutation_rate"]
+                ged = result["ged"]
+                core_edge_count = stats[network]["core_edge_count"]
+
+                for dataset in result["npa"]:
+                    score = result["npa"][dataset]
+
+                    if permutation not in results_by_permutation:
+                        results_by_permutation[permutation] = dict()
+                    if in_file not in results_by_permutation[permutation]:
+                        results_by_permutation[permutation][in_file] = dict()
+                    if (network, dataset) not in results_by_permutation[permutation][in_file]:
+                        results_by_permutation[permutation][in_file][(network, dataset)] = dict()
+                    if p_rate not in results_by_permutation[permutation][in_file][(network, dataset)]:
+                        results_by_permutation[permutation][in_file][(network, dataset)][p_rate] = []
+
+                    results_by_permutation[permutation][in_file][(network, dataset)][p_rate].append(
+                        (core_edge_count, ged, score))
+
+    for permutation in results_by_permutation:
+        if permutation is None:
+            continue
+
+        # Plot results
+        columns = len(results_by_permutation[permutation])
+        fig, axs = plt.subplots(1, columns, figsize=(4 * columns, 6))
+        if columns == 1:
+            axs = [axs]
+
+        for file_idx, in_file in enumerate(results_by_permutation[permutation]):
+            results_by_file = results_by_permutation[permutation][in_file]
+            base_results = results_by_permutation[None][in_file]
+            ax = axs[file_idx]
+
+            permutation_rates = []
+            relative_npa = []
+
+            if in_files[in_file] == "COPD1":
+                for dataset in results_by_file:
+                    base_ged, ref_npa = base_results[dataset][0][0]
+
+                    if base_ged != 0:
+                        print("Base GED is not zero for %s." % dataset)
+                    if ref_npa == 0:
+                        print("Skipping %s." % dataset)
+                        continue
+
+                    for p_rate in results_by_file[dataset]:
+                        count = 0
+                        rel_npa = 0
+                        for ged, npa in results_by_file[dataset][p_rate]:
+                            count += 1
+                            rel_npa += npa / ref_npa
+
+                        permutation_rates.append(p_rate)
+                        relative_npa.append(rel_npa / count)
+
+                sns.boxplot(x=permutation_rates, y=relative_npa, ax=ax, color="tab:blue")
+                ax.set_xlabel("Permutation Rate")
+                ax.set_ylabel("Relative NPA")
+                ax.set_ylim([-0.05, 1.05])
+
+            else:
+                for network, dataset in results_by_file:
+                    edge_count, base_ged, ref_npa = base_results[(network, dataset)][0][0]
+
+                    if base_ged != 0:
+                        print("Base GED is not zero for %s." % dataset)
+                    if ref_npa == 0:
+                        print("Skipping %s." % dataset)
+                        continue
+
+                    for p_rate in results_by_file[(network, dataset)]:
+                        count = 0
+                        rel_npa = 0
+                        for edge_count, ged, npa in results_by_file[(network, dataset)][p_rate]:
+                            count += 1
+                            rel_npa += npa / ref_npa
+
+                        permutation_rates.append(p_rate)
+                        relative_npa.append(rel_npa / count)
+
+            sns.boxplot(x=permutation_rates, y=relative_npa, ax=ax, color="tab:blue")
+            ax.set_xlabel("Permutation Rate")
+            ax.set_ylabel("Relative NPA")
+            ax.set_ylim([-0.05, 1.75])
+            ax.set_title(in_files[in_file])
+
+        permutation_name = permutation.split("_")
+        plt.suptitle("Core edge permutation \"%s\" (%s)" % (permutation_name[0].upper(), permutation_name[1]))
+        plt.tight_layout()
+        out_file = "graph_edit_distance/k_perms_combined_%s_%s.png" % (permutation_name[0], permutation_name[1])
+        plt.savefig(out_file, dpi=300)
+        plt.clf()
+
+
 if __name__ == "__main__":
     # plot_copd1_k_perms("graph_edit_distance/k_perms_copd1.json")
     # plot_gen_k_perms("graph_edit_distance/k_perms_npa.json",
-    #                "../../output/network_stats/network_stats.json")
-    plot_gen_k_perms("graph_edit_distance/k_perms_ba.json",
-                     "../../output/ba_stats_03/ba_stats.json")
+    #                 "../../output/network_stats/network_stats.json")
+    # plot_gen_k_perms("graph_edit_distance/k_perms_ba.json",
+    #                "../../output/ba_stats_03/ba_stats.json")
+    plot_all_k_perms(
+        {
+            "graph_edit_distance/k_perms_copd1.json": "COPD1",
+         "graph_edit_distance/k_perms_npa.json": "NPA-R",
+         "graph_edit_distance/k_perms_ba.json": "Barabási–Albert"
+         },{
+            "graph_edit_distance/k_perms_npa.json" : "../../output/network_stats/network_stats.json",
+            "graph_edit_distance/k_perms_ba.json" : "../../output/ba_stats_03/ba_stats.json"
+        }
+    )

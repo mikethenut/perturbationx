@@ -1,3 +1,4 @@
+import os
 import logging
 import time
 
@@ -74,11 +75,6 @@ if __name__ == "__main__":
     test_rewiring(my_cbn, copd1_data)
     logging.info("Finished rewiring")
 
-    my_cbn = CausalNetwork.from_tsv("data/BAGen03Large/10000_3062_247405_core.tsv", edge_type="core")
-    my_cbn.add_edges_from_tsv("data/BAGen03Large/10000_3062_247405_boundary.tsv", edge_type="boundary")
-    import_end = time.time()
-    print("Import time: ", import_end - import_start)
-
     import_start = time.time()
     edge_df = pd.read_table("data/Arabidopsis/ckn-directed.tsv", header=None)
     edge_df.columns = ["source", "target"]
@@ -96,6 +92,20 @@ if __name__ == "__main__":
           my_cbn.number_of_edges(typ="boundary"))
 
     my_cbn.to_dsv("test.tsv", delimiter=";", data_cols=["subject", "relation"], header=("src", "reg"))
+
+    import_start = time.time()
+    my_cbn = CausalNetwork.from_tsv("data/BAGen03Large/10000_3062_247405_core.tsv", edge_type="core")
+    my_cbn.add_edges_from_tsv("data/BAGen03Large/10000_3062_247405_boundary.tsv", edge_type="boundary")
+    import_end = time.time()
+    print("Import time: ", import_end - import_start)
+
+    dataset_folder = "data/ExpressionExamplesGen02"
+    large_data = dict()
+    for file_name in os.listdir(dataset_folder):
+        if file_name.startswith("10000_3062_247405"):
+            large_data[file_name] = pd.read_table(os.path.join(dataset_folder, file_name))
+
+    example_run(my_cbn, large_data, permutations=["o", "k1", "k2"])
 
     # my_cbn.add_edge("p(MGI:Bcl2)", "p(MGI:Bcl2a1b)", "0.", "core")
     # my_cbn.to_dsv("test.tsv", delimiter=";", data_cols=["subject", "relation"], header=("src", "reg"))

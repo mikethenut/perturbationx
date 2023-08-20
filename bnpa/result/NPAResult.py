@@ -14,8 +14,7 @@ from py4cytoscape.py4cytoscape_utils import DEFAULT_BASE_URL
 from bnpa.resources import DEFAULT_STYLE
 from bnpa.vis import NPAResultDisplay
 from bnpa.vis.cytoscape import init_cytoscape, load_network_data
-from bnpa.vis.shortest_paths import get_shortest_path_components
-from bnpa.vis.neighbors import get_neighborhood
+from bnpa.util import get_shortest_path_components, get_neighborhood_components
 
 
 class NPAResult:
@@ -138,7 +137,7 @@ class NPAResult:
                                  "'directed', 'undirected', 'all', or 'none'.")
 
         # Find neighborhood
-        neigh_nodes, neigh_edges = get_neighborhood(graph, nodes, include_neighbors, neighborhood_type)
+        neigh_nodes, neigh_edges = get_neighborhood_components(graph, nodes, include_neighbors, neighborhood_type)
 
         nodes = list(nodes.union(path_nodes).union(neigh_nodes))
         edges = list(path_edges.union(neigh_edges))

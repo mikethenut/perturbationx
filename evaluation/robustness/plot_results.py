@@ -285,8 +285,8 @@ def plot_copd1_mvr_robustness(in_file):
     # Plot MVR results
     keys = ["ncl", "rcl", "nc"]
     colors = {
-        "ncl": "tab:blue",
-        "nc": "tab:green",
+        "ncl": "tab:green",
+        "nc": "tab:blue",
         "rcl": "tab:orange"
     }
     columns = 3
@@ -446,8 +446,8 @@ def plot_gen_mvr_robustness(in_file):
                     ln_precision.append(precision / count)
 
     colors = {
-        "ncl": "tab:blue",
-        "nc": "tab:green",
+        "ncl": "tab:green",
+        "nc": "tab:blue",
         "rcl": "tab:orange"
     }
     for key in keys:
@@ -554,7 +554,7 @@ def plot_gen_opposite_pruning(in_file):
         0: "Random datasets",
         1: "Consistent datasets"
     }
-    palette = ["tab:cyan", "tab:purple", "tab:olive"]
+    palette = ["tab:blue", "tab:orange", "tab:green"]
     plot_dataframe = pd.DataFrame()
     for dataset_type, color in zip([0, -1, 1], palette):
         """
@@ -803,6 +803,178 @@ def plot_gen_snr_robustness(in_file):
     plt.clf()
 
 
+def plot_snr_combined(in_files):
+    results_by_file = dict()
+    for in_file in in_files:
+        with open(in_file) as f:
+            results = json.load(f)
+
+        if in_files[in_file] == "COPD1":
+            results_by_dataset = dict()
+            results_by_file[in_file] = results_by_dataset
+            for idx, result in enumerate(results):
+                key = get_key(result)
+                if key != "nc":
+                    print("Skipping %s" % key)
+                    continue
+
+                for dataset in result["dataset_source"]:
+                    dataset_source = result["dataset_source"][dataset]
+                    dataset_snr = result["dataset_snr"][dataset]
+
+                    if dataset_source not in results_by_dataset:
+                        results_by_dataset[dataset_source] = dict()
+                    if dataset_snr not in results_by_dataset[dataset_source]:
+                        results_by_dataset[dataset_source][dataset_snr] = {
+                            "NPA": [], "Leading nodes": [], "Matched boundary edges": []
+                        }
+
+                    results_by_dataset[dataset_source][dataset_snr]["NPA"].append(
+                        result["npa"][dataset]
+                    )
+                    results_by_dataset[dataset_source][dataset_snr]["Leading nodes"].append(
+                        result["leading_nodes"][dataset]
+                    )
+                    results_by_dataset[dataset_source][dataset_snr]["Matched boundary edges"].append(
+                        result["matched_boundary_edges"][dataset]
+                    )
+
+        else:
+            results_by_network = dict()
+            results_by_file[in_file] = results_by_network
+            for idx, result in enumerate(results):
+                key = get_key(result)
+                if key != "nc":
+                    print("Skipping %s" % key)
+                    continue
+
+                network = result["network"]
+                if network not in results_by_network:
+                    results_by_network[network] = dict()
+
+                for dataset in result["dataset_source"]:
+                    dataset_source = result["dataset_source"][dataset]
+                    dataset_snr = result["dataset_snr"][dataset]
+
+                    if dataset_source not in results_by_network[network]:
+                        results_by_network[network][dataset_source] = dict()
+                    if dataset_snr not in results_by_network[network][dataset_source]:
+                        results_by_network[network][dataset_source][dataset_snr] = {
+                            "NPA": [], "Leading nodes": [], "Matched boundary edges": []
+                        }
+
+                    results_by_network[network][dataset_source][dataset_snr]["NPA"].append(
+                        result["npa"][dataset]
+                    )
+                    results_by_network[network][dataset_source][dataset_snr]["Leading nodes"].append(
+                        result["leading_nodes"][dataset]
+                    )
+                    results_by_network[network][dataset_source][dataset_snr]["Matched boundary edges"].append(
+                        result["matched_boundary_edges"][dataset]
+                    )
+
+    # Plot SNR results
+    columns = 3
+    fig, ax = plt.subplots(1, columns, figsize=(4 * columns, 6))
+    colors = ["tab:green", "tab:blue", "tab:orange"]
+    c_idx = 0
+
+    for in_file in results_by_file:
+        x, npa_mrae, ln_precision, ln_recall = [], [], [], []
+
+        if in_files[in_file] == "COPD1":
+            results_by_dataset = results_by_file[in_file]
+            for dataset_source in results_by_dataset:
+                base_results = results_by_dataset[dataset_source][None]
+
+                ref_npa = base_results["NPA"][0]
+                if ref_npa == 0.:
+                    print("Skipping", dataset_source)
+                    continue
+                ref_leading_nodes = base_results["Leading nodes"][0]
+
+                for dataset_snr in results_by_dataset[dataset_source]:
+                    if dataset_snr is None:
+                        continue
+
+                    x.append(dataset_snr)
+
+                    count = 0
+                    npa_rae = 0
+                    for npa in results_by_dataset[dataset_source][dataset_snr]["NPA"]:
+                        count += 1
+                        npa_rae += np.abs(npa - ref_npa) / ref_npa
+                    npa_mrae.append(npa_rae / count)
+
+                    count = 0
+                    recall = 0
+                    precision = 0
+                    for leading_nodes in results_by_dataset[dataset_source][dataset_snr]["Leading nodes"]:
+                        count += 1
+                        recall += len(set(leading_nodes) & set(ref_leading_nodes)) / len(ref_leading_nodes)
+                        precision += len(set(leading_nodes) & set(ref_leading_nodes)) / len(leading_nodes)
+                    ln_recall.append(recall / count)
+                    ln_precision.append(precision / count)
+
+        else:
+            results_by_network = results_by_file[in_file]
+            for network in results_by_network:
+
+                for dataset_source in results_by_network[network]:
+                    base_results = results_by_network[network][dataset_source][None]
+
+                    ref_npa = base_results["NPA"][0]
+                    if ref_npa == 0.:
+                        print("Skipping", dataset_source)
+                        continue
+                    ref_leading_nodes = base_results["Leading nodes"][0]
+
+                    for dataset_snr in results_by_network[network][dataset_source]:
+                        if dataset_snr is None:
+                            continue
+
+                        x.append(dataset_snr)
+
+                        count = 0
+                        npa_rae = 0
+                        for npa in results_by_network[network][dataset_source][dataset_snr]["NPA"]:
+                            count += 1
+                            npa_rae += np.abs(npa - ref_npa) / ref_npa
+                        npa_mrae.append(npa_rae / count)
+
+                        count = 0
+                        recall = 0
+                        precision = 0
+                        for leading_nodes in results_by_network[network][dataset_source][dataset_snr]["Leading nodes"]:
+                            count += 1
+                            recall += len(set(leading_nodes) & set(ref_leading_nodes)) / len(ref_leading_nodes)
+                            precision += len(set(leading_nodes) & set(ref_leading_nodes)) / len(leading_nodes)
+                        ln_recall.append(recall / count)
+                        ln_precision.append(precision / count)
+
+        sns.lineplot(x=x, y=npa_mrae, ax=ax[0], label=in_files[in_file], color=colors[c_idx])
+        sns.lineplot(x=x, y=ln_recall, ax=ax[1], color=colors[c_idx])
+        sns.lineplot(x=x, y=ln_precision, ax=ax[2], color=colors[c_idx])
+        c_idx += 1 if c_idx < len(colors) - 1 else 0
+
+    for col in range(columns):
+        ax[col].set_xlabel("Signal to Noise Ratio")
+        ax[col].invert_xaxis()
+
+    ax[0].set_ylabel("NPA Relative Absolute Error")
+    ax[0].set_ylim([0, 0.3])
+    ax[0].legend(loc="upper left")
+    ax[1].set_ylabel("Leading Node Recall")
+    ax[1].set_ylim([0.75, 1])
+    ax[2].set_ylabel("Leading Node Precision")
+    ax[2].set_ylim([0.75, 1])
+
+    plt.tight_layout()
+    out_file = "snr_evaluation/snr_evaluation_combined.png"
+    plt.savefig(out_file, dpi=300)
+    plt.clf()
+
+
 def plot_copd1_svr_robustness(in_file):
     with open(in_file) as f:
         results = json.load(f)
@@ -1002,6 +1174,154 @@ def plot_gen_svr_robustness(in_file):
     plt.clf()
 
 
+def plot_svr_combined(in_files):
+    fig, axs = plt.subplots(1, len(in_files), figsize=(4 * len(in_files), 6))
+    if len(in_files) == 1:
+        axs = [axs]
+
+    for file_idx, in_file in enumerate(in_files):
+        with open(in_file) as f:
+            results = json.load(f)
+
+        if in_files[in_file] == "COPD1":
+            results_by_dataset = dict()
+            for idx, result in enumerate(results):
+                key = get_key(result)
+                if key != "nc":
+                    print("Skipping %s" % key)
+                    continue
+
+                for dataset in result["dataset_source"]:
+                    dataset_source = result["dataset_source"][dataset]
+                    dataset_svr = result["dataset_svr"][dataset]
+
+                    if dataset_source not in results_by_dataset:
+                        results_by_dataset[dataset_source] = dict()
+                    if dataset_svr not in results_by_dataset[dataset_source]:
+                        results_by_dataset[dataset_source][dataset_svr] = {
+                            "NPA": [], "Leading nodes": [], "Matched boundary edges": []
+                        }
+
+                    results_by_dataset[dataset_source][dataset_svr]["NPA"].append(
+                        result["npa"][dataset]
+                    )
+                    results_by_dataset[dataset_source][dataset_svr]["Leading nodes"].append(
+                        result["leading_nodes"][dataset]
+                    )
+                    results_by_dataset[dataset_source][dataset_svr]["Matched boundary edges"].append(
+                        result["matched_boundary_edges"][dataset]
+                    )
+
+            # Plot SVR results
+            ax = axs[file_idx]
+            x = []
+            relative_npa = []
+
+            for dataset_source in results_by_dataset:
+                smallest_svr = min(results_by_dataset[dataset_source].keys())
+                base_results = results_by_dataset[dataset_source][smallest_svr]
+
+                ref_npa = base_results["NPA"][0]
+                if ref_npa == 0.:
+                    print("Skipping", dataset_source)
+                    continue
+
+                for dataset_svr in results_by_dataset[dataset_source]:
+                    if dataset_svr == smallest_svr:
+                        continue
+
+                    x.append(dataset_svr)
+
+                    count = 0
+                    rel_npa = 0
+                    for npa in results_by_dataset[dataset_source][dataset_svr]["NPA"]:
+                        count += 1
+                        rel_npa += npa / ref_npa
+                    relative_npa.append(rel_npa / count)
+
+            sns.boxplot(x=x, y=relative_npa, ax=ax, color="tab:blue")
+
+            ax.set_xlabel("Shuffled Value Ratio")
+            ax.set_ylabel("Relative NPA")
+            ax.set_ylim([-0.05, 1.05])
+            ax.set_title(in_files[in_file])
+
+        else:
+            results_by_network = dict()
+            for idx, result in enumerate(results):
+                key = get_key(result)
+                if key != "nc":
+                    print("Skipping %s" % key)
+                    continue
+
+                network = result["network"]
+                if network not in results_by_network:
+                    results_by_network[network] = dict()
+
+                for dataset in result["dataset_source"]:
+                    dataset_source = result["dataset_source"][dataset]
+                    dataset_svr = result["dataset_svr"][dataset]
+
+                    if dataset_source not in results_by_network[network]:
+                        results_by_network[network][dataset_source] = dict()
+                    if dataset_svr not in results_by_network[network][dataset_source]:
+                        results_by_network[network][dataset_source][dataset_svr] = {
+                            "NPA": [], "Leading nodes": [], "Matched boundary edges": []
+                        }
+
+                    results_by_network[network][dataset_source][dataset_svr]["NPA"].append(
+                        result["npa"][dataset]
+                    )
+                    results_by_network[network][dataset_source][dataset_svr]["Leading nodes"].append(
+                        result["leading_nodes"][dataset]
+                    )
+                    results_by_network[network][dataset_source][dataset_svr]["Matched boundary edges"].append(
+                        result["matched_boundary_edges"][dataset]
+                    )
+
+            # Plot SVR results
+            x = []
+            relative_npa = []
+            ax = axs[file_idx]
+
+            for network in results_by_network:
+
+                for dataset_source in results_by_network[network]:
+                    smallest_svr = min(results_by_network[network][dataset_source].keys())
+                    base_results = results_by_network[network][dataset_source][smallest_svr]
+
+                    ref_npa = base_results["NPA"][0]
+                    if ref_npa == 0.:
+                        print("Skipping", dataset_source)
+                        continue
+
+                    for dataset_svr in results_by_network[network][dataset_source]:
+                        if dataset_svr == smallest_svr:
+                            continue
+
+                        x.append(dataset_svr)
+
+                        count = 0
+                        rel_npa = 0
+                        for npa in results_by_network[network][dataset_source][dataset_svr]["NPA"]:
+                            count += 1
+                            rel_npa += npa / ref_npa
+                        relative_npa.append(rel_npa / count)
+
+            sns.boxplot(x=x, y=relative_npa, ax=ax, color="tab:blue")
+
+            ax.set_xlabel("Shuffled Value Ratio")
+            ax.set_ylabel("Relative NPA")
+            ax.set_ylim([-0.05, 1.05])
+            ax.set_title(in_files[in_file])
+
+    plt.suptitle("Boundary edge permutation \"O\"")
+    plt.tight_layout()
+    out_file = "svr_evaluation/svr_evaluation_combined.png"
+    plt.savefig(out_file, dpi=300)
+    plt.clf()
+
+
 if __name__ == "__main__":
     # plot_gen_opposite_pruning("ovr_evaluation/ovr_evaluation_npa.json")
     # plot_gen_opposite_pruning("ovr_evaluation/ovr_evaluation_ba.json")
@@ -1014,6 +1334,18 @@ if __name__ == "__main__":
     # plot_gen_snr_robustness("snr_evaluation/snr_evaluation_npa.json")
     # plot_gen_snr_robustness("snr_evaluation/snr_evaluation_ba.json")
 
-    plot_copd1_svr_robustness("svr_evaluation/svr_evaluation_copd1.json")
-    plot_gen_svr_robustness("svr_evaluation/svr_evaluation_npa.json")
-    plot_gen_svr_robustness("svr_evaluation/svr_evaluation_ba.json")
+    plot_snr_combined({
+        "snr_evaluation/snr_evaluation_copd1.json": "COPD1",
+        "snr_evaluation/snr_evaluation_npa.json": "NPA-R",
+        "snr_evaluation/snr_evaluation_ba.json": "Barabási–Albert"
+    })
+
+    # plot_copd1_svr_robustness("svr_evaluation/svr_evaluation_copd1.json")
+    # plot_gen_svr_robustness("svr_evaluation/svr_evaluation_npa.json")
+    # plot_gen_svr_robustness("svr_evaluation/svr_evaluation_ba.json")
+
+    #plot_svr_combined({
+    #    "svr_evaluation/svr_evaluation_copd1.json": "COPD1",
+    #    "svr_evaluation/svr_evaluation_npa.json": "NPA-R",
+    #    "svr_evaluation/svr_evaluation_ba.json": "Barabási–Albert"
+    #})

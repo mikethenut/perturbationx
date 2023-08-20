@@ -1,5 +1,7 @@
 import networkx as nx
 
+__all__ = ["get_neighborhood_components"]
+
 
 def get_all_neighbors(graph: nx.Graph, source_nodes: set, max_distance=0):
     if max_distance < 1:
@@ -27,9 +29,9 @@ def get_common_neighbors(graph: nx.Graph, source_nodes: set, max_distance=0):
     return neighbors
 
 
-def get_neighborhood(graph: nx.DiGraph, source_nodes: set, max_distance=0, neighborhood_type="union"):
+def get_neighborhood_components(graph: nx.DiGraph, source_nodes: set, max_distance=0, neighborhood_type="union"):
     """
-    Get the neighbors of a set of nodes in a graph.
+    Get the neighborhood of a set of nodes in a graph.
 
     Parameters
     ----------
