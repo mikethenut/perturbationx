@@ -103,8 +103,12 @@ class NPAResult:
             plt.show()
         return ax
 
-    def get_leading_nodes(self, dataset, cutoff=0.8, attr="contribution"):
-        contributions = self.node_info(attr)[dataset].sort_values(ascending=False)
+    def get_leading_nodes(self, dataset, cutoff=0.8, attr="contribution", abs_value=True):
+        contributions = self.node_info(attr)[dataset]
+        if abs_value:
+            contributions = contributions.abs()
+        contributions = contributions.sort_values(ascending=False)
+
         cumulative_contributions = contributions.cumsum() / contributions.sum()
         max_idx = 0
         for contr in cumulative_contributions:
