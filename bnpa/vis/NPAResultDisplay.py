@@ -63,7 +63,7 @@ class NPAResultDisplay:
         self.reset_display(reset_highlight=True)
 
         # Get subgraph
-        leading_nodes = self._results.get_leading_nodes(dataset, cutoff=cutoff, attr=attr, abs_value=True)
+        leading_nodes = self._results.get_leading_nodes(dataset, cutoff=cutoff, attr=attr, abs_value=abs_value)
         nodes, edges = self._results.get_node_subgraph(
             leading_nodes, include_shortest_paths, path_length_tolerance, include_neighbors, neighborhood_type
         )
@@ -83,7 +83,7 @@ class NPAResultDisplay:
         self.reset_display(reset_visibility=True)
 
         # Get subgraph
-        leading_nodes = self._results.get_leading_nodes(dataset, cutoff=cutoff, attr=attr, abs_value=True)
+        leading_nodes = self._results.get_leading_nodes(dataset, cutoff=cutoff, attr=attr, abs_value=abs_value)
         nodes, edges = self._results.get_node_subgraph(
             leading_nodes, include_shortest_paths, path_length_tolerance, include_neighbors, neighborhood_type
         )
