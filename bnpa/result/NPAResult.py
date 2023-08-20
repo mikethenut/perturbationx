@@ -19,13 +19,13 @@ from bnpa.vis.neighbors import get_neighborhood
 
 
 class NPAResult:
-    def __init__(self, graph, datasets, global_info, node_info, distributions):
+    def __init__(self, graph, datasets, global_info, node_info, distributions, metadata=None):
         self._graph = graph
         self._datasets = datasets
         self._global_info = global_info
         self._node_info = node_info
         self._distributions = distributions
-        self._metadata = dict()
+        self._metadata = metadata if metadata is not None else dict()
 
         # System metadata
         self._metadata["datetime_utc"] = datetime.utcnow().isoformat()
@@ -37,7 +37,14 @@ class NPAResult:
 
         # Network metadata
         for k, v in graph.graph.items():
+            if k.startswith("dataset") or k.startswith("network"):
+                self._metadata[k] = v
             self._metadata["network_" + k] = v
+
+        if "network_title" not in self._metadata:
+            self._metadata["network_title"] = "Untitled network"
+        if "network_collection" not in self._metadata:
+            self._metadata["network_collection"] = "Untitled collection"
 
         # TODO: Add metadata for package and dependency versions
 
@@ -60,8 +67,12 @@ class NPAResult:
         level = "data" if accessor in self._datasets else "attr"
         return self._node_info.xs(accessor, level=level).transpose(copy=True)
 
-    def get_distribution(self, distribution, dataset):
-        return copy.deepcopy(self._distributions[distribution][dataset][0])
+    def get_distribution(self, distribution, dataset, include_reference=False):
+        value_distribution = copy.deepcopy(self._distributions[distribution][dataset][0])
+        if include_reference:
+            return value_distribution, self._distributions[distribution][dataset][1]
+        else:
+            return value_distribution
 
     def plot_distribution(self, distribution, datasets=None, show=True):
         if datasets is None:
@@ -93,8 +104,8 @@ class NPAResult:
             plt.show()
         return ax
 
-    def get_leading_nodes(self, dataset, cutoff=0.8):
-        contributions = self.node_info("contribution")[dataset].sort_values(ascending=False)
+    def get_leading_nodes(self, dataset, cutoff=0.8, attr="contribution"):
+        contributions = self.node_info(attr)[dataset].sort_values(ascending=False)
         cumulative_contributions = contributions.cumsum() / contributions.sum()
         max_idx = 0
         for contr in cumulative_contributions:
@@ -123,7 +134,8 @@ class NPAResult:
             case "none" | None:
                 path_nodes, path_edges = set(), set()
             case _:
-                raise ValueError("Argument neighborhood_type must be 'union' or 'intersection'.")
+                raise ValueError("Argument neighborhood_type must be "
+                                 "'directed', 'undirected', 'all', or 'none'.")
 
         # Find neighborhood
         neigh_nodes, neigh_edges = get_neighborhood(graph, nodes, include_neighbors, neighborhood_type)
@@ -164,7 +176,7 @@ class NPAResult:
 
         return graph_copy
 
-    def to_json(self, filepath, indent=4):
+    def to_dict(self):
         data = dict()
         data["metadata"] = self._metadata.copy()
 
@@ -183,5 +195,9 @@ class NPAResult:
             for distr in self.distributions():
                 data[d]["distributions"][distr] = self._distributions[distr][d][0]
 
+        return data
+
+    def to_json(self, filepath, indent=4):
+        data = self.to_dict()
         with open(filepath, 'w') as f:
             json.dump(data, f, ensure_ascii=False, indent=indent)

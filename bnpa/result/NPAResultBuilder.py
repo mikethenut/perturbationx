@@ -57,7 +57,7 @@ class NPAResultBuilder:
             self._distributions[distribution] = {d: ([], None) for d in self._datasets}
         self._distributions[distribution][dataset_id] = (values, reference)
 
-    def build(self):
+    def build(self, metadata=None):
         # Create global info dataframe
         global_info = pd.DataFrame({
             attr: [self._global_attributes[attr][d] for d in self._datasets]
@@ -75,4 +75,5 @@ class NPAResultBuilder:
             for d, attr in node_indices
         ], index=node_indices, columns=self._nodes)
 
-        return NPAResult(self._graph, self._datasets, global_info, node_info, self._distributions)
+        return NPAResult(self._graph, self._datasets, global_info,
+                         node_info, self._distributions, metadata)
