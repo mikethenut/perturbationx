@@ -32,10 +32,15 @@ def format_dataset(dataset: pd.DataFrame, computing_statistics=True):
     return reduced_dataset
 
 
-def remove_opposing_edges(adjacency: np.ndarray, dataset: pd.DataFrame):
+def remove_opposing_edges(adjacency: np.ndarray, dataset: pd.DataFrame, minimum_amplitude=1.):
     boundary_sign = np.sign(adjacency)
     dataset_sign = np.sign(dataset["logFC"].to_numpy())
+    dataset_threshold = np.logical_and(
+            np.abs(dataset["logFC"].to_numpy()) >= minimum_amplitude,
+            dataset["logFC"].to_numpy() != 0.
+    )
     sign_mask = np.logical_and(
+        dataset_threshold[np.newaxis, :],
         boundary_sign != dataset_sign[np.newaxis, :],
         boundary_sign != 0
     )
@@ -47,8 +52,8 @@ def remove_opposing_edges(adjacency: np.ndarray, dataset: pd.DataFrame):
 
 
 def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray, dataset: pd.DataFrame, dataset_id,
-                          missing_value_pruning_mode="remove", opposing_value_pruning_mode="remove",
-                          boundary_edge_minimum=6, verbose=True):
+                          missing_value_pruning_mode="nullify", opposing_value_pruning_mode=None,
+                          opposing_value_minimum_amplitude=1., boundary_edge_minimum=6, verbose=True):
 
     if missing_value_pruning_mode not in ["remove", "nullify"]:
         raise ValueError("Invalid missing value pruning mode. Must be one of 'remove' or 'nullify'.")
@@ -75,14 +80,16 @@ def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray, dataset: pd.Data
     if missing_value_pruning_mode == "remove":
         lap_b = lap_b[:, network_idx]
     if opposing_value_pruning_mode == "remove":
-        lap_b = remove_opposing_edges(lap_b, dataset_pruned)
+        lap_b = remove_opposing_edges(
+            lap_b, dataset_pruned, minimum_amplitude=opposing_value_minimum_amplitude)
 
     lap_b = generate_boundary_laplacian(lap_b, boundary_edge_minimum)
 
     if missing_value_pruning_mode == "nullify":
         lap_b = lap_b[:, network_idx]
     if opposing_value_pruning_mode == "nullify":
-        lap_b = remove_opposing_edges(lap_b, dataset_pruned)
+        lap_b = remove_opposing_edges(
+            lap_b, dataset_pruned, minimum_amplitude=opposing_value_minimum_amplitude)
 
     lap_b_pruned = - lap_b
 

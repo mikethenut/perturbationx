@@ -8,8 +8,8 @@ import perturbationx.util as util
 __all__ = ["toponpa", "evaluate_modifications"]
 
 
-def toponpa(graph, relation_translator, datasets: dict, missing_value_pruning_mode="remove",
-            opposing_value_pruning_mode="remove", opposing_value_minimum_amplitude=1.,
+def toponpa(graph, relation_translator, datasets: dict, missing_value_pruning_mode="nullify",
+            opposing_value_pruning_mode=None, opposing_value_minimum_amplitude=1.,
             boundary_edge_minimum=6, exact_boundary_outdegree=True, compute_statistics=True,
             alpha=0.95, permutations=('o', 'k2'), full_core_permutation=True, p_iters=500,
             p_rate=1., seed=None, verbose=True):
@@ -45,6 +45,7 @@ def toponpa(graph, relation_translator, datasets: dict, missing_value_pruning_mo
             graph, adj_b, dataset, dataset_id,
             missing_value_pruning_mode=missing_value_pruning_mode,
             opposing_value_pruning_mode=opposing_value_pruning_mode,
+            opposing_value_minimum_amplitude=opposing_value_minimum_amplitude,
             boundary_edge_minimum=boundary_edge_minimum,
             verbose=verbose
         )
@@ -78,15 +79,16 @@ def toponpa(graph, relation_translator, datasets: dict, missing_value_pruning_mo
             )
 
         # Compute permutation test statistics
-        distributions = statistics.test_permutations(
-            lap_b, lap_c, lap_q, lap_perms, core_edge_count,
-            dataset["logFC"].to_numpy(), permutations,
-            iterations=p_iters, permutation_rate=p_rate, seed=seed
-        )
-        for p in distributions:
-            pv = statistics.p_value(npa, distributions[p])
-            result_builder.set_global_attributes(dataset_id, ["%s_value" % p], [pv])
-            result_builder.set_distribution(dataset_id, p, distributions[p], npa)
+        if permutations is not None:
+            distributions = statistics.test_permutations(
+                lap_b, lap_c, lap_q, lap_perms, core_edge_count,
+                dataset["logFC"].to_numpy(), permutations,
+                iterations=p_iters, permutation_rate=p_rate, seed=seed
+            )
+            for p in distributions:
+                pv = statistics.p_value(npa, distributions[p])
+                result_builder.set_global_attributes(dataset_id, ["%s_value" % p], [pv])
+                result_builder.set_distribution(dataset_id, p, distributions[p], npa)
 
     args_metadata = {
         "missing_value_pruning_mode": missing_value_pruning_mode,
@@ -104,7 +106,7 @@ def toponpa(graph, relation_translator, datasets: dict, missing_value_pruning_mo
 
 
 def evaluate_modifications(graph, relation_translator, modifications, nodes, datasets,
-                           missing_value_pruning_mode="remove", opposing_value_pruning_mode="remove",
+                           missing_value_pruning_mode="nullify", opposing_value_pruning_mode=None,
                            opposing_value_minimum_amplitude=1., boundary_edge_minimum=6,
                            exact_boundary_outdegree=True, seed=None, verbose=True):
     if verbose:
@@ -155,6 +157,7 @@ def evaluate_modifications(graph, relation_translator, modifications, nodes, dat
                 graph, adj_b, dataset, dataset_id,
                 missing_value_pruning_mode=missing_value_pruning_mode,
                 opposing_value_pruning_mode=opposing_value_pruning_mode,
+                opposing_value_minimum_amplitude=opposing_value_minimum_amplitude,
                 boundary_edge_minimum=boundary_edge_minimum,
                 verbose=verbose
             )

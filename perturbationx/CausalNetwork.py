@@ -206,8 +206,9 @@ class CausalNetwork:
                 self._graph.add_edge(src, trg, relation=rel, type="infer")
 
     def rewire_edges(self, nodes, iterations, datasets, method='k1', p_rate=1.,
-                     missing_value_pruning_mode="remove", opposing_value_pruning_mode="remove",
-                     boundary_edge_minimum=6, exact_boundary_outdegree=True, seed=None, verbose=True,
+                     missing_value_pruning_mode="nullify", opposing_value_pruning_mode=None,
+                     opposing_value_minimum_amplitude=1., boundary_edge_minimum=6,
+                     exact_boundary_outdegree=True, seed=None, verbose=True,
                      logging_kwargs=DEFAULT_LOGGING_KWARGS):
         if verbose and logging_kwargs is not None:
             logging.basicConfig(**logging_kwargs)
@@ -234,13 +235,18 @@ class CausalNetwork:
         # Otherwise, compute NPAs for each dataset
         return self.evaluate_modifications(
             modifications, nodes, datasets,
-            missing_value_pruning_mode, opposing_value_pruning_mode,
-            boundary_edge_minimum, exact_boundary_outdegree, seed, verbose
+            missing_value_pruning_mode=missing_value_pruning_mode,
+            opposing_value_pruning_mode=opposing_value_pruning_mode,
+            opposing_value_minimum_amplitude=opposing_value_minimum_amplitude,
+            boundary_edge_minimum=boundary_edge_minimum,
+            exact_boundary_outdegree=exact_boundary_outdegree,
+            seed=seed, verbose=verbose
         )
 
     def wire_edges(self, number_of_edges, nodes, edge_relations, iterations, datasets,
-                   missing_value_pruning_mode="remove", opposing_value_pruning_mode="remove",
-                   boundary_edge_minimum=6, exact_boundary_outdegree=True, seed=None, verbose=True,
+                   missing_value_pruning_mode="nullify", opposing_value_pruning_mode=None,
+                   opposing_value_minimum_amplitude=1., boundary_edge_minimum=6,
+                   exact_boundary_outdegree=True, seed=None, verbose=True,
                    logging_kwargs=DEFAULT_LOGGING_KWARGS):
         if verbose and logging_kwargs is not None:
             logging.basicConfig(**logging_kwargs)
@@ -257,7 +263,10 @@ class CausalNetwork:
                 trg_nodes[idx] = trg
 
             relations = rng.choice(edge_relations, size=number_of_edges, replace=True)
-            modifications.append([(src, trg, rel, "core") for src, trg, rel in zip(src_nodes, trg_nodes, relations)])
+            modifications.append([
+                (src, trg, rel, "core") for src, trg, rel
+                in zip(src_nodes, trg_nodes, relations)
+            ])
 
         # If no datasets were given, return the modifications
         if datasets is None:
@@ -266,13 +275,17 @@ class CausalNetwork:
         # Otherwise, compute NPAs for each dataset
         return self.evaluate_modifications(
             modifications, nodes, datasets,
-            missing_value_pruning_mode, opposing_value_pruning_mode,
-            boundary_edge_minimum, exact_boundary_outdegree, seed, verbose
+            missing_value_pruning_mode=missing_value_pruning_mode,
+            opposing_value_pruning_mode=opposing_value_pruning_mode,
+            opposing_value_minimum_amplitude=opposing_value_minimum_amplitude,
+            boundary_edge_minimum=boundary_edge_minimum,
+            exact_boundary_outdegree=exact_boundary_outdegree,
+            seed=seed, verbose=verbose
         )
 
-    def evaluate_modifications(self, modifications, nodes, datasets, missing_value_pruning_mode="remove",
-                               opposing_value_pruning_mode="remove", boundary_edge_minimum=6,
-                               exact_boundary_outdegree=True, seed=None, verbose=True,
+    def evaluate_modifications(self, modifications, nodes, datasets, missing_value_pruning_mode="nullify",
+                               opposing_value_pruning_mode=None, opposing_value_minimum_amplitude=1.,
+                               boundary_edge_minimum=6, exact_boundary_outdegree=True, seed=None, verbose=True,
                                logging_kwargs=DEFAULT_LOGGING_KWARGS):
         if verbose and logging_kwargs is not None:
             logging.basicConfig(**logging_kwargs)
@@ -282,8 +295,12 @@ class CausalNetwork:
 
         return toponpa.evaluate_modifications(
             prograph, self.relation_translator, modifications, nodes, datasets,
-            missing_value_pruning_mode, opposing_value_pruning_mode,
-            boundary_edge_minimum, exact_boundary_outdegree, seed, verbose
+            missing_value_pruning_mode=missing_value_pruning_mode,
+            opposing_value_pruning_mode=opposing_value_pruning_mode,
+            opposing_value_minimum_amplitude=opposing_value_minimum_amplitude,
+            boundary_edge_minimum=boundary_edge_minimum,
+            exact_boundary_outdegree=exact_boundary_outdegree,
+            seed=seed, verbose=verbose
         )
 
     def infer_graph_attributes(self, inplace=False, verbose=True, logging_kwargs=DEFAULT_LOGGING_KWARGS):
@@ -328,10 +345,10 @@ class CausalNetwork:
         )
         return lap_b, lap_c, lap_q, node_ordering
 
-    def toponpa(self, datasets: dict, missing_value_pruning_mode="remove", opposing_value_pruning_mode="remove",
-                boundary_edge_minimum=6, exact_boundary_outdegree=True, compute_statistics=True, alpha=0.95,
-                permutations=('o', 'k2'), p_iters=500, p_rate=1., seed=None, verbose=True,
-                logging_kwargs=DEFAULT_LOGGING_KWARGS):
+    def toponpa(self, datasets: dict, missing_value_pruning_mode="nullify", opposing_value_pruning_mode=None,
+                opposing_value_minimum_amplitude=1., boundary_edge_minimum=6, exact_boundary_outdegree=True,
+                compute_statistics=True, alpha=0.95, permutations=('o', 'k2'), full_core_permutation=True,
+                p_iters=500, p_rate=1.,  seed=None, verbose=True, logging_kwargs=DEFAULT_LOGGING_KWARGS):
         if verbose and logging_kwargs is not None:
             logging.basicConfig(**logging_kwargs)
 
@@ -342,10 +359,14 @@ class CausalNetwork:
 
         return toponpa.toponpa(
             prograph, self.relation_translator, datasets,
-            missing_value_pruning_mode, opposing_value_pruning_mode,
-            boundary_edge_minimum, exact_boundary_outdegree,
-            compute_statistics, alpha, permutations, p_iters, p_rate,
-            seed, verbose
+            missing_value_pruning_mode=missing_value_pruning_mode,
+            opposing_value_pruning_mode=opposing_value_pruning_mode,
+            opposing_value_minimum_amplitude=opposing_value_minimum_amplitude,
+            boundary_edge_minimum=boundary_edge_minimum,
+            exact_boundary_outdegree=exact_boundary_outdegree,
+            compute_statistics=compute_statistics, alpha=alpha,
+            permutations=permutations, full_core_permutation=full_core_permutation,
+            p_iters=p_iters, p_rate=p_rate, seed=seed, verbose=verbose
         )
 
     def to_networkx(self):
