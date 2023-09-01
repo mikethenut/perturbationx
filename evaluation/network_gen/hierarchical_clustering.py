@@ -11,11 +11,25 @@ from sklearn.cluster import FeatureAgglomeration
 from scipy.cluster.hierarchy import linkage, dendrogram
 
 
+def transform_labels(labels):
+    tr_labs = []
+    for label in labels:
+        if label == "Dr_ORG_Heart":
+            tr_labs.append("Dr ORG Cardiotoxicity")
+        elif label == "degree_assortativity_coefficient":
+            tr_labs.append("core degree assortativity")
+        elif label == "boundary_degree_assortativity_coefficient":
+            tr_labs.append("boundary degree assortativity")
+        else:
+            tr_labs.append(label.replace("_", " "))
+    return np.array(tr_labs)
+
+
 def hierarchical_clustering(data, labels, method='average', color_threshold=None, filename=None):
     clusters = linkage(data, method)
     fig = plt.figure(figsize=(12, 8))
     fig.patch.set_facecolor('white')
-    dn = dendrogram(clusters, labels=labels, orientation="left", color_threshold=color_threshold)
+    dn = dendrogram(clusters, labels=transform_labels(labels), orientation="left", color_threshold=color_threshold)
     fig.tight_layout()
     if filename is not None:
         plt.savefig("clustering_plots/" + filename)
@@ -35,7 +49,8 @@ def barplot(data, filename=None):
 
 
 def plot_correlation(data, features, filename=None):
-    data_df = pd.DataFrame(data, columns=features)
+    labels = transform_labels(features)
+    data_df = pd.DataFrame(data, columns=labels)
     corr_df = data_df.corr()
     fig = plt.figure(figsize=(12, 8))
     sns.heatmap(corr_df, annot=True, cmap="vlag", vmin=-1, center=0, vmax=1)
@@ -71,11 +86,11 @@ if __name__ == "__main__":
 
     data = []
     labels = []
-    feature_ordering = ["core_node_count", "core_edge_count", "boundary_node_count", "boundary_edge_count",
-                        "inner_boundary_node_count", "radius", "diameter", "transitivity", "average_clustering",
-                        "average_shortest_path_length", "degree_assortativity_coefficient",
-                        "boundary_degree_assortativity_coefficient",
-                        "core_negative_edge_ratio", "boundary_negative_edge_ratio"]
+    feature_ordering = ["core_node_count", "core_edge_count", "core_negative_edge_ratio",
+                        "inner_boundary_node_count", "boundary_node_count", "boundary_edge_count",
+                        "boundary_negative_edge_ratio", "radius", "diameter", "average_shortest_path_length",
+                        "transitivity", "average_clustering", "degree_assortativity_coefficient",
+                        "boundary_degree_assortativity_coefficient"]
     for n in net_stats:
         data_point = []
         data.append(data_point)

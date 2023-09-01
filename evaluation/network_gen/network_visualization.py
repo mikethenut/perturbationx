@@ -11,13 +11,10 @@ from sklearn.linear_model import LinearRegression
 from sklearn.manifold import MDS
 
 
-CORE_FEATURES = [
+PRIMARY_FEATURES = [
     "core_node_count",
     "core_edge_count",
-    "core_negative_edge_count"
-]
-
-BOUNDARY_FEATURES = [
+    "core_negative_edge_count",
     "inner_boundary_node_count",
     "boundary_node_count",
     "boundary_edge_count",
@@ -85,7 +82,7 @@ def paired_scatterplot(statistics_df, hue_column, filename=None):
 
 
 def mds_plot(statistics_df, hue_column, filename=None):
-    mds_data = statistics_df.drop(columns=list(hue_column))
+    mds_data = statistics_df.drop(hue_column, axis=1)
     mds_data.columns = mds_data.columns.droplevel("feature_type")
     scaled_data = MinMaxScaler().fit_transform(mds_data)
 
@@ -107,6 +104,8 @@ def mds_plot(statistics_df, hue_column, filename=None):
     plt.figure(figsize=(6, 6))
     splt = sns.scatterplot(data=mds_df, x="x", y="y", hue=hue_column_flat, alpha=0.75)
     sns.move_legend(splt, "upper right")
+    plt.xlabel("MDS 1")
+    plt.ylabel("MDS 2")
     plt.tight_layout()
     if filename is not None:
         plt.savefig(filename + "_mds.png")
@@ -144,20 +143,16 @@ def format_samples(network_statistics, network_names=None):
     if network_names is None:
         network_names = list(network_statistics.keys())
 
-    core_primary_df = pd.DataFrame(np.array(
-        [[network_statistics[n][f] for n in network_names] for f in CORE_FEATURES]
-    )).set_index(pd.MultiIndex.from_product([["core"], CORE_FEATURES],
+    primary_df = pd.DataFrame(np.array(
+        [[network_statistics[n][f] for n in network_names] for f in PRIMARY_FEATURES]
+    )).set_index(pd.MultiIndex.from_product([["primary"], PRIMARY_FEATURES],
                                             names=["feature_type", "feature_name"]))
-    boundary_primary_df = pd.DataFrame(np.array(
-        [[network_statistics[n][f] for n in network_names] for f in BOUNDARY_FEATURES]
-    )).set_index(pd.MultiIndex.from_product([["boundary"], BOUNDARY_FEATURES],
-                                            names=["feature_type", "feature_name"]))
-    boundary_secondary_df = pd.DataFrame(np.array(
+    secondary_df = pd.DataFrame(np.array(
         [[network_statistics[n][f] for n in network_names] for f in SECONDARY_FEATURES]
     )).set_index(pd.MultiIndex.from_product([["secondary"], SECONDARY_FEATURES],
                                             names=["feature_type", "feature_name"]))
 
-    combined_df = pd.concat([core_primary_df, boundary_primary_df, boundary_secondary_df]).T
+    combined_df = pd.concat([primary_df, secondary_df]).T
     combined_df.rename(index={i: network_names[i] for i in range(len(network_names))}, inplace=True)
     return combined_df
 
@@ -177,8 +172,22 @@ def get_distributions(network_statistics, network_names=None):
     return distributions
 
 
+def transform_labels(labels):
+    tr_labs = []
+    for label in labels:
+        if label == "Dr_ORG_Heart":
+            tr_labs.append("Dr ORG Cardiotoxicity")
+        elif label == "degree_assortativity_coefficient":
+            tr_labs.append("core degree assortativity")
+        elif label == "boundary_degree_assortativity_coefficient":
+            tr_labs.append("boundary degree assortativity")
+        else:
+            tr_labs.append(label.replace("_", " "))
+    return np.array(tr_labs)
+
+
 if __name__ == "__main__":
-    network_type_header = pd.MultiIndex.from_product([["metadata"], ["network_type"]],
+    network_type_header = pd.MultiIndex.from_product([["metadata"], ["Network group"]],
                                                      names=["feature_type", "feature_name"])
 
     group_a = ["Hs_CST_Oxidative_Stress", "Mm_CST_Oxidative_Stress", "Hs_CFA_Apoptosis", "Mm_CFA_Apoptosis",
@@ -195,7 +204,7 @@ if __name__ == "__main__":
 
         for i, group_networks in enumerate([group_a, group_b, group_c, group_d]):
             group_samples = format_samples(npa_stats, group_networks)
-            group_samples[network_type_header] = "npa_group_" + chr(ord('A') + i)
+            group_samples[network_type_header] = "NPA group " + chr(ord('A') + i)
 
             if npa_samples is None:
                 npa_samples = group_samples
@@ -204,12 +213,12 @@ if __name__ == "__main__":
 
             group_distributions = get_distributions(npa_stats, group_networks)
             for f in group_distributions:
-                distribution_features[f]["npa_group_" + chr(ord('A') + i)] = group_distributions[f]
+                distribution_features[f]["NPA group " + chr(ord('A') + i)] = group_distributions[f]
 
     with open("../../output/ba_stats_03/ba_stats.json", "r") as in_file:
         ba_stats = json.load(in_file)
         ba_samples = format_samples(ba_stats)
-        ba_samples[network_type_header] = "barabasi_albert"
+        ba_samples[network_type_header] = "Barabási–Albert"
 
         ba_distributions = get_distributions(ba_stats)
         for f in ba_distributions:
@@ -217,11 +226,11 @@ if __name__ == "__main__":
             partial_ba_distribution = {
                 n: full_ba_distribution[n] for idx, n in enumerate(full_ba_distribution) if idx % 10 == 0
             }
-            distribution_features[f]["barabasi_albert"] = partial_ba_distribution
+            distribution_features[f]["Barabási–Albert"] = partial_ba_distribution
 
     all_stats = pd.concat([npa_samples, ba_samples])
-    paired_scatterplot(all_stats, network_type_header, "network_gen_plots/network_attributes")
+    # paired_scatterplot(all_stats, network_type_header, "network_gen_plots/network_attributes")
     mds_plot(all_stats, network_type_header, "network_gen_plots/network_distance")
-    degree_plot(distribution_features, "network_gen_plots/degree_distributions")
+    # degree_plot(distribution_features, "network_gen_plots/degree_distributions")
 
 

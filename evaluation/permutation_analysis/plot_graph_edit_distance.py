@@ -165,10 +165,6 @@ def plot_gen_k_perms(in_file, stat_file):
 
 
 def plot_all_k_perms(in_files, stat_files):
-    fig, axs = plt.subplots(1, len(in_files), figsize=(4 * len(in_files), 6))
-    if len(in_files) == 1:
-        axs = [axs]
-
     results_by_permutation = dict()
     for file_idx, in_file in enumerate(in_files):
         with open(in_file) as f:
@@ -225,9 +221,16 @@ def plot_all_k_perms(in_files, stat_files):
         if permutation is None:
             continue
 
+        permutation_name = permutation.split("_")
+
+        if permutation_name[1] == "full":
+            color = sns.color_palette()[0]
+        else:
+            color = sns.color_palette()[2]
+
         # Plot results
         columns = len(results_by_permutation[permutation])
-        fig, axs = plt.subplots(1, columns, figsize=(4 * columns, 6))
+        fig, axs = plt.subplots(1, columns, figsize=(4 * columns, 5))
         if columns == 1:
             axs = [axs]
 
@@ -259,11 +262,6 @@ def plot_all_k_perms(in_files, stat_files):
                         permutation_rates.append(p_rate)
                         relative_npa.append(rel_npa / count)
 
-                sns.boxplot(x=permutation_rates, y=relative_npa, ax=ax, color="tab:blue")
-                ax.set_xlabel("Permutation Rate")
-                ax.set_ylabel("Relative NPA")
-                ax.set_ylim([-0.05, 1.05])
-
             else:
                 for network, dataset in results_by_file:
                     edge_count, base_ged, ref_npa = base_results[(network, dataset)][0][0]
@@ -284,14 +282,19 @@ def plot_all_k_perms(in_files, stat_files):
                         permutation_rates.append(p_rate)
                         relative_npa.append(rel_npa / count)
 
-            sns.boxplot(x=permutation_rates, y=relative_npa, ax=ax, color="tab:blue")
-            ax.set_xlabel("Permutation Rate")
-            ax.set_ylabel("Relative NPA")
-            ax.set_ylim([-0.05, 1.75])
-            ax.set_title(in_files[in_file])
+            sns.boxplot(x=permutation_rates, y=relative_npa, ax=ax, color=color)
 
-        permutation_name = permutation.split("_")
-        plt.suptitle("Core edge permutation \"%s\" (%s)" % (permutation_name[0].upper(), permutation_name[1]))
+            if file_idx == 0:
+                ax.set_ylabel(permutation_name[1].capitalize() + " permutation\nRelative NPA")
+            ax.set_xlabel("Permutation Rate")
+            ax.set_ylim([-0.05, 1.75])
+
+            title = in_files[in_file]
+            if title == "COPD1":
+                title = "Mm Apoptosis"
+            ax.set_title(title)
+
+        plt.suptitle("Core edge permutation \"%s\"" % permutation_name[0].upper())
         plt.tight_layout()
         out_file = "graph_edit_distance/k_perms_combined_%s_%s.png" % (permutation_name[0], permutation_name[1])
         plt.savefig(out_file, dpi=300)
@@ -299,6 +302,7 @@ def plot_all_k_perms(in_files, stat_files):
 
 
 if __name__ == "__main__":
+    plt.rcParams.update({'font.size': 12})
     # plot_copd1_k_perms("graph_edit_distance/k_perms_copd1.json")
     # plot_gen_k_perms("graph_edit_distance/k_perms_npa.json",
     #                 "../../output/network_stats/network_stats.json")
@@ -309,7 +313,8 @@ if __name__ == "__main__":
             "graph_edit_distance/k_perms_copd1.json": "COPD1",
          "graph_edit_distance/k_perms_npa.json": "NPA-R",
          "graph_edit_distance/k_perms_ba.json": "Barabási–Albert"
-         },{
+         },
+        {
             "graph_edit_distance/k_perms_npa.json" : "../../output/network_stats/network_stats.json",
             "graph_edit_distance/k_perms_ba.json" : "../../output/ba_stats_03/ba_stats.json"
         }

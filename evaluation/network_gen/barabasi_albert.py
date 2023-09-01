@@ -56,11 +56,9 @@ def generate_model(samples, plot_residuals=False, filename=None):
     residual_y = sample_y - predicted_y
 
     if plot_residuals:
-        residuals = np.concatenate((sample_x, residual_y), axis=1)
-        residual_df = pd.DataFrame(residuals)
-        residual_df.rename(columns={i: FEATURE_ORDERING[i] for i in range(len(FEATURE_ORDERING))}, inplace=True)
-
-        plt.figure(figsize=(6, 6))
+        residual_df = pd.DataFrame(residual_y)
+        residual_df.rename(columns={i: FEATURE_ORDERING[i+1].replace("_", " ")
+                                    for i in range(len(FEATURE_ORDERING) - 1)}, inplace=True)
         sns.pairplot(residual_df)
         plt.tight_layout()
         if filename is not None:
@@ -68,7 +66,7 @@ def generate_model(samples, plot_residuals=False, filename=None):
         plt.show()
         plt.close()
 
-        plt.figure(figsize=(8, 8))
+        plt.figure(figsize=(8, 5))
         sns.heatmap(residual_df.corr(), annot=True, cmap="vlag", vmin=-1, center=0, vmax=1)
         plt.tight_layout()
         if filename is not None:
@@ -306,7 +304,7 @@ if __name__ == "__main__":
         samples, plot_residuals=True, filename="network_gen_plots/linear_model_residuals"
     )
 
-    node_counts = []
+    node_counts.clear()
     for node_count in node_counts:
         for _ in range(repetitions):
             net_params = sample_parameters(linear_model, model_residuals, node_count)

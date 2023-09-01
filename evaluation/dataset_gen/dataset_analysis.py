@@ -88,23 +88,61 @@ def plot_datasets(file_paths, header_labels=('logFC', 't', 'adj.P.Val', 'Gene.sy
     plt.close()
 
 
-if __name__ == "__main__":
-    """"
-    example_files = {}
-    example_folder = "../../data/ExpressionExamples"
-    for file_name in os.listdir(example_folder):
-        if file_name.endswith(".tsv"):
-            example_files[file_name[:-4]] = os.path.join(example_folder, file_name)
-    plot_datasets(example_files, pairwise=False, filename="dataset_analysis_plots/examples")
+def plot_correlations(file_paths, header_labels=('logFC', 't', 'adj.P.Val', 'Gene.symbol'),
+                      separator='\t', filename=None):
+    dataframes = {}
+    for file in file_paths:
+        data_df = pd.read_csv(file_paths[file], sep=separator)
+        if "dataset" in file:
+            file = file[-12:]
+        dataframes[file] = data_df
+        data_df.set_index(header_labels[3], inplace=True)
 
+    total_plots = len(file_paths) * (len(file_paths) - 1) // 2
+    fig, axs = plt.subplots(1, total_plots, figsize=(4 * total_plots, 4))
+
+    files = {idx: file for idx, file in enumerate(dataframes)}
+    idx, idy = 0, 1
+    for idz in range(total_plots):
+        dataframe_x = dataframes[files[idx]]
+        dataframe_y = dataframes[files[idy]]
+        ax = axs[idz]
+
+        gene_set_x = set(dataframe_x.index)
+        gene_set_y = set(dataframe_y.index)
+        common_genes = list(gene_set_x.intersection(gene_set_y))
+
+        # Reverse axes for clarity
+        logfc_x = dataframe_x.loc[common_genes, header_labels[0]]
+        logfc_y = dataframe_y.loc[common_genes, header_labels[0]]
+        if header_labels[3] == 'nodeID':
+            ax.set_xlabel(files[idx] + " coefficients")
+            ax.set_ylabel(files[idy] + " coefficients")
+        else:
+            ax.set_xlabel(files[idx] + " logFC")
+            ax.set_ylabel(files[idy] + " logFC")
+
+        ax.scatter(x=logfc_x, y=logfc_y, s=1, alpha=0.75)
+
+        idy += 1
+        if idy == len(file_paths):
+            idx += 1
+            idy = idx + 1
+
+    plt.tight_layout()
+    if filename is not None:
+        fig.savefig(filename + ".png")
+    else:
+        plt.show()
+    plt.close()
+
+
+if __name__ == "__main__":
     copd_files = {}
     copd_folder = "../../data/COPD1"
     for file_name in os.listdir(copd_folder):
         if file_name.endswith(".tsv"):
             copd_files[file_name[:-4]] = os.path.join(copd_folder, file_name)
-    plot_datasets(copd_files, header_labels=('foldChange', 't', None, 'nodeLabel'),
-                  filename="dataset_analysis_plots/copd1")
-                  """
 
     generated_files = {}
     generated_folder = "../../data/ExpressionExamplesGen02"
@@ -115,6 +153,32 @@ if __name__ == "__main__":
                 generated_files[file_name_start] = {}
             generated_files[file_name_start][file_name[:-4]] = os.path.join(generated_folder, file_name)
 
+    """"
+    example_files = {}
+    example_folder = "../../data/ExpressionExamples"
+    for file_name in os.listdir(example_folder):
+        if file_name.endswith(".tsv"):
+            example_files[file_name[:-4]] = os.path.join(example_folder, file_name)
+    plot_datasets(example_files, pairwise=False, filename="dataset_analysis_plots/examples")
+
+    plot_datasets(copd_files, header_labels=('foldChange', 't', None, 'nodeLabel'),
+                  filename="dataset_analysis_plots/copd1")
+
     for file_name_start in generated_files:
         plot_datasets(generated_files[file_name_start], header_labels=('logFC', None, None, 'nodeID'),
                       filename="dataset_analysis_plots/" + file_name_start + "_gen02", separator=',')
+    """
+
+    copd_selection = ["CS (5m)", "CS (7m)", "CS (4m) + Sham (1m)"]
+    copd_selection = {file: copd_files[file] for file in copd_selection}
+
+    plot_correlations(copd_selection, header_labels=('foldChange', None, None, 'nodeLabel'),
+                      filename="dataset_analysis_plots/copd1_correlations")
+
+    generated_selection = generated_files["Mm_CFA_Apo"]
+    generated_selection = {file: generated_selection[file] for file in generated_selection
+                           if "(0)" in file}
+    generated_selection = {file: generated_selection[file] for file in list(generated_selection)[:3]}
+    plot_correlations(generated_selection, header_labels=('logFC', None, None, 'nodeID'),
+                      separator=",", filename="dataset_analysis_plots/gen02_correlations")
+

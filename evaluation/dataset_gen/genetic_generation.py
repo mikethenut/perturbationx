@@ -51,6 +51,15 @@ def generate_dataset(network_name, causalbionet, population_size,
     negative_boundary_mask = generate_mask(boundary_direction, -1)
     neutral_boundary_mask = generate_mask(boundary_direction, 0)
 
+    total_edges = np.count_nonzero(lap_b)
+    lowest_possible_edge_consistency = 0.
+    lowest_possible_edge_consistency += np.sum(positive_boundary_edge_counts[negative_boundary_mask])
+    lowest_possible_edge_consistency += np.sum(negative_boundary_edge_counts[positive_boundary_mask])
+    lowest_possible_edge_consistency += np.sum(positive_boundary_edge_counts[neutral_boundary_mask])
+    lowest_possible_edge_consistency /= total_edges
+    print(network_name + " highest possible edge consistency: " + str(lowest_possible_edge_consistency))
+    return
+
     # Load data samples
     positive_data_samples = pd.read_table("../../data/ExpressionExamples/positive_samples.csv", sep=",")
     negative_data_samples = pd.read_table("../../data/ExpressionExamples/negative_samples.csv", sep=",")
@@ -202,9 +211,9 @@ if __name__ == "__main__":
                         format="%(asctime)s %(levelname)s -- %(message)s")
 
     # Network
-    network_folder = "../../data/BAGen03Large/"
-    core_suffix = "_core.tsv"
-    boundary_suffix = "_boundary.tsv"
+    network_folder = "../../data/NPANetworks/"
+    core_suffix = "_backbone.tsv"
+    boundary_suffix = "_downstream.tsv"
     directions = ["0"]
     datasets_per_direction = 1
     pop_size = 500

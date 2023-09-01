@@ -290,7 +290,7 @@ def plot_copd1_mvr_robustness(in_file):
         "rcl": "tab:orange"
     }
     columns = 3
-    fig, ax = plt.subplots(1, columns, figsize=(4 * columns, 6))
+    fig, ax = plt.subplots(1, columns, figsize=(4 * columns, 5))
     for idx, key in enumerate(keys):
         x = []
         npa_mrae = []
@@ -358,13 +358,14 @@ def plot_copd1_mvr_robustness(in_file):
     ax[2].set_ylabel("Leading Node Precision")
     ax[2].set_ylim([0.15, 1.05])
 
+    plt.suptitle("Mm Apoptosis")
     plt.tight_layout()
     out_file = in_file.replace(".json", ".png")
     plt.savefig(out_file, dpi=300)
     plt.clf()
 
 
-def plot_gen_mvr_robustness(in_file):
+def plot_gen_mvr_robustness(in_file, title):
     with open(in_file) as f:
         results = json.load(f)
 
@@ -401,7 +402,7 @@ def plot_gen_mvr_robustness(in_file):
     # Plot MVR results
     keys = ["ncl", "rcl", "nc"]
     columns = 3
-    fig, ax = plt.subplots(1, columns, figsize=(4 * columns, 6))
+    fig, ax = plt.subplots(1, columns, figsize=(4 * columns, 5))
     lineplot_data = {key: ([], [], [], []) for key in keys}
 
     for network in results_by_network:
@@ -477,13 +478,15 @@ def plot_gen_mvr_robustness(in_file):
     ax[2].set_ylabel("Leading Node Precision")
     ax[2].set_ylim([0.73, 1.02])
 
+    if title is not None:
+        plt.suptitle(title)
     plt.tight_layout()
     out_file = in_file.replace(".json", ".png")
     plt.savefig(out_file, dpi=300)
     plt.clf()
 
 
-def plot_gen_opposite_pruning(in_file):
+def plot_gen_opposite_pruning(in_file, title):
     with open(in_file) as f:
         results = json.load(f)
 
@@ -509,10 +512,10 @@ def plot_gen_opposite_pruning(in_file):
                 result["matched_boundary_edges"][dataset]
 
     # Plot OVR results
-    columns = 3
+    rows = 3
     keys = ["ncl", "nncl", "nnc", "rrcl"]
     ref_key = "ncl"
-    fig, ax = plt.subplots(1, columns, figsize=(6 * columns, 6))
+    fig, ax = plt.subplots(rows, 1, figsize=(6, 5 * rows))
     lineplot_data = {
         -1: ([], [], [], []),
         0: ([], [], [], []),
@@ -554,24 +557,13 @@ def plot_gen_opposite_pruning(in_file):
         0: "Random datasets",
         1: "Consistent datasets"
     }
-    palette = ["tab:blue", "tab:orange", "tab:green"]
+    palette = sns.color_palette("Set2")
+    palette = [palette[2], palette[1], palette[0]]
     plot_dataframe = pd.DataFrame()
     for dataset_type, color in zip([0, -1, 1], palette):
-        """
-        sns.lineplot(x=lineplot_data[dataset_type][0],
-                     y=lineplot_data[dataset_type][1],
-                     ax=ax[0], color=color)
-        sns.lineplot(x=lineplot_data[dataset_type][0],
-                     y=lineplot_data[dataset_type][3],
-                     ax=ax[1], color=color)
-        sns.lineplot(x=lineplot_data[dataset_type][0],
-                     y=lineplot_data[dataset_type][2],
-                     ax=ax[2], color=color,
-                     label=dataset_labels[dataset_type])
-        """
         x, relative_npa, ln_precision, ln_recall = lineplot_data[dataset_type]
         dataset_dataframe = pd.DataFrame({
-            "Opposing value pruning method": x,
+            "Opposing edge pruning method": x,
             "Relative NPA": relative_npa,
             "Leading Node Recall": ln_recall,
             "Leading Node Precision": ln_precision
@@ -579,26 +571,22 @@ def plot_gen_opposite_pruning(in_file):
         dataset_dataframe["Dataset type"] = dataset_labels[dataset_type]
         plot_dataframe = pd.concat([plot_dataframe, dataset_dataframe])
 
-    sns.boxplot(x="Opposing value pruning method",
+    sns.boxplot(x="Opposing edge pruning method",
                 y="Relative NPA", hue="Dataset type",
                 data=plot_dataframe, ax=ax[0], palette=palette)
-    plot_dataframe = plot_dataframe[plot_dataframe["Opposing value pruning method"] != "Keep"]
-    sns.boxplot(x="Opposing value pruning method",
+    plot_dataframe = plot_dataframe[plot_dataframe["Opposing edge pruning method"] != "Keep"]
+    sns.boxplot(x="Opposing edge pruning method",
                 y="Leading Node Recall", hue="Dataset type",
                 data=plot_dataframe, ax=ax[1], palette=palette)
-    sns.boxplot(x="Opposing value pruning method",
+    sns.boxplot(x="Opposing edge pruning method",
                 y="Leading Node Precision", hue="Dataset type",
                 data=plot_dataframe, ax=ax[2], palette=palette)
 
-    for col in range(columns):
-        ax[col].set_xlabel("Opposing value pruning method")
-
-    ax[0].set_ylabel("Relative NPA")
+    ax[0].set_xlabel(None)
     ax[0].set_ylim(-0.15, 2.65)
-    ax[1].set_ylabel("Leading Node Recall")
+    ax[1].set_xlabel(None)
     ax[1].get_legend().remove()
     ax[1].set_ylim(-0.05, 1.05)
-    ax[2].set_ylabel("Leading Node Precision")
     ax[2].get_legend().remove()
     ax[2].set_ylim(-0.05, 1.05)
 
@@ -608,6 +596,8 @@ def plot_gen_opposite_pruning(in_file):
                  [labels[idx] for idx in order],
                  loc="upper left")
 
+    if title is not None:
+        plt.suptitle(title)
     plt.tight_layout()
     out_file = in_file.replace(".json", ".png")
     plt.savefig(out_file, dpi=300)
@@ -875,8 +865,8 @@ def plot_snr_combined(in_files):
 
     # Plot SNR results
     columns = 3
-    fig, ax = plt.subplots(1, columns, figsize=(4 * columns, 6))
-    colors = ["tab:green", "tab:blue", "tab:orange"]
+    fig, ax = plt.subplots(1, columns, figsize=(4 * columns, 5))
+    colors = ["tab:olive", "tab:cyan", "tab:purple"]
     c_idx = 0
 
     for in_file in results_by_file:
@@ -952,7 +942,10 @@ def plot_snr_combined(in_files):
                         ln_recall.append(recall / count)
                         ln_precision.append(precision / count)
 
-        sns.lineplot(x=x, y=npa_mrae, ax=ax[0], label=in_files[in_file], color=colors[c_idx])
+        label = in_files[in_file]
+        if label == "COPD1":
+            label = "Mm Apoptosis"
+        sns.lineplot(x=x, y=npa_mrae, ax=ax[0], label=label, color=colors[c_idx])
         sns.lineplot(x=x, y=ln_recall, ax=ax[1], color=colors[c_idx])
         sns.lineplot(x=x, y=ln_precision, ax=ax[2], color=colors[c_idx])
         c_idx += 1 if c_idx < len(colors) - 1 else 0
@@ -962,12 +955,12 @@ def plot_snr_combined(in_files):
         ax[col].invert_xaxis()
 
     ax[0].set_ylabel("NPA Relative Absolute Error")
-    ax[0].set_ylim([0, 0.3])
+    ax[0].set_ylim([-0.02, 0.32])
     ax[0].legend(loc="upper left")
     ax[1].set_ylabel("Leading Node Recall")
-    ax[1].set_ylim([0.75, 1])
+    ax[1].set_ylim([0.73, 1.02])
     ax[2].set_ylabel("Leading Node Precision")
-    ax[2].set_ylim([0.75, 1])
+    ax[2].set_ylim([0.73, 1.02])
 
     plt.tight_layout()
     out_file = "snr_evaluation/snr_evaluation_combined.png"
@@ -1175,13 +1168,18 @@ def plot_gen_svr_robustness(in_file):
 
 
 def plot_svr_combined(in_files):
-    fig, axs = plt.subplots(1, len(in_files), figsize=(4 * len(in_files), 6))
+    fig, axs = plt.subplots(1, len(in_files), figsize=(4 * len(in_files), 5))
     if len(in_files) == 1:
         axs = [axs]
 
     for file_idx, in_file in enumerate(in_files):
         with open(in_file) as f:
             results = json.load(f)
+
+        # Plot SVR results
+        ax = axs[file_idx]
+        x = []
+        relative_npa = []
 
         if in_files[in_file] == "COPD1":
             results_by_dataset = dict()
@@ -1212,10 +1210,7 @@ def plot_svr_combined(in_files):
                         result["matched_boundary_edges"][dataset]
                     )
 
-            # Plot SVR results
-            ax = axs[file_idx]
-            x = []
-            relative_npa = []
+
 
             for dataset_source in results_by_dataset:
                 smallest_svr = min(results_by_dataset[dataset_source].keys())
@@ -1239,12 +1234,7 @@ def plot_svr_combined(in_files):
                         rel_npa += npa / ref_npa
                     relative_npa.append(rel_npa / count)
 
-            sns.boxplot(x=x, y=relative_npa, ax=ax, color="tab:blue")
-
-            ax.set_xlabel("Shuffled Value Ratio")
-            ax.set_ylabel("Relative NPA")
-            ax.set_ylim([-0.05, 1.05])
-            ax.set_title(in_files[in_file])
+                    print(dataset_svr, dataset_source, rel_npa / count)
 
         else:
             results_by_network = dict()
@@ -1279,13 +1269,7 @@ def plot_svr_combined(in_files):
                         result["matched_boundary_edges"][dataset]
                     )
 
-            # Plot SVR results
-            x = []
-            relative_npa = []
-            ax = axs[file_idx]
-
             for network in results_by_network:
-
                 for dataset_source in results_by_network[network]:
                     smallest_svr = min(results_by_network[network][dataset_source].keys())
                     base_results = results_by_network[network][dataset_source][smallest_svr]
@@ -1308,14 +1292,18 @@ def plot_svr_combined(in_files):
                             rel_npa += npa / ref_npa
                         relative_npa.append(rel_npa / count)
 
-            sns.boxplot(x=x, y=relative_npa, ax=ax, color="tab:blue")
+        sns.boxplot(x=x, y=relative_npa, ax=ax, color=sns.color_palette()[1])
 
-            ax.set_xlabel("Shuffled Value Ratio")
-            ax.set_ylabel("Relative NPA")
-            ax.set_ylim([-0.05, 1.05])
-            ax.set_title(in_files[in_file])
+        ax.set_xlabel("Permutation Rate")
+        ax.set_ylabel("Relative NPA")
+        ax.set_ylim([-0.05, 1.05])
 
-    plt.suptitle("Boundary edge permutation \"O\"")
+        title = in_files[in_file]
+        if title == "COPD1":
+            title = "Mm Apoptosis"
+        ax.set_title(title)
+
+    plt.suptitle("Boundary node permutation \"O\"")
     plt.tight_layout()
     out_file = "svr_evaluation/svr_evaluation_combined.png"
     plt.savefig(out_file, dpi=300)
@@ -1323,29 +1311,31 @@ def plot_svr_combined(in_files):
 
 
 if __name__ == "__main__":
-    # plot_gen_opposite_pruning("ovr_evaluation/ovr_evaluation_npa.json")
-    # plot_gen_opposite_pruning("ovr_evaluation/ovr_evaluation_ba.json")
+    plt.rcParams.update({'font.size': 12})
+
+    # plot_gen_opposite_pruning("ovr_evaluation/ovr_evaluation_npa.json", "NPA-R")
+    # plot_gen_opposite_pruning("ovr_evaluation/ovr_evaluation_ba.json", "Barabási–Albert")
 
     # plot_copd1_mvr_robustness("mvr_evaluation/mvr_evaluation_copd1.json")
-    # plot_gen_mvr_robustness("mvr_evaluation/mvr_evaluation_npa.json")
-    # plot_gen_mvr_robustness("mvr_evaluation/mvr_evaluation_ba.json")
+    # plot_gen_mvr_robustness("mvr_evaluation/mvr_evaluation_npa.json", "NPA-R")
+    # plot_gen_mvr_robustness("mvr_evaluation/mvr_evaluation_ba.json", "Barabási–Albert")
 
     # plot_copd1_snr_robustness("snr_evaluation/snr_evaluation_copd1.json")
     # plot_gen_snr_robustness("snr_evaluation/snr_evaluation_npa.json")
     # plot_gen_snr_robustness("snr_evaluation/snr_evaluation_ba.json")
 
-    plot_snr_combined({
-        "snr_evaluation/snr_evaluation_copd1.json": "COPD1",
-        "snr_evaluation/snr_evaluation_npa.json": "NPA-R",
-        "snr_evaluation/snr_evaluation_ba.json": "Barabási–Albert"
-    })
+    # plot_snr_combined({
+    #    "snr_evaluation/snr_evaluation_copd1.json": "COPD1",
+    #    "snr_evaluation/snr_evaluation_npa.json": "NPA-R",
+    #    "snr_evaluation/snr_evaluation_ba.json": "Barabási–Albert"
+    # })
 
     # plot_copd1_svr_robustness("svr_evaluation/svr_evaluation_copd1.json")
     # plot_gen_svr_robustness("svr_evaluation/svr_evaluation_npa.json")
     # plot_gen_svr_robustness("svr_evaluation/svr_evaluation_ba.json")
 
-    #plot_svr_combined({
-    #    "svr_evaluation/svr_evaluation_copd1.json": "COPD1",
-    #    "svr_evaluation/svr_evaluation_npa.json": "NPA-R",
-    #    "svr_evaluation/svr_evaluation_ba.json": "Barabási–Albert"
-    #})
+    plot_svr_combined({
+        "svr_evaluation/svr_evaluation_copd1.json": "COPD1",
+        "svr_evaluation/svr_evaluation_npa.json": "NPA-R",
+        "svr_evaluation/svr_evaluation_ba.json": "Barabási–Albert"
+    })
