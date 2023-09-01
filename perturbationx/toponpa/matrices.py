@@ -38,7 +38,7 @@ def generate_boundary_laplacian(adj_b, boundary_edge_minimum=6):
     return adj_b / row_sums[:, np.newaxis]
 
 
-def generate_core_laplacians(lap_b, adj_c, adj_perms, exact_boundary_outdegree=True):
+def generate_core_laplacians(lap_b, adj_c, exact_boundary_outdegree=True):
     core_degrees = np.abs(adj_c).sum(axis=1)
     boundary_outdegrees = np.abs(lap_b).sum(axis=1)
 
@@ -49,9 +49,4 @@ def generate_core_laplacians(lap_b, adj_c, adj_perms, exact_boundary_outdegree=T
     lap_c = np.diag(core_degrees + boundary_outdegrees) - adj_c
     lap_q = np.diag(core_degrees) + adj_c
 
-    lap_perms = {}
-    for p in adj_perms:
-        lap_perms[p] = [np.diag(np.abs(adj).sum(axis=1) + boundary_outdegrees) - adj
-                        for adj in adj_perms[p]]
-
-    return lap_c, lap_q, lap_perms
+    return lap_c, lap_q

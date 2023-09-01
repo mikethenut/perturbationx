@@ -339,9 +339,8 @@ class CausalNetwork:
         lap_b = - toponpa.generate_boundary_laplacian(
             adj_b, boundary_edge_minimum=boundary_outdegree_minimum
         )
-        lap_c, lap_q, _ = toponpa.generate_core_laplacians(
-            lap_b, adj_c, {},
-            exact_boundary_outdegree=exact_boundary_outdegree
+        lap_c, lap_q, = toponpa.generate_core_laplacians(
+            lap_b, adj_c, exact_boundary_outdegree=exact_boundary_outdegree
         )
         return lap_b, lap_c, lap_q, node_ordering
 

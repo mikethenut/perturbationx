@@ -27,20 +27,26 @@ def confidence_interval(values, variances, alpha=0.95):
     return ci_lower, ci_upper, p_values
 
 
-def test_permutations(lap_b: np.ndarray, lap_c: np.ndarray, lap_q: np.ndarray, lperms: dict,
-                      core_edge_count: int, boundary_coefficients: np.ndarray,
-                      permutations=('o', 'k2'), permutation_rate=1., iterations=500, seed=None):
+def test_permutations(lap_b: np.ndarray, lap_c: np.ndarray, lap_q: np.ndarray, adj_perms: dict,
+                      core_edge_count: int, boundary_coefficients: np.ndarray, permutations=('o', 'k2'),
+                      full_core_permutation=True, exact_boundary_outdegree=True, permutation_rate=1.,
+                      iterations=500, seed=None):
     distributions = dict()
     for p in set(permutations):
         match p.lower():
             case 'o':
                 distributions[p] = test_boundary_permutations(
-                    lap_b, lap_c, lap_q, boundary_coefficients, core_edge_count,
-                    permutation_rate=permutation_rate, iterations=iterations, seed=seed
+                    lap_b=lap_b, lap_c=lap_c, lap_q=lap_q,
+                    boundary_coefficients=boundary_coefficients,
+                    core_edge_count=core_edge_count, permutation_rate=permutation_rate,
+                    iterations=iterations, seed=seed
                 )
             case 'k1' | 'k2':
                 distributions[p] = test_core_permutations(
-                    lap_b, lperms[p], lap_q, boundary_coefficients, core_edge_count
+                    adj_perms=adj_perms[p], boundary_coefficients=boundary_coefficients,
+                    lap_b=lap_b, core_edge_count=core_edge_count,
+                    exact_boundary_outdegree=exact_boundary_outdegree,
+                    lap_q=lap_q, full_permutations=full_core_permutation
                 )
             case _:
                 warnings.warn("Permutation %s is unknown and will be skipped." % p)

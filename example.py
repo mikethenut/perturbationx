@@ -9,14 +9,16 @@ from perturbationx.resources import DEFAULT_LOGGING_KWARGS
 from perturbationx import CausalNetwork
 
 
-def example_run(causalbionet, datasets, permutations=("o", "k1", "k2")):
+def example_run(causalbionet, datasets, permutations=("o", "k1", "k2"), full_core_permutation=True):
     results = causalbionet.toponpa(
-        datasets, permutations=permutations, verbose=True
+        datasets, permutations=permutations,
+        full_core_permutation=full_core_permutation,
+        verbose=True
     )
 
-    # results.plot_distribution("k2")
-    # results.plot_distribution("k1")
-    # results.plot_distribution("o")
+    results.plot_distribution("k2")
+    results.plot_distribution("k1")
+    results.plot_distribution("o")
     results.to_json("results.json")
     # print(results.metadata())
 
@@ -132,7 +134,10 @@ if __name__ == "__main__":
     logging.basicConfig(**DEFAULT_LOGGING_KWARGS)
     mm_apoptosis = CausalNetwork.from_tsv("data/NPANetworks/Mm_CFA_Apoptosis_backbone.tsv", edge_type="core")
     mm_apoptosis.add_edges_from_tsv("data/NPANetworks/Mm_CFA_Apoptosis_downstream.tsv", edge_type="boundary")
-    example_run(mm_apoptosis, copd1_data, permutations=["o", "k1", "k2"])
+    example_run(mm_apoptosis, copd1_data, permutations=["o", "k1", "k2"],
+                full_core_permutation=True)
+    example_run(mm_apoptosis, copd1_data, permutations=["o", "k1", "k2"],
+                full_core_permutation=False)
     logging.info("Finished run")
     test_rewiring(mm_apoptosis, copd1_data)
     logging.info("Finished rewiring")

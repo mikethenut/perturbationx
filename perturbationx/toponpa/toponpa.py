@@ -26,13 +26,11 @@ def toponpa(graph, relation_translator, datasets: dict, missing_value_pruning_mo
     preprocessing.infer_graph_attributes(graph, relation_translator, verbose)
     core_edge_count = sum(1 for src, trg in graph.edges if graph[src][trg]["type"] == "core")
     adj_b, adj_c = matrices.generate_adjacencies(graph)
-    if permutations is not None:
-        adj_perms = permutation.permute_adjacency(
+    adj_perms = None if permutations is None \
+        else permutation.permute_adjacency(
             adj_c, permutations=permutations, iterations=p_iters,
             permutation_rate=p_rate, seed=seed
         )
-    else:
-        adj_perms = {}
 
     result_builder = NPAResultBuilder.new_builder(graph, list(datasets.keys()))
     for dataset_id in datasets:
@@ -49,9 +47,8 @@ def toponpa(graph, relation_translator, datasets: dict, missing_value_pruning_mo
             boundary_edge_minimum=boundary_edge_minimum,
             verbose=verbose
         )
-        lap_c, lap_q, lap_perms = matrices.generate_core_laplacians(
-            lap_b, adj_c, adj_perms,
-            exact_boundary_outdegree=exact_boundary_outdegree
+        lap_c, lap_q = matrices.generate_core_laplacians(
+            lap_b, adj_c, exact_boundary_outdegree=exact_boundary_outdegree
         )
 
         # Compute NPA
@@ -81,10 +78,13 @@ def toponpa(graph, relation_translator, datasets: dict, missing_value_pruning_mo
         # Compute permutation test statistics
         if permutations is not None:
             distributions = statistics.test_permutations(
-                lap_b, lap_c, lap_q, lap_perms, core_edge_count,
-                dataset["logFC"].to_numpy(), permutations,
-                iterations=p_iters, permutation_rate=p_rate, seed=seed
+                lap_b=lap_b, lap_c=lap_c, lap_q=lap_q, adj_perms=adj_perms,
+                core_edge_count=core_edge_count, boundary_coefficients=dataset["logFC"].to_numpy(),
+                permutations=permutations, full_core_permutation=full_core_permutation,
+                exact_boundary_outdegree=exact_boundary_outdegree, permutation_rate=p_rate,
+                iterations=p_iters, seed=seed
             )
+
             for p in distributions:
                 pv = statistics.p_value(npa, distributions[p])
                 result_builder.set_global_attributes(dataset_id, ["%s_value" % p], [pv])
@@ -151,19 +151,19 @@ def evaluate_modifications(graph, relation_translator, modifications, nodes, dat
         if verbose:
             logging.info("COMPUTING NPA FOR DATASET '%s'" % dataset_id)
 
+        # Prepare data
+        lap_b, dataset = preprocessing.prune_network_dataset(
+            graph, adj_b, dataset, dataset_id,
+            missing_value_pruning_mode=missing_value_pruning_mode,
+            opposing_value_pruning_mode=opposing_value_pruning_mode,
+            opposing_value_minimum_amplitude=opposing_value_minimum_amplitude,
+            boundary_edge_minimum=boundary_edge_minimum,
+            verbose=verbose
+        )
+
         for idx, adj_c_perm in enumerate(adj_c_perms):
-            # Prepare data
-            lap_b, dataset = preprocessing.prune_network_dataset(
-                graph, adj_b, dataset, dataset_id,
-                missing_value_pruning_mode=missing_value_pruning_mode,
-                opposing_value_pruning_mode=opposing_value_pruning_mode,
-                opposing_value_minimum_amplitude=opposing_value_minimum_amplitude,
-                boundary_edge_minimum=boundary_edge_minimum,
-                verbose=verbose
-            )
-            lap_c, lap_q, _ = matrices.generate_core_laplacians(
-                lap_b, adj_c, {},
-                exact_boundary_outdegree=exact_boundary_outdegree
+            lap_c, lap_q = matrices.generate_core_laplacians(
+                lap_b, adj_c_perm, exact_boundary_outdegree=exact_boundary_outdegree
             )
 
             # Compute NPA
