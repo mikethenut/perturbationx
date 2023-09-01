@@ -9,7 +9,7 @@ import uuid
 import numpy as np
 import pandas as pd
 
-from bnpa.CausalNetwork import CausalNetwork
+from perturbationx.CausalNetwork import CausalNetwork
 
 
 def test_copd1(argument_product, signal_to_noise_ratio, missing_value_ratio, shuffled_value_ratio,

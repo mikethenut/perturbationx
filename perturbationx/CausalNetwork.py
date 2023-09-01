@@ -8,10 +8,10 @@ import json
 import numpy as np
 import networkx as nx
 
-import bnpa.io as px_io
-from bnpa.io import RelationTranslator
-import bnpa.toponpa as toponpa
-from bnpa.resources import DEFAULT_DATA_COLS, DEFAULT_LOGGING_KWARGS
+import perturbationx.io as px_io
+from perturbationx.io import RelationTranslator
+import perturbationx.toponpa as toponpa
+from perturbationx.resources import DEFAULT_DATA_COLS, DEFAULT_LOGGING_KWARGS
 
 
 class CausalNetwork:

@@ -2,11 +2,11 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 
-from bnpa.io.network_io import read_dsv
-from bnpa.io.RelationTranslator import RelationTranslator
-from bnpa.toponpa.preprocessing import preprocess_dataset, preprocess_network, network_matrices, permute_network
-from bnpa.toponpa import core
-from bnpa.result.NPAResultBuilder import NPAResultBuilder
+from perturbationx.io.network_io import read_dsv
+from perturbationx.io.RelationTranslator import RelationTranslator
+from perturbationx.toponpa.preprocessing import preprocess_dataset, preprocess_network, network_matrices, permute_network
+from perturbationx.toponpa import core
+from perturbationx.result.NPAResultBuilder import NPAResultBuilder
 
 
 def build_graph(include_boundary=True):

@@ -1,17 +1,18 @@
 import logging
 
-from bnpa.io import RelationTranslator
-from bnpa.result import NPAResultBuilder
+from perturbationx.io import RelationTranslator
+from perturbationx.result import NPAResultBuilder
 from . import preprocessing, matrices, permutation, core, statistics
-import bnpa.util as util
+import perturbationx.util as util
 
 __all__ = ["toponpa", "evaluate_modifications"]
 
 
 def toponpa(graph, relation_translator, datasets: dict, missing_value_pruning_mode="remove",
-            opposing_value_pruning_mode="remove", boundary_edge_minimum=6, exact_boundary_outdegree=True,
-            compute_statistics=True, alpha=0.95, permutations=('o', 'k2'), p_iters=500, p_rate=1.,
-            seed=None, verbose=True):
+            opposing_value_pruning_mode="remove", opposing_value_minimum_amplitude=1.,
+            boundary_edge_minimum=6, exact_boundary_outdegree=True, compute_statistics=True,
+            alpha=0.95, permutations=('o', 'k2'), full_core_permutation=True, p_iters=500,
+            p_rate=1., seed=None, verbose=True):
     if verbose:
         logging.info("PREPROCESSING NETWORK")
 
@@ -90,9 +91,11 @@ def toponpa(graph, relation_translator, datasets: dict, missing_value_pruning_mo
     args_metadata = {
         "missing_value_pruning_mode": missing_value_pruning_mode,
         "opposing_value_pruning_mode": opposing_value_pruning_mode,
+        "opposing_value_minimum_amplitude": opposing_value_minimum_amplitude,
         "boundary_edge_minimum": boundary_edge_minimum,
         "exact_boundary_outdegree": exact_boundary_outdegree,
         "alpha": alpha,
+        "full_core_permutation": full_core_permutation,
         "permutation_iterations": p_iters,
         "permutation_rate": p_rate,
         "seed": seed
@@ -102,8 +105,8 @@ def toponpa(graph, relation_translator, datasets: dict, missing_value_pruning_mo
 
 def evaluate_modifications(graph, relation_translator, modifications, nodes, datasets,
                            missing_value_pruning_mode="remove", opposing_value_pruning_mode="remove",
-                           boundary_edge_minimum=6, exact_boundary_outdegree=True,
-                           seed=None, verbose=True):
+                           opposing_value_minimum_amplitude=1., boundary_edge_minimum=6,
+                           exact_boundary_outdegree=True, seed=None, verbose=True):
     if verbose:
         logging.info("PREPROCESSING NETWORK")
 

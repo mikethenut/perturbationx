@@ -4,8 +4,8 @@ import time
 
 import pandas as pd
 
-from bnpa.resources import DEFAULT_LOGGING_KWARGS
-from bnpa import CausalNetwork
+from perturbationx.resources import DEFAULT_LOGGING_KWARGS
+from perturbationx import CausalNetwork
 
 
 def example_run(causalbionet, datasets, permutations=("o", "k1", "k2")):

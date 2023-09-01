@@ -1,6 +1,6 @@
 import numpy as np
 
-from bnpa.util import connect_adjacency_components
+from perturbationx.util import connect_adjacency_components
 
 
 def adjacency_permutation_k1(adj: np.ndarray, iterations=500, permutation_rate=1.,

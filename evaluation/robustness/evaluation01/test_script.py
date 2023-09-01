@@ -7,7 +7,7 @@ import warnings
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from bnpa.CausalNetwork import CausalNetwork
+from perturbationx.CausalNetwork import CausalNetwork
 
 
 def test_networks(network_folder, core_suffix, boundary_suffix, out_file):

@@ -4,7 +4,7 @@ import logging
 import py4cytoscape as p4c
 from py4cytoscape.py4cytoscape_utils import DEFAULT_BASE_URL
 
-from bnpa.resources import DEFAULT_NODE_COLOR, DEFAULT_GRADIENT
+from perturbationx.resources import DEFAULT_NODE_COLOR, DEFAULT_GRADIENT
 from .cytoscape import set_boundary_display, edge_to_p4c_format, \
     color_nodes_by_column, highlight_subgraph, isolate_subgraph, extract_subgraph, clear_bypass
 

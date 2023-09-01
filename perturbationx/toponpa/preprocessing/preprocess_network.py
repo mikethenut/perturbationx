@@ -5,7 +5,7 @@ from typing import Optional
 
 import networkx as nx
 
-from bnpa.io import RelationTranslator
+from perturbationx.io import RelationTranslator
 
 
 def infer_node_type(graph: nx.DiGraph):

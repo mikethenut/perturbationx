@@ -11,10 +11,10 @@ import networkx as nx
 import py4cytoscape as p4c
 from py4cytoscape.py4cytoscape_utils import DEFAULT_BASE_URL
 
-from bnpa.resources import DEFAULT_STYLE
-from bnpa.vis import NPAResultDisplay
-from bnpa.vis.cytoscape import init_cytoscape, load_network_data
-from bnpa.util import get_shortest_path_components, get_neighborhood_components
+from perturbationx.resources import DEFAULT_STYLE
+from perturbationx.vis import NPAResultDisplay
+from perturbationx.vis.cytoscape import init_cytoscape, load_network_data
+from perturbationx.util import get_shortest_path_components, get_neighborhood_components
 
 
 class NPAResult:

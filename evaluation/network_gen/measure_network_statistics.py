@@ -3,8 +3,8 @@ import json
 
 import networkx as nx
 
-from bnpa.io.network_io import read_dsv
-from bnpa.io.RelationTranslator import RelationTranslator
+from perturbationx.io.network_io import read_dsv
+from perturbationx.io.RelationTranslator import RelationTranslator
 
 
 def measure_network_stats(network_folder, output_file):

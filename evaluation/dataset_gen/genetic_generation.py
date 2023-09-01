@@ -8,8 +8,8 @@ import numpy.linalg as la
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from bnpa.CausalNetwork import CausalNetwork
-from bnpa.toponpa.core import perturbation_amplitude
+from perturbationx.CausalNetwork import CausalNetwork
+from perturbationx.toponpa.core import perturbation_amplitude
 
 
 def generate_mask(array, value):

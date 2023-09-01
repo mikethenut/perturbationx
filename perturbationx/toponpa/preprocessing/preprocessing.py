@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 
-from bnpa.io import RelationTranslator
+from perturbationx.io import RelationTranslator
 from ..matrices import generate_boundary_laplacian
 from .preprocess_network import infer_node_type, enumerate_nodes, remove_invalid_graph_elements, \
     infer_edge_attributes, infer_metadata

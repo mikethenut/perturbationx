@@ -6,9 +6,9 @@ import logging
 import pandas as pd
 import networkx as nx
 
-from bnpa.CausalNetwork import CausalNetwork
-from bnpa.toponpa.preprocessing import preprocess_dataset, network_matrices, permute_network
-from bnpa.toponpa import core
+from perturbationx.CausalNetwork import CausalNetwork
+from perturbationx.toponpa.preprocessing import preprocess_dataset, network_matrices, permute_network
+from perturbationx.toponpa import core
 
 
 def create_networkx_from_adjacency(adjacency, nodes):

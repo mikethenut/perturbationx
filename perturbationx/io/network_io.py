@@ -3,7 +3,7 @@ import warnings
 
 import networkx as nx
 
-from bnpa.resources.resources import DEFAULT_DATA_COLS
+from perturbationx.resources.resources import DEFAULT_DATA_COLS
 
 
 __all__ = ["read_dsv", "parse_pandas", "validate_nx_graph", "to_edge_list", "write_dsv"]

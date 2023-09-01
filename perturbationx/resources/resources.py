@@ -19,7 +19,7 @@ DEFAULT_LOGGING_KWARGS = {
 
 # visualisation
 STYLE_XML = "default-style.xml"
-DEFAULT_STYLE = "bnpa-default"
+DEFAULT_STYLE = "perturbationx-default"
 DEFAULT_NODE_COLOR = "#FEE391"
 DEFAULT_GRADIENT = ("#2B80EF", "#EF3B2C")
 DEFAULT_EDGE_WIDTH = 2.0

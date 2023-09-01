@@ -9,7 +9,7 @@ from py4cytoscape.exceptions import CyError
 from py4cytoscape.py4cytoscape_utils import DEFAULT_BASE_URL
 from py4cytoscape.tables import load_table_data
 
-from bnpa.resources import *
+from perturbationx.resources import *
 
 
 def edge_to_p4c_format(src, trg, interaction):
