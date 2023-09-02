@@ -208,8 +208,8 @@ class CausalNetwork:
     def rewire_edges(self, nodes, iterations, datasets, method='k1', p_rate=1.,
                      missing_value_pruning_mode="nullify", opposing_value_pruning_mode=None,
                      opposing_value_minimum_amplitude=1., boundary_edge_minimum=6,
-                     exact_boundary_outdegree=True, seed=None, verbose=True,
-                     logging_kwargs=DEFAULT_LOGGING_KWARGS):
+                     exact_boundary_outdegree=True, sparse=True, seed=None,
+                     verbose=True, logging_kwargs=DEFAULT_LOGGING_KWARGS):
         if verbose and logging_kwargs is not None:
             logging.basicConfig(**logging_kwargs)
             logging.info("REWIRING EDGES")
@@ -240,14 +240,14 @@ class CausalNetwork:
             opposing_value_minimum_amplitude=opposing_value_minimum_amplitude,
             boundary_edge_minimum=boundary_edge_minimum,
             exact_boundary_outdegree=exact_boundary_outdegree,
-            seed=seed, verbose=verbose
+            sparse=sparse, seed=seed, verbose=verbose
         )
 
     def wire_edges(self, number_of_edges, nodes, edge_relations, iterations, datasets,
                    missing_value_pruning_mode="nullify", opposing_value_pruning_mode=None,
                    opposing_value_minimum_amplitude=1., boundary_edge_minimum=6,
-                   exact_boundary_outdegree=True, seed=None, verbose=True,
-                   logging_kwargs=DEFAULT_LOGGING_KWARGS):
+                   exact_boundary_outdegree=True, sparse=True, seed=None,
+                   verbose=True, logging_kwargs=DEFAULT_LOGGING_KWARGS):
         if verbose and logging_kwargs is not None:
             logging.basicConfig(**logging_kwargs)
             logging.info("WIRING EDGES")
@@ -280,13 +280,13 @@ class CausalNetwork:
             opposing_value_minimum_amplitude=opposing_value_minimum_amplitude,
             boundary_edge_minimum=boundary_edge_minimum,
             exact_boundary_outdegree=exact_boundary_outdegree,
-            seed=seed, verbose=verbose
+            sparse=sparse, seed=seed, verbose=verbose
         )
 
     def evaluate_modifications(self, modifications, nodes, datasets, missing_value_pruning_mode="nullify",
                                opposing_value_pruning_mode=None, opposing_value_minimum_amplitude=1.,
-                               boundary_edge_minimum=6, exact_boundary_outdegree=True, seed=None, verbose=True,
-                               logging_kwargs=DEFAULT_LOGGING_KWARGS):
+                               boundary_edge_minimum=6, exact_boundary_outdegree=True, sparse=True,
+                               seed=None, verbose=True, logging_kwargs=DEFAULT_LOGGING_KWARGS):
         if verbose and logging_kwargs is not None:
             logging.basicConfig(**logging_kwargs)
 
@@ -300,7 +300,7 @@ class CausalNetwork:
             opposing_value_minimum_amplitude=opposing_value_minimum_amplitude,
             boundary_edge_minimum=boundary_edge_minimum,
             exact_boundary_outdegree=exact_boundary_outdegree,
-            seed=seed, verbose=verbose
+            sparse=sparse, seed=seed, verbose=verbose
         )
 
     def infer_graph_attributes(self, inplace=False, verbose=True, logging_kwargs=DEFAULT_LOGGING_KWARGS):
@@ -315,7 +315,7 @@ class CausalNetwork:
             toponpa.infer_graph_attributes(graph, self.relation_translator, verbose)
             return CausalNetwork(graph, self.relation_translator, inplace=True)
 
-    def get_adjacencies(self, verbose=True, logging_kwargs=DEFAULT_LOGGING_KWARGS):
+    def get_adjacencies(self, sparse=False, verbose=True, logging_kwargs=DEFAULT_LOGGING_KWARGS):
         if verbose and logging_kwargs is not None:
             logging.basicConfig(**logging_kwargs)
             logging.info("PREPROCESSING NETWORK")
@@ -325,7 +325,7 @@ class CausalNetwork:
         toponpa.infer_graph_attributes(prograph, self.relation_translator, verbose)
 
         # Construct adjacency matrices
-        adj_b, adj_c = toponpa.generate_adjacencies(prograph)
+        adj_b, adj_c = toponpa.generate_adjacencies(prograph, sparse=sparse)
 
         # Determine node ordering
         node_ordering = [None] * len(prograph.nodes)
@@ -334,8 +334,10 @@ class CausalNetwork:
 
         return adj_b, adj_c, node_ordering
 
-    def get_laplacians(self, boundary_outdegree_minimum=6, exact_boundary_outdegree=True, verbose=True):
-        adj_b, adj_c, node_ordering = self.get_adjacencies(verbose)
+    def get_laplacians(self, boundary_outdegree_minimum=6, exact_boundary_outdegree=True, sparse=False,
+                       verbose=True, logging_kwargs=DEFAULT_LOGGING_KWARGS):
+        adj_b, adj_c, node_ordering = self.get_adjacencies(
+            sparse=sparse, verbose=verbose, logging_kwargs=logging_kwargs)
         lap_b = - toponpa.generate_boundary_laplacian(
             adj_b, boundary_edge_minimum=boundary_outdegree_minimum
         )
@@ -347,7 +349,7 @@ class CausalNetwork:
     def toponpa(self, datasets: dict, missing_value_pruning_mode="nullify", opposing_value_pruning_mode=None,
                 opposing_value_minimum_amplitude=1., boundary_edge_minimum=6, exact_boundary_outdegree=True,
                 compute_statistics=True, alpha=0.95, permutations=('o', 'k2'), full_core_permutation=True,
-                p_iters=500, p_rate=1.,  seed=None, verbose=True, logging_kwargs=DEFAULT_LOGGING_KWARGS):
+                p_iters=500, p_rate=1., sparse=True, seed=None, verbose=True, logging_kwargs=DEFAULT_LOGGING_KWARGS):
         if verbose and logging_kwargs is not None:
             logging.basicConfig(**logging_kwargs)
 
@@ -365,7 +367,7 @@ class CausalNetwork:
             exact_boundary_outdegree=exact_boundary_outdegree,
             compute_statistics=compute_statistics, alpha=alpha,
             permutations=permutations, full_core_permutation=full_core_permutation,
-            p_iters=p_iters, p_rate=p_rate, seed=seed, verbose=verbose
+            p_iters=p_iters, p_rate=p_rate, sparse=sparse, seed=seed, verbose=verbose
         )
 
     def to_networkx(self):

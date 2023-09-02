@@ -1,16 +1,19 @@
 import numpy as np
 import numpy.linalg as la
+from scipy.sparse import issparse
 
 from perturbationx.toponpa import generate_core_laplacians
 
 
-def test_boundary_permutations(lap_b: np.ndarray, lap_c: np.ndarray, lap_q: np.ndarray,
-                               boundary_coefficients: np.ndarray, core_edge_count: int,
-                               permutation_rate=1., iterations=500, seed=None):
-    rng = np.random.default_rng(seed)
-    inference_matrix = - np.matmul(la.inv(lap_c), lap_b)
-    permutation_count = np.ceil(permutation_rate * boundary_coefficients.shape[0]).astype(int)
+def test_boundary_permutations(lap_b, lap_c, lap_q, boundary_coefficients: np.ndarray,
+                               core_edge_count: int, permutation_rate=1., iterations=500, seed=None):
+    if issparse(lap_c):
+        lap_c = lap_c.todense()
+    lap_c_inv = la.inv(lap_c)
+    inference_matrix = - lap_c_inv @ lap_b if not issparse(lap_b) else None
 
+    rng = np.random.default_rng(seed)
+    permutation_count = np.ceil(permutation_rate * boundary_coefficients.shape[0]).astype(int)
     distribution = []
     for p in range(iterations):
         permuted_idx = rng.choice(boundary_coefficients.shape[0], size=permutation_count, replace=False)
@@ -18,9 +21,13 @@ def test_boundary_permutations(lap_b: np.ndarray, lap_c: np.ndarray, lap_q: np.n
         permuted_boundary[permuted_idx] = \
             rng.permutation(permuted_boundary[permuted_idx])
 
-        permuted_core = np.matmul(inference_matrix, permuted_boundary)
-        sample_perturbation = np.matmul(permuted_core.transpose(), lap_q.dot(permuted_core)) / core_edge_count
-        distribution.append(sample_perturbation)
+        if issparse(lap_b):  # We do not precompute the inference matrix for sparse matrices
+            permuted_core = - lap_c_inv @ lap_b @ permuted_boundary
+        else:
+            permuted_core = inference_matrix @ permuted_boundary
+
+        sample_perturbation = permuted_core.T @ lap_q @ permuted_core
+        distribution.append(sample_perturbation / core_edge_count)
 
     return distribution
 
@@ -31,7 +38,7 @@ def test_core_permutations(adj_perms, boundary_coefficients: np.ndarray, lap_b: 
     if not full_permutations and lap_q is None:
         raise ValueError("Parameter lap_q must be provided if full_permutations is False.")
 
-    edge_constraints = - lap_b.dot(boundary_coefficients)
+    edge_constraints = - lap_b @ boundary_coefficients
     distribution = []
 
     for adj_c_perm in adj_perms:
@@ -39,8 +46,9 @@ def test_core_permutations(adj_perms, boundary_coefficients: np.ndarray, lap_b: 
         if full_permutations:
             lap_q = lap_q_perm
 
-        core_coefficients = np.matmul(la.inv(lap_c_perm), edge_constraints)
-        sample_perturbation = np.matmul(lap_q.dot(core_coefficients), core_coefficients)
+        lap_c_inv = la.inv(lap_c_perm.todense()) if issparse(lap_c_perm) else la.inv(lap_c_perm)
+        core_coefficients = lap_c_inv @ edge_constraints
+        sample_perturbation = core_coefficients.T @ lap_q @ core_coefficients
         distribution.append(sample_perturbation / core_edge_count)
 
     return distribution

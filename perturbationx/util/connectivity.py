@@ -9,7 +9,10 @@ def get_root(node, parents: dict):
 
 
 def find_connected_components(adj: np.ndarray):
-    num_nodes = len(adj)
+    if adj.ndim != 2 or adj.shape[0] != adj.shape[1]:
+        raise ValueError("Argument 'adj' {} is not a square matrix.".format(str(adj.shape)))
+
+    num_nodes = adj.shape[0]
     parents = {idx: idx for idx in range(num_nodes)}
     for idx, idy in zip(*np.nonzero(adj)):
         if idx < idy:
@@ -30,6 +33,9 @@ def find_connected_components(adj: np.ndarray):
 
 
 def connect_adjacency_components(adj: np.ndarray, nodes=None, weights=(1.,), seed=None):
+    if adj.ndim != 2:
+        raise ValueError("Argument 'adj' {} is not a square matrix.".format(str(adj.shape)))
+
     components = find_connected_components(adj)
 
     rng = np.random.default_rng(seed)

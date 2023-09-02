@@ -1,9 +1,10 @@
 import numpy as np
+from scipy.sparse import issparse, lil_array
 
 from perturbationx.util import connect_adjacency_components
 
 
-def adjacency_permutation_k1(adj: np.ndarray, iterations=500, permutation_rate=1.,
+def adjacency_permutation_k1(adj, iterations=500, permutation_rate=1.,
                              ensure_connectedness=True, seed=None):
     if adj.ndim != 2 or adj.shape[0] != adj.shape[1]:
         raise ValueError("Argument 'adj' {} is not a square matrix.".format(str(adj.shape)))
@@ -11,6 +12,8 @@ def adjacency_permutation_k1(adj: np.ndarray, iterations=500, permutation_rate=1
     rng = np.random.default_rng(seed)
     tril_idx = np.tril_indices(adj.shape[0], -1)
     adj_tril = adj[tril_idx]
+    if issparse(adj_tril):
+        adj_tril = adj_tril.todense().flatten()
 
     edge_idx = np.nonzero(adj_tril)[0]
     fixed_edges = np.floor(edge_idx.size * (1. - permutation_rate)).astype(int)
@@ -19,12 +22,16 @@ def adjacency_permutation_k1(adj: np.ndarray, iterations=500, permutation_rate=1
     permuted = []
     for _ in range(iterations):
         fixed_idx = rng.choice(edge_idx, size=fixed_edges, replace=False)
-        permuted_idx = np.ones(len(adj_tril), dtype=bool)
+        permuted_idx = np.ones(adj_tril.shape[0], dtype=bool)
         permuted_idx[fixed_idx] = False
         random_tril = adj_tril.copy()
         random_tril[permuted_idx] = rng.permutation(random_tril[permuted_idx])
 
-        random_adj = np.zeros(adj.shape)
+        if issparse(adj):
+            random_adj = lil_array(adj.shape)
+        else:
+            random_adj = np.zeros(adj.shape)
+
         random_adj[tril_idx] = random_tril
         random_adj += random_adj.transpose()
 

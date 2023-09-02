@@ -1,14 +1,15 @@
 import logging
 from typing import Optional
 
+import networkx as nx
 import numpy as np
 import pandas as pd
-import networkx as nx
+from scipy.sparse import issparse
 
 from perturbationx.io import RelationTranslator
-from ..matrices import generate_boundary_laplacian
 from .preprocess_network import infer_node_type, enumerate_nodes, remove_invalid_graph_elements, \
     infer_edge_attributes, infer_metadata
+from ..matrices import generate_boundary_laplacian
 
 __all__ = ["format_dataset", "prune_network_dataset", "infer_graph_attributes"]
 
@@ -33,28 +34,25 @@ def format_dataset(dataset: pd.DataFrame, computing_statistics=True):
 
 
 def remove_opposing_edges(adjacency: np.ndarray, dataset: pd.DataFrame, minimum_amplitude=1.):
-    boundary_sign = np.sign(adjacency)
     dataset_sign = np.sign(dataset["logFC"].to_numpy())
-    dataset_threshold = np.logical_and(
-            np.abs(dataset["logFC"].to_numpy()) >= minimum_amplitude,
-            dataset["logFC"].to_numpy() != 0.
+    dataset_mask = np.logical_and(
+        np.abs(dataset["logFC"].to_numpy()) >= minimum_amplitude,
+        dataset["logFC"].to_numpy() != 0.
     )
-    sign_mask = np.logical_and(
-        dataset_threshold[np.newaxis, :],
-        boundary_sign != dataset_sign[np.newaxis, :],
-        boundary_sign != 0
-    )
+
+    # mask edges with a different sign than the dataset
+    adjacency_mask = adjacency * dataset_sign[np.newaxis, :] < 0.
+    adjacency_mask *= dataset_mask[np.newaxis, :]
 
     # remove edges with a different sign than the dataset
     adjacency_pruned = adjacency.copy()
-    adjacency_pruned[sign_mask] = 0
+    adjacency_pruned[adjacency_mask] = 0
     return adjacency_pruned
 
 
 def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray, dataset: pd.DataFrame, dataset_id,
                           missing_value_pruning_mode="nullify", opposing_value_pruning_mode=None,
                           opposing_value_minimum_amplitude=1., boundary_edge_minimum=6, verbose=True):
-
     if missing_value_pruning_mode not in ["remove", "nullify"]:
         raise ValueError("Invalid missing value pruning mode. Must be one of 'remove' or 'nullify'.")
     if opposing_value_pruning_mode is not None and opposing_value_pruning_mode not in ["remove", "nullify"]:
@@ -96,7 +94,10 @@ def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray, dataset: pd.Data
     # Infer dataset-specific metadata
     outer_boundary_node_count = network_idx.size
     # Count non-zero elements per row
-    non_zero_row_count = np.count_nonzero(lap_b_pruned, axis=1)
+    if issparse(lap_b_pruned):
+        non_zero_row_count = np.bincount(lap_b_pruned.nonzero()[0], minlength=lap_b_pruned.shape[0])
+    else:
+        non_zero_row_count = np.count_nonzero(lap_b_pruned, axis=1)
     boundary_edge_count = np.sum(non_zero_row_count)
     inner_boundary_node_count = np.count_nonzero(non_zero_row_count)
 

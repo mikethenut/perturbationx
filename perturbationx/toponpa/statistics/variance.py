@@ -1,18 +1,23 @@
 import numpy as np
 import numpy.linalg as la
+from scipy.sparse import issparse, lil_array
 
 
-def core_covariance_matrix(lb: np.ndarray, lc: np.ndarray, stderr: np.ndarray):
-    inference_matrix = np.matmul(la.inv(lc), lb)
-    repeated = np.repeat([stderr], inference_matrix.shape[0], axis=0)
-    temp = np.multiply(inference_matrix, repeated)
-    return np.matmul(temp, temp.T)
+def core_covariance_matrix(lap_b, lap_c, stderr: np.ndarray):
+    if issparse(lap_c):
+        lap_c = lap_c.todense()
+    lap_c_inv = la.inv(lap_c)
+
+    err_diag = lil_array((stderr.shape[0], stderr.shape[0]))
+    err_diag.setdiag(stderr ** 2)
+    tmp = lap_b @ err_diag @ lap_b.T
+    res = lap_c_inv @ tmp @ lap_c_inv.T
+    return res
 
 
-def perturbation_variance(lq: np.ndarray, core_coefficients: np.ndarray,
+def perturbation_variance(lap_q: np.ndarray, core_coefficients: np.ndarray,
                           core_covariance: np.ndarray, core_edge_count: int):
-    temp = np.matmul(lq, core_covariance)
-    unscaled_variance = 2 * np.trace(np.matmul(temp, temp)) + \
-                        4 * np.matmul(np.matmul(core_coefficients, temp),
-                                      np.matmul(lq, core_coefficients))
+    temp = lap_q @ core_covariance
+    unscaled_variance = 2 * np.trace(temp @ temp) + \
+                        4 * core_coefficients @ temp @ lap_q @ core_coefficients
     return unscaled_variance / core_edge_count ** 2

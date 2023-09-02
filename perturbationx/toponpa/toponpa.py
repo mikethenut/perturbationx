@@ -1,9 +1,9 @@
 import logging
 
+import perturbationx.util as util
 from perturbationx.io import RelationTranslator
 from perturbationx.result import NPAResultBuilder
 from . import preprocessing, matrices, permutation, core, statistics
-import perturbationx.util as util
 
 __all__ = ["toponpa", "evaluate_modifications"]
 
@@ -12,7 +12,7 @@ def toponpa(graph, relation_translator, datasets: dict, missing_value_pruning_mo
             opposing_value_pruning_mode=None, opposing_value_minimum_amplitude=1.,
             boundary_edge_minimum=6, exact_boundary_outdegree=True, compute_statistics=True,
             alpha=0.95, permutations=('o', 'k2'), full_core_permutation=True, p_iters=500,
-            p_rate=1., seed=None, verbose=True):
+            p_rate=1., sparse=True, seed=None, verbose=True):
     if verbose:
         logging.info("PREPROCESSING NETWORK")
 
@@ -25,7 +25,7 @@ def toponpa(graph, relation_translator, datasets: dict, missing_value_pruning_mo
     # Preprocess the graph
     preprocessing.infer_graph_attributes(graph, relation_translator, verbose)
     core_edge_count = sum(1 for src, trg in graph.edges if graph[src][trg]["type"] == "core")
-    adj_b, adj_c = matrices.generate_adjacencies(graph)
+    adj_b, adj_c = matrices.generate_adjacencies(graph, sparse=sparse)
     adj_perms = None if permutations is None \
         else permutation.permute_adjacency(
             adj_c, permutations=permutations, iterations=p_iters,
@@ -52,7 +52,7 @@ def toponpa(graph, relation_translator, datasets: dict, missing_value_pruning_mo
         )
 
         # Compute NPA
-        core_coefficients = core.value_inference(lap_b, lap_c, dataset["logFC"].to_numpy())
+        core_coefficients = core.coefficient_inference(lap_b, lap_c, dataset["logFC"].to_numpy())
         npa, node_contributions = core.perturbation_amplitude_contributions(
             lap_q, core_coefficients, core_edge_count
         )
@@ -108,7 +108,7 @@ def toponpa(graph, relation_translator, datasets: dict, missing_value_pruning_mo
 def evaluate_modifications(graph, relation_translator, modifications, nodes, datasets,
                            missing_value_pruning_mode="nullify", opposing_value_pruning_mode=None,
                            opposing_value_minimum_amplitude=1., boundary_edge_minimum=6,
-                           exact_boundary_outdegree=True, seed=None, verbose=True):
+                           exact_boundary_outdegree=True, sparse=True, seed=None, verbose=True):
     if verbose:
         logging.info("PREPROCESSING NETWORK")
 
@@ -122,7 +122,7 @@ def evaluate_modifications(graph, relation_translator, modifications, nodes, dat
     core_edge_count = sum(1 for src, trg in graph.edges if graph[src][trg]["type"] == "core")
 
     # Construct modified adjacency matrices
-    adj_b, adj_c = matrices.generate_adjacencies(graph)
+    adj_b, adj_c = matrices.generate_adjacencies(graph, sparse=sparse)
     adj_c_perms = [adj_c.copy() for _ in range(len(modifications))]
     rt = relation_translator if relation_translator is not None \
         else RelationTranslator()
@@ -167,7 +167,7 @@ def evaluate_modifications(graph, relation_translator, modifications, nodes, dat
             )
 
             # Compute NPA
-            core_coefficients = core.value_inference(lap_b, lap_c, dataset["logFC"].to_numpy())
+            core_coefficients = core.coefficient_inference(lap_b, lap_c, dataset["logFC"].to_numpy())
             npa = core.perturbation_amplitude(lap_q, core_coefficients, core_edge_count)
             modifications[idx][1][dataset_id] = npa
 
