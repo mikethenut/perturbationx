@@ -19,7 +19,7 @@ def coefficient_inference(lap_b, lap_c, boundary_coefficients: np.ndarray):
         lap_c = lap_c.todense()
 
     edge_constraints = - lap_b @ boundary_coefficients
-    return la.inv(lap_c) @ edge_constraints
+    return la.solve(lap_c, edge_constraints)
 
 
 def perturbation_amplitude(lap_q: np.ndarray, core_coefficients: np.ndarray, core_edge_count: int):
