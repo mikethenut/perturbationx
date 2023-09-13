@@ -1,4 +1,3 @@
-import sys
 import warnings
 import logging
 from pathlib import Path

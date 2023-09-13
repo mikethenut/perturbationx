@@ -41,7 +41,12 @@ def generate_boundary_laplacian(adj_b, boundary_edge_minimum=6):
     if issparse(adj_b):
         # Clip edges where boundary outdegree is below threshold
         row_nonzero_counts = np.bincount(adj_b.nonzero()[0], minlength=adj_b.shape[0])
-        adj_b[row_nonzero_counts < boundary_edge_minimum, :] = 0
+        clipping_mask = row_nonzero_counts < boundary_edge_minimum
+        clipping_mask *= row_nonzero_counts > 0
+
+        clip_row_idx = [idx for idx, clip_row in enumerate(clipping_mask) if clip_row] + [0]
+        for idx in clip_row_idx:
+            adj_b[idx, :] = 0
 
         row_sums = abs(adj_b).sum(axis=1)
         row_sums[row_sums == 0] = 1

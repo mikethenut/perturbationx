@@ -22,7 +22,7 @@ def test_boundary_permutations(lap_b, lap_c, lap_q, boundary_coefficients: np.nd
             rng.permutation(permuted_boundary[permuted_idx])
 
         if issparse(lap_b):  # We do not precompute the inference matrix for sparse matrices
-            permuted_core = - lap_c_inv @ lap_b @ permuted_boundary
+            permuted_core = - lap_c_inv @ (lap_b @ permuted_boundary)
         else:
             permuted_core = inference_matrix @ permuted_boundary
 

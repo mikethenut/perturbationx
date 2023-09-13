@@ -63,16 +63,25 @@ def adjacency_permutation_k2(adj: np.ndarray, iterations=500, permutation_rate=1
 
         permuted_edge_weights = edge_weights.copy()
         permuted_edge_weights[permuted_idx] = rng.permutation(permuted_edge_weights[permuted_idx])
-        permuted_edge_weights = list(permuted_edge_weights)
 
-        random_adj = np.zeros(adj.shape)
-        for (src, trg), weight in zip(permuted_stubs, permuted_edge_weights):
-            if src != trg:
-                random_adj[src, trg] += weight
-                random_adj[trg, src] += weight
+        if issparse(adj):
+            random_adj = lil_array(adj.shape)
+        else:
+            random_adj = np.zeros(adj.shape)
+
+        src_indices, trg_indices = zip(*permuted_stubs)
+        mask = src_indices != trg_indices
+
+        src_indices = np.array(src_indices)[mask]
+        trg_indices = np.array(trg_indices)[mask]
+        permuted_edge_weights = permuted_edge_weights[mask]
+
+        random_adj[src_indices, trg_indices] = permuted_edge_weights
+        random_adj[trg_indices, src_indices] += permuted_edge_weights
 
         if ensure_connectedness:
             connect_adjacency_components(random_adj, weights=edge_weights, seed=seed)
+
         permuted.append(random_adj)
 
     return permuted
