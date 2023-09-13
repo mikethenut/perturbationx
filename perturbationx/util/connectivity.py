@@ -4,8 +4,11 @@ __all__ = ["connect_adjacency_components"]
 
 
 def get_root(node, parents: dict):
-    parent = parents[node]
-    return parent if parent == node else get_root(parent, parents)
+    if parents[node] == node:
+        return node
+
+    parents[node] = get_root(parents[node], parents)
+    return parents[node]
 
 
 def find_connected_components(adj: np.ndarray):

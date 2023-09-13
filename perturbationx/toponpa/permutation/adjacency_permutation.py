@@ -16,24 +16,32 @@ def adjacency_permutation_k1(adj, iterations=500, permutation_rate=1.,
         adj_tril = adj_tril.todense().flatten()
 
     edge_idx = np.nonzero(adj_tril)[0]
+    edge_weights = adj_tril[edge_idx]
     fixed_edges = np.floor(edge_idx.size * (1. - permutation_rate)).astype(int)
-    edge_weights = [adj[idx, idy] for idx, idy in zip(*np.nonzero(adj)) if idx < idy]
 
     permuted = []
     for _ in range(iterations):
         fixed_idx = rng.choice(edge_idx, size=fixed_edges, replace=False)
-        permuted_idx = np.ones(adj_tril.shape[0], dtype=bool)
-        permuted_idx[fixed_idx] = False
-        random_tril = adj_tril.copy()
-        random_tril[permuted_idx] = rng.permutation(random_tril[permuted_idx])
+        remaining_idx = [idx for idx in edge_idx if idx not in fixed_idx]
+        fixed_weights = adj_tril[fixed_idx]
+        remaining_weights = adj_tril[remaining_idx]
+
+        permuted_idx = np.arange(adj_tril.size)
+        permuted_idx = np.delete(permuted_idx, fixed_idx)
+        permuted_idx = rng.choice(permuted_idx, size=remaining_weights.size, replace=False)
+
+        combined_idx = np.concatenate((fixed_idx, permuted_idx))
+        combined_weights = np.concatenate((fixed_weights, remaining_weights))
 
         if issparse(adj):
             random_adj = lil_array(adj.shape)
         else:
             random_adj = np.zeros(adj.shape)
 
-        random_adj[tril_idx] = random_tril
-        random_adj += random_adj.transpose()
+        src_indices = tril_idx[0][combined_idx]
+        trg_indices = tril_idx[1][combined_idx]
+        random_adj[src_indices, trg_indices] = combined_weights
+        random_adj[trg_indices, src_indices] += combined_weights
 
         if ensure_connectedness:
             connect_adjacency_components(random_adj, weights=edge_weights, seed=seed)
