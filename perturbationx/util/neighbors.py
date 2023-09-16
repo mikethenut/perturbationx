@@ -56,6 +56,8 @@ def get_neighborhood_components(graph: nx.DiGraph, source_nodes: set, max_distan
 
     if max_distance < 0.:
         raise ValueError("Argument max_distance must be >= 0.")
+    elif max_distance == 0:
+        return source_nodes, set()
 
     match neighborhood_type:
         case "union":
