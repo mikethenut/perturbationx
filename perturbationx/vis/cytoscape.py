@@ -115,13 +115,13 @@ def color_nodes_by_column(data_column, network_suid, gradient=DEFAULT_GRADIENT, 
     )
 
 
-def highlight_subgraph(nodes, edges, network_suid, cytoscape_url=DEFAULT_BASE_URL):
+def highlight_subgraph(nodes, edges, network_suid, highlight_factor=3, cytoscape_url=DEFAULT_BASE_URL):
     p4c.style_bypasses.set_node_border_width_bypass(
-        nodes, DEFAULT_NODE_BORDER_WIDTH * 3,
+        nodes, DEFAULT_NODE_BORDER_WIDTH * highlight_factor,
         network=network_suid, base_url=cytoscape_url
     )
     p4c.style_bypasses.set_edge_line_width_bypass(
-        edges, DEFAULT_EDGE_WIDTH * 3,
+        edges, DEFAULT_EDGE_WIDTH * highlight_factor,
         network=network_suid, base_url=cytoscape_url
     )
 

@@ -2,7 +2,7 @@ import warnings
 
 import networkx as nx
 import numpy as np
-from scipy.sparse import issparse, lil_array, SparseEfficiencyWarning
+from scipy.sparse import issparse, lil_array, csr_array, SparseEfficiencyWarning
 
 __all__ = ["generate_adjacencies", "generate_boundary_laplacian", "generate_core_laplacians"]
 
@@ -51,7 +51,7 @@ def generate_boundary_laplacian(adj_b, boundary_edge_minimum=6):
         row_sums = abs(adj_b).sum(axis=1)
         row_sums[row_sums == 0] = 1
         adj_b /= row_sums[:, np.newaxis]
-        adj_b = adj_b.tocsr()
+        adj_b = csr_array(adj_b)
 
     else:
         # Clip edges where boundary outdegree is below threshold

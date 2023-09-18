@@ -39,6 +39,7 @@ def get_shortest_path_components(graph: nx.DiGraph, endpoints: set, directed=Fal
     if length_tolerance < 0.:
         raise ValueError("Argument length_tolerance must be >= 0.")
 
+    dir_graph = graph
     if not directed:
         graph = graph.to_undirected()
 
@@ -63,7 +64,10 @@ def get_shortest_path_components(graph: nx.DiGraph, endpoints: set, directed=Fal
             for p in paths:
                 nodes.update(p)
                 for n, m in zip(p, p[1:]):
-                    edges.add((n, m, graph[n][m]["interaction"]))
+                    if dir_graph.has_edge(n, m):
+                        edges.add((n, m, dir_graph[n][m]["interaction"]))
+                    elif dir_graph.has_edge(m, n):
+                        edges.add((m, n, dir_graph[m][n]["interaction"]))
 
         except nx.NetworkXNoPath:
             pass

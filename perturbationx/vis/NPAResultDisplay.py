@@ -27,24 +27,37 @@ class NPAResultDisplay:
         if display_boundary is not None:
             set_boundary_display(self._graph, display_boundary, self._network_suid, self._cytoscape_url)
 
-        # Reset nodes
+        # Get core nodes and edges
         core_nodes = [n for n in self._graph.nodes if self._graph.nodes[n]["type"] == "core"]
+        core_edges = [edge_to_p4c_format(src, trg, self._graph[src][trg]["interaction"])
+                      for src, trg in self._graph.edges if self._graph[src][trg]["type"] == "core"]
+
+        # Note: CyREST is very fussy with bypasses
+        # you cannot remove a bypass if all given nodes/edges don't have it
+
+        # Reset visibility
         if reset_visibility:
-            clear_bypass(core_nodes, "node", "NODE_VISIBLE", self._network_suid, self._cytoscape_url)
+            isolate_subgraph(self._graph, core_nodes, core_edges,
+                             network_suid=self._network_suid, cytoscape_url=self._cytoscape_url)
+            clear_bypass(core_edges, "edge", "EDGE_VISIBLE",
+                         network_suid=self._network_suid, cytoscape_url=self._cytoscape_url)
+            clear_bypass(core_nodes, "node", "NODE_VISIBLE",
+                         network_suid=self._network_suid, cytoscape_url=self._cytoscape_url)
+
+        # Reset highlight
         if reset_highlight:
-            clear_bypass(core_nodes, "node", "NODE_BORDER_WIDTH", self._network_suid, self._cytoscape_url)
+            highlight_subgraph(core_nodes, core_edges, highlight_factor=1,
+                               network_suid=self._network_suid, cytoscape_url=self._cytoscape_url)
+            clear_bypass(core_nodes, "node", "NODE_BORDER_WIDTH",
+                         network_suid=self._network_suid, cytoscape_url=self._cytoscape_url)
+            clear_bypass(core_edges, "edge", "EDGE_WIDTH",
+                         network_suid=self._network_suid, cytoscape_url=self._cytoscape_url)
+
+        # Reset color
         if reset_color:
             p4c.style_mappings.delete_style_mapping(
                 style_name=self._network_style, visual_prop="NODE_FILL_COLOR", base_url=self._cytoscape_url
             )
-
-        # Reset edges
-        core_edges = [edge_to_p4c_format(src, trg, self._graph[src][trg]["interaction"])
-                      for src, trg in self._graph.edges if self._graph[src][trg]["type"] == "core"]
-        if reset_visibility:
-            clear_bypass(core_edges, "edge", "EDGE_VISIBLE", self._network_suid, self._cytoscape_url)
-        if reset_highlight:
-            clear_bypass(core_edges, "edge", "EDGE_WIDTH", self._network_suid, self._cytoscape_url)
 
         return self._network_suid
 
