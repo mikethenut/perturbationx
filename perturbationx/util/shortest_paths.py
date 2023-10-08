@@ -4,28 +4,21 @@ __all__ = ["get_shortest_path_components"]
 
 
 def get_shortest_path_components(graph: nx.DiGraph, endpoints: set, directed=False, length_tolerance=0):
-    """
-    Finds paths between nodes in a graph and returns the nodes and edges in the paths.
+    """Find paths between nodes in a graph and return the nodes and edges in those paths.
 
-    Parameters
-    ----------
-    graph : nx.DiGraph
-        The graph to search for paths in.
-    endpoints : set
-        The nodes to find paths between.
-    directed : bool
-        Whether to only consider directed paths.
-    length_tolerance : int or float
-        How much longer a path can be than the shortest path and still be considered. If length_tolerance is 0, only
-        the shortest paths are returned. If length_tolerance is an integer, it is interpreted as an absolute length.
-        If length_tolerance is a float, it is interpreted as a percentage of the length of the shortest path.
-
-    Returns
-    -------
-    nodes : set
-        The nodes in the paths.
-    edges : set
-        The edges in the paths.
+    :param graph: The graph to search for paths in.
+    :type graph: nx.DiGraph
+    :param endpoints: The nodes to find paths between.
+    :type endpoints: set
+    :param directed: Whether to search for directed or undirected shortest paths.
+    :type directed: bool, optional
+    :param length_tolerance: The tolerance for the length of the shortest paths. If 0, only the shortest paths
+            are returned. If length_tolerance is an integer, it is interpreted as an absolute length. If
+            length_tolerance is a float, it is interpreted as a percentage of the length of the shortest path.
+            Defaults to 0.
+    :type length_tolerance: int | float, optional
+    :return: The nodes and edges in the paths. They are returned as a pair of lists.
+    :rtype: tuple
     """
 
     try:

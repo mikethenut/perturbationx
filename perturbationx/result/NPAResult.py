@@ -7,6 +7,7 @@ import json
 from importlib.metadata import version, PackageNotFoundError
 
 import matplotlib.pyplot as plt
+import pandas
 import seaborn as sns
 import networkx as nx
 import py4cytoscape as p4c
@@ -19,7 +20,32 @@ from perturbationx.util import get_shortest_path_components, get_neighborhood_co
 
 
 class NPAResult:
-    def __init__(self, graph, datasets, global_info, node_info, distributions, metadata=None):
+    """Class for storing and accessing the results of a Network Perturbation Analysis (NPA). It is recommended
+    to build an NPAResult object using NPAResultBuilder to ensure correct formatting. Metadata is prefixed with
+    "network_" to avoid conflicts, unless the metadata key already starts with "network" or "dataset". By default,
+    the following metadata is added: datetime_utc, python_implementation, python_version, system_name,
+    system_release, system_version, network_title, network_collection, perturbationx_version, numpy_version,
+    networkx_version, pandas_version, scipy_version, matplotlib_version, seaborn_version, and py4cytoscape_version.
+
+
+    :param graph: The network graph.
+    :type graph: networkx.DiGraph
+    :param datasets: The datasets used for the analysis.
+    :type datasets: list
+    :param global_info: The global information for each dataset.
+    :type global_info: pandas.DataFrame
+    :param node_info: The node information for each dataset.
+    :type node_info: pandas.DataFrame
+    :param distributions: The distributions for each permutation.
+    :type distributions: dict
+    :param metadata: Additional metadata to store with the result.
+    :type metadata: dict, optional
+    """
+    def __init__(self, graph: nx.DiGraph, datasets: list, global_info: pandas.DataFrame, node_info: pandas.DataFrame,
+                 distributions: dict, metadata=None):
+        """Construct a new NPAResult.
+        """
+
         self._graph = graph
         self._datasets = datasets
         self._global_info = global_info
@@ -61,32 +87,87 @@ class NPAResult:
         self._metadata["py4cytoscape_version"] = version("py4cytoscape")
 
     def metadata(self):
+        """Get the metadata for this result.
+
+        :return: The metadata for this result.
+        :rtype: dict
+        """
         return copy.deepcopy(self._metadata)
 
     def datasets(self):
+        """Get the datasets used for this result.
+
+        :return: The datasets used for this result.
+        :rtype: list
+        """
         return copy.deepcopy(self._datasets)
 
     def node_attributes(self):
+        """Get the node attributes for this result.
+
+        :return: The node attributes for this result.
+        :rtype: list
+        """
         return self._node_info.index.unique('attr').tolist()
 
     def distributions(self):
+        """Get the distributions for this result.
+
+        :return: The distributions for this result.
+        :rtype: list
+        """
         return list(self._distributions.keys())
 
     def global_info(self):
+        """Get the global information for this result.
+
+        :return: The global information for this result.
+        :rtype: pandas.DataFrame
+        """
         return self._global_info.copy()
 
-    def node_info(self, accessor):
+    def node_info(self, accessor: str):
+        """Get the node information for this result.
+
+        :param accessor: The dataset or node attribute to get the information for.
+        :type accessor: str
+        :return: The node information for this result.
+        :rtype: pandas.DataFrame
+        """
         level = "data" if accessor in self._datasets else "attr"
         return self._node_info.xs(accessor, level=level).transpose(copy=True)
 
-    def get_distribution(self, distribution, dataset, include_reference=False):
+    def get_distribution(self, distribution: str, dataset: str, include_reference=False):
+        """Get the distribution for a permutation.
+
+        :param distribution: The permutation to get the distribution for.
+        :type distribution: str
+        :param dataset: The dataset to get the distribution for.
+        :type dataset: str
+        :param include_reference: If True, the reference value will be included in the distribution. Defaults to False.
+        :type include_reference: bool, optional
+        :return: The distribution for the permutation. If include_reference is True, a tuple of the distribution and
+            the reference value will be returned.
+        :rtype: list | tuple
+        """
         value_distribution = copy.deepcopy(self._distributions[distribution][dataset][0])
         if include_reference:
             return value_distribution, self._distributions[distribution][dataset][1]
         else:
             return value_distribution
 
-    def plot_distribution(self, distribution, datasets=None, show=True):
+    def plot_distribution(self, distribution: str, datasets=None, show=True):
+        """Plot the distribution for a permutation.
+
+        :param distribution: The permutation to plot the distribution for.
+        :type distribution: str
+        :param datasets: The datasets to plot the distribution for. If None, all datasets will be plotted.
+        :type datasets: list, optional
+        :param show: If True, the plot will be shown. Defaults to True.
+        :type show: bool, optional
+        :return: The axes of the plot.
+        :rtype: matplotlib.axes.Axes
+        """
         if datasets is None:
             datasets = self._datasets
         else:
@@ -116,7 +197,21 @@ class NPAResult:
             plt.show()
         return ax
 
-    def get_leading_nodes(self, dataset, cutoff=0.8, attr="contribution", abs_value=True):
+    def get_leading_nodes(self, dataset: str, cutoff=0.8, attr="contribution", abs_value=True):
+        """Get the leading nodes for a dataset. The leading nodes are the nodes that contribute the most
+        to a selected attribute, up to a certain cutoff.
+
+        :param dataset: The dataset to get the leading nodes for.
+        :type dataset: str
+        :param cutoff: The cutoff for the cumulative distribution. Defaults to 0.8.
+        :type cutoff: float, optional
+        :param attr: The node attribute to get the leading nodes for. Defaults to "contribution".
+        :type attr: str, optional
+        :param abs_value: If True, the absolute value of the attribute will be used. Defaults to True.
+        :type abs_value: bool, optional
+        :return: The leading nodes for the dataset.
+        :rtype: set
+        """
         contributions = self.node_info(attr)[dataset]
         if abs_value:
             contributions = contributions.abs()
@@ -132,6 +227,31 @@ class NPAResult:
 
     def get_node_subgraph(self, nodes, include_shortest_paths="none", path_length_tolerance=0,
                           include_neighbors=0, neighborhood_type="union"):
+        """Get the subgraph for a set of nodes. The subgraph can include the shortest paths between the nodes,
+        the neighborhood of the nodes, or both.
+
+        :param nodes: The nodes to get the subgraph for.
+        :type nodes: set
+        :param include_shortest_paths: If "directed", the directed shortest paths between the nodes will be included.
+            If "undirected", the undirected shortest paths between the nodes will be included. If "none",
+            no shortest paths will be included. Defaults to "none".
+        :type include_shortest_paths: str, optional
+        :param path_length_tolerance: The tolerance for the length of the shortest paths. If 0, only the shortest paths
+            are returned. If length_tolerance is an integer, it is interpreted as an absolute length. If
+            length_tolerance is a float, it is interpreted as a percentage of the length of the shortest path.
+            Defaults to 0.
+        :type path_length_tolerance: int | float, optional
+        :param include_neighbors: The maximum distance from leading nodes that neighbors can be. If 0, no neighbors
+            will be included. If 1, only the neighbors of the nodes will be included. If 2, the neighbors of the
+            neighbors of the nodes will be included, and so on. Defaults to 0.
+        :type include_neighbors: int, optional
+        :param neighborhood_type: The type of neighborhood to include. Can be one of "union" or "intersection".
+            If "union", all nodes within the maximum distance from any leading node are returned. If "intersection",
+            only nodes within the maximum distance from all leading nodes are returned. Defaults to "union".
+        :type neighborhood_type: str, optional
+        :return: The nodes and edges in the subgraph. They are returned as a pair of lists.
+        :rtype: tuple
+        """
         # Remove boundary nodes
         graph = self._graph.copy()
         boundary_nodes = [n for n in graph.nodes if graph.nodes[n]["type"] == "boundary"]
@@ -143,7 +263,7 @@ class NPAResult:
                 path_nodes, path_edges = get_shortest_path_components(
                     graph, nodes, directed=True, length_tolerance=path_length_tolerance
                 )
-            case "undirected" | "all":
+            case "undirected":
                 path_nodes, path_edges = get_shortest_path_components(
                     graph, nodes, directed=False, length_tolerance=path_length_tolerance
                 )
@@ -151,7 +271,7 @@ class NPAResult:
                 path_nodes, path_edges = set(), set()
             case _:
                 raise ValueError("Argument neighborhood_type must be "
-                                 "'directed', 'undirected', 'all', or 'none'.")
+                                 "'directed', 'undirected', or 'none'.")
 
         # Find neighborhood
         neigh_nodes, neigh_edges = get_neighborhood_components(graph, nodes, include_neighbors, neighborhood_type)
@@ -161,6 +281,18 @@ class NPAResult:
         return nodes, edges
 
     def display_network(self, display_boundary=False, style=DEFAULT_STYLE, cytoscape_url=DEFAULT_BASE_URL):
+        """Display the network in Cytoscape.
+
+        :param display_boundary: If True, boundary nodes will be displayed. Defaults to False.
+        :type display_boundary: bool, optional
+        :param style: The style to apply to the network. Defaults to perturbationx-default.
+        :type style: str, optional
+        :param cytoscape_url: The URL of the Cytoscape instance to display the network in. Defaults to
+            DEFAULT_BASE_URL in py4cytoscape (http://127.0.0.1:1234/v1).
+        :type cytoscape_url: str, optional
+        :return: The display object.
+        :rtype: NPAResultDisplay
+        """
         logging.getLogger().handlers.clear()  # Block logging to stdout
 
         # Initialize Cytoscape
@@ -178,6 +310,11 @@ class NPAResult:
         return NPAResultDisplay(self._graph, self, style, network_suid, cytoscape_url)
 
     def to_networkx(self):
+        """Retrieve the NetworkX graph for this result.
+
+        :return: The NetworkX graph.
+        :rtype: networkx.DiGraph
+        """
         graph_copy = self._graph.copy()
         graph_copy.graph.update(self._metadata)
         for n in graph_copy.nodes:
@@ -193,6 +330,12 @@ class NPAResult:
         return graph_copy
 
     def to_dict(self):
+        """Convert this result to a dictionary.
+
+        :return: The result as a dictionary. Top-level keys are "metadata" and dataset names. For each dataset, the
+            top-level keys are "global_info", "node_info", and "distributions".
+        :rtype: dict
+        """
         data = dict()
         data["metadata"] = self._metadata.copy()
 
@@ -213,7 +356,14 @@ class NPAResult:
 
         return data
 
-    def to_json(self, filepath, indent=4):
+    def to_json(self, filepath: str, indent=4):
+        """Save this result to a JSON file. The format is the same as the output of to_dict().
+
+        :param filepath: The path to save the result to.
+        :type filepath: str
+        :param indent: The indentation to use. Defaults to 4.
+        :type indent: int, optional
+        """
         data = self.to_dict()
         with open(filepath, 'w') as f:
             json.dump(data, f, ensure_ascii=False, indent=indent)
