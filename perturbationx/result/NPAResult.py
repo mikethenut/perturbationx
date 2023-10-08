@@ -4,6 +4,7 @@ import warnings
 import logging
 from datetime import datetime
 import json
+from importlib.metadata import version, PackageNotFoundError
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -45,7 +46,19 @@ class NPAResult:
         if "network_collection" not in self._metadata:
             self._metadata["network_collection"] = "Untitled collection"
 
-        # TODO: Add metadata for package and dependency versions
+        # Library metadata
+        try:
+            self._metadata["perturbationx_version"] = version("perturbationx")
+        except PackageNotFoundError:
+            self._metadata["perturbationx_version"] = "dev"
+
+        self._metadata["numpy_version"] = version("numpy")
+        self._metadata["networkx_version"] = version("networkx")
+        self._metadata["pandas_version"] = version("pandas")
+        self._metadata["scipy_version"] = version("scipy")
+        self._metadata["matplotlib_version"] = version("matplotlib")
+        self._metadata["seaborn_version"] = version("seaborn")
+        self._metadata["py4cytoscape_version"] = version("py4cytoscape")
 
     def metadata(self):
         return copy.deepcopy(self._metadata)
