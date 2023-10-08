@@ -37,7 +37,12 @@ def permute_edge_list(edge_list: np.ndarray, node_list, iterations, method='k1',
     if node_list is None:
         node_list = np.unique(edge_list[:, :2])
 
-    permuted_edge_count = np.ceil(edge_list.shape[0] * permutation_rate).astype(int)
+    if permutation_rate != "confidence":
+        permutation_rate = float(permutation_rate)
+
+    permuted_edge_count = np.ceil(edge_list.shape[0] * permutation_rate).astype(int) \
+        if type(permutation_rate) is float else None
+    confidence_weights = edge_list[:, 3].astype(float)
     rng = np.random.default_rng(seed)
 
     permutations = []
@@ -45,7 +50,12 @@ def permute_edge_list(edge_list: np.ndarray, node_list, iterations, method='k1',
         permutation = []
         permutations.append(permutation)
 
-        permuted_edge_idx = rng.choice(edge_list.shape[0], size=permuted_edge_count, replace=False, axis=0)
+        if permutation_rate == "confidence":
+            permuted_edge_idx = np.where(rng.uniform(size=edge_list.shape[0]) > confidence_weights)[0]
+            permuted_edge_count = permuted_edge_idx.shape[0]
+        else:
+            permuted_edge_idx = rng.choice(edge_list.shape[0], size=permuted_edge_count, replace=False, axis=0)
+
         permuted_edges = edge_list[permuted_edge_idx, :].copy()
         fixed_edges = np.delete(edge_list, permuted_edge_idx, axis=0)
 
@@ -60,16 +70,19 @@ def permute_edge_list(edge_list: np.ndarray, node_list, iterations, method='k1',
                 raise ValueError("Unknown permutation %s." % permutation)
 
         permuted_edges[:, 2] = rng.permutation(permuted_edges[:, 2])
-        permuted_edges = np.concatenate([permuted_edges, fixed_edges], axis=0)
-
         for i in range(permuted_edges.shape[0]):
-            src, trg, rel = permuted_edges[i, :]
+            src, trg, rel = permuted_edges[i, :3]
             if src != trg and not any(e[0] == src and e[1] == trg for e in permutation):
                 permutation.append((src, trg, rel))
 
+        permuted_edges = np.concatenate([permuted_edges, fixed_edges], axis=0)
         for i in range(edge_list.shape[0]):
-            src, trg, rel = edge_list[i, :]
-            if src != trg and not any(e[0] == src and e[1] == trg for e in permutation):
+            src, trg = edge_list[i, :2]
+            if not any(permuted_edges[j, 0] == src and permuted_edges[j, 1] == trg
+                       for j in range(permuted_edges.shape[0])):
                 permutation.append((src, trg, None))
+
+        if len(permutation) == 0:
+            warnings.warn("Edge list permutation '%s' produced empty modification list." % method)
 
     return permutations

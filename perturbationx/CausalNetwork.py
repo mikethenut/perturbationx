@@ -156,7 +156,7 @@ class CausalNetwork:
         else:
             return list(self._graph.edges)
 
-    def add_edge(self, src, trg, rel, typ="infer"):
+    def add_edge(self, src, trg, rel, typ="infer", confidence=None):
         if self._graph.has_edge(src, trg):
             warnings.warn("Edge between %s and %s already exists "
                           "and will be modified." % (src, trg))
@@ -166,8 +166,10 @@ class CausalNetwork:
             warnings.warn("Unknown type %s of edge %s will be "
                           "replaced with \"infer\"." % (typ, str((src, trg))))
             self._graph.add_edge(src, trg, relation=rel, type="infer")
+        if confidence is not None:
+            self._graph[src][trg]["confidence"] = float(confidence)
 
-    def modify_edge(self, src, trg, rel=None, typ=None):
+    def modify_edge(self, src, trg, rel=None, typ=None, confidence=None):
         if not self._graph.has_edge(src, trg):
             raise KeyError("Edge between %s and %s does not exist." % (src, trg))
         if rel is not None:
@@ -178,6 +180,8 @@ class CausalNetwork:
             else:
                 warnings.warn("Unknown type %s of edge %s "
                               "will be ignored." % (typ, str((src, trg))))
+        if confidence is not None:
+            self._graph[src][trg]["confidence"] = float(confidence)
 
     def remove_edge(self, src, trg):
         if not self._graph.has_edge(src, trg):
@@ -217,7 +221,8 @@ class CausalNetwork:
         existing_edges = []
         for src, trg in self._graph.edges(nodes):
             if trg in nodes:
-                existing_edges.append((src, trg, self._graph[src][trg]["relation"]))
+                confidence = self._graph[src][trg].get("confidence", 1.0)
+                existing_edges.append((src, trg, self._graph[src][trg]["relation"], confidence))
 
         # Permute edges
         modifications = toponpa.permute_edge_list(
@@ -242,7 +247,7 @@ class CausalNetwork:
             sparse=sparse, seed=seed, verbose=verbose
         )
 
-    def wire_edges(self, number_of_edges, nodes, edge_relations, iterations, datasets,
+    def wire_edges(self, nodes, iterations, datasets, number_of_edges, edge_relations,
                    missing_value_pruning_mode="nullify", opposing_value_pruning_mode=None,
                    opposing_value_minimum_amplitude=1., boundary_edge_minimum=6,
                    exact_boundary_outdegree=True, sparse=True, seed=None,
