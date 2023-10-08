@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = 'perturbationx'
+version = '1.0.0'
+description = 'Python package for computing causal network perturbation'
+readme = 'README.md'
+license = {text = 'CC BY-NC 4.0'}
+dependencies = [
+    'numpy',
+    'networkx',
+    'pandas',
+    'scipy',
+    'matplotlib',
+    'seaborn',
+    'py4cytoscape'
+]
