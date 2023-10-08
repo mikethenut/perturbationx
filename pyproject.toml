@@ -18,5 +18,5 @@ dependencies = [
     "py4cytoscape"
 ]
 
-[tool.setuptools]
-packages = ["perturbationx"]
+[tool.setuptools.packages.find]
+where = ["perturbationx"]
