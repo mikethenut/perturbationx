@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "perturbationx"
 version = "1.0.0"
 description = "Python package for computing causal network perturbation"
+requires-python = ">=3.10"
 readme = "README.md"
 license = {text = "CC BY-NC 4.0"}
 dependencies = [
