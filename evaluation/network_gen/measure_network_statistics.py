@@ -10,6 +10,9 @@ from perturbationx.io.RelationTranslator import RelationTranslator
 def measure_network_stats(network_folder, output_file):
     networks = []
     for filename in os.listdir(network_folder):
+        if not filename.startswith("50_24_"):
+            continue
+
         if filename.endswith("_core.tsv") or filename.endswith("_backbone.tsv"):
             networks.append(filename)
             
@@ -101,6 +104,6 @@ def measure_network_stats(network_folder, output_file):
 
 
 if __name__ == "__main__":
-    network_path = "../../data/NPANetworks/"
-    json_file = "../../output/network_stats/network_stats.json"
+    network_path = "../../data/BAGen03b/"
+    json_file = "../../output/ba_stats_03/ba_stats_02.json"
     measure_network_stats(network_path, json_file)

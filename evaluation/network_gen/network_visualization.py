@@ -5,28 +5,35 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy.stats import linregress
 
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.manifold import MDS
 
 
-PRIMARY_FEATURES = [
+CORE_FEATURES = [
     "core_node_count",
     "core_edge_count",
-    "core_negative_edge_count",
+    "core_negative_edge_count"
+]
+
+BOUNDARY_FEATURES = [
     "inner_boundary_node_count",
     "boundary_node_count",
     "boundary_edge_count",
     "boundary_negative_edge_count"
 ]
 
-SECONDARY_FEATURES = [
+DISTANCE_FEATURES = [
     "radius",
     "diameter",
+    "average_shortest_path_length"
+]
+
+CLUSTERING_FEATURES = [
     "transitivity",
     "average_clustering",
-    "average_shortest_path_length",
     "degree_assortativity_coefficient",
     "boundary_degree_assortativity_coefficient"
 ]
@@ -49,9 +56,11 @@ def paired_scatterplot(statistics_df, hue_column, filename=None):
             else:
                 features[column[0]].append(column[1])
 
+
     statistics_df_flat = statistics_df
     statistics_df_flat.columns = statistics_df.columns.droplevel("feature_type")
     hue_column_flat = hue_column.droplevel("feature_type")[0]
+    statistics_df_npa = statistics_df_flat[statistics_df_flat[hue_column_flat] != "Barabási–Albert"]
 
     feature_types = list(features.keys())
     for i in range(len(feature_types)):
@@ -60,24 +69,53 @@ def paired_scatterplot(statistics_df, hue_column, filename=None):
 
         for j in range(i+1):
             feature_type_y = feature_types[j]
-            plt.figure(figsize=(6, 6))
+            rows = len(features[feature_type_y])
+            cols = len(type_x_features)
 
             if feature_type_y == feature_type_x:
-                splt = sns.PairGrid(statistics_df_flat, vars=type_x_features, hue=hue_column_flat)
+                splt = sns.PairGrid(statistics_df_flat, vars=type_x_features,
+                                    hue=hue_column_flat, palette="tab10", corner=True)
                 plot_name = feature_type_x
             else:
                 type_y_features = features[feature_type_y]
-                splt = sns.PairGrid(statistics_df_flat, x_vars=type_x_features,
-                                    y_vars=type_y_features, hue=hue_column_flat)
+                splt = sns.PairGrid(statistics_df_flat, x_vars=type_x_features, y_vars=type_y_features,
+                                    hue=hue_column_flat, palette="tab10")
                 plot_name = feature_type_y + "_" + feature_type_x
 
-            splt.map_diag(sns.histplot, multiple="stack")
+            splt.map_diag(sns.histplot, multiple="stack", bins=10)
             splt.map_offdiag(sns.scatterplot, alpha=0.75)
-            splt.add_legend(loc="center right")
-            plt.tight_layout(rect=[0, 0, 0.9, 1])
+            if feature_type_x in ["core", "boundary"] and feature_type_y in ["core", "boundary"]:
+                for idy, axs in enumerate(splt.axes):
+                    for idx, ax in enumerate(axs):
+                        if feature_type_y != feature_type_x:
+                            sns.regplot(data=statistics_df_npa, x=type_x_features[idx], y=type_y_features[idy],
+                                        scatter=False, ax=ax, line_kws={"alpha": 0.5}, color="black", truncate=False)
+                            res = linregress(x=statistics_df_npa[type_x_features[idx]],
+                                             y=statistics_df_npa[type_y_features[idy]])
+                            ax.annotate(f'$r^2 = {res.rvalue ** 2:.2f}$\ny = ${res.slope:.2f}x{res.intercept:+.2f}$',
+                                        xy=(.05, .95), xycoords=ax.transAxes, fontsize=8,
+                                        color='black', ha='left', va='top')
+                        elif idx < idy:
+                            sns.regplot(data=statistics_df_npa, x=type_x_features[idx], y=type_x_features[idy],
+                                        scatter=False, ax=ax, line_kws={"alpha": 0.5}, color="black", truncate=False)
+                            res = linregress(x=statistics_df_npa[type_x_features[idx]],
+                                             y=statistics_df_npa[type_x_features[idy]])
+                            ax.annotate(f'$r^2 = {res.rvalue ** 2:.2f}$\ny = ${res.slope:.2f}x{res.intercept:+.2f}$',
+                                        xy=(.05, .95), xycoords=ax.transAxes, fontsize=8,
+                                        color='black', ha='left', va='top')
+
+            splt.add_legend(loc="upper center")
+            fig = plt.gcf()
+            if feature_type_y != feature_type_x:
+                fig.set_size_inches(2.5 * cols, 2.5 * rows + 1.5)
+                y_ratio = 1. - 1.5 / (2.5 * rows + 1.5)
+                plt.tight_layout(rect=[0, 0, 1, y_ratio])
+            else:
+                fig.set_size_inches(2.5 * cols, 2.5 * rows)
+                plt.tight_layout()
             if filename is not None:
-                plt.savefig(filename + "_" + plot_name + "_pairplot.png")
-            plt.show()
+                plt.savefig(filename + "_" + plot_name + "_pairplot.pdf")
+            # plt.show()
             plt.close()
 
 
@@ -87,7 +125,7 @@ def mds_plot(statistics_df, hue_column, filename=None):
     scaled_data = MinMaxScaler().fit_transform(mds_data)
 
     # regress out core node count
-    node_count_idx = mds_data.columns.get_loc("core_node_count")
+    node_count_idx = mds_data.columns.get_loc("core node count")
     scaled_data_x = scaled_data[:, node_count_idx].reshape(-1, 1)
     scaled_data_y = np.delete(scaled_data, node_count_idx, axis=1)
     regression = LinearRegression()
@@ -103,12 +141,12 @@ def mds_plot(statistics_df, hue_column, filename=None):
 
     plt.figure(figsize=(6, 6))
     splt = sns.scatterplot(data=mds_df, x="x", y="y", hue=hue_column_flat, alpha=0.75)
-    sns.move_legend(splt, "upper right")
+    sns.move_legend(splt, "upper left")
     plt.xlabel("MDS 1")
     plt.ylabel("MDS 2")
     plt.tight_layout()
     if filename is not None:
-        plt.savefig(filename + "_mds.png")
+        plt.savefig(filename + "_mds.pdf")
     plt.show()
     plt.close()
 
@@ -116,13 +154,16 @@ def mds_plot(statistics_df, hue_column, filename=None):
 def degree_plot(distributions, filename=None):
     for feature in distributions:
         group_count = len(distributions[feature])
-        fig, ax = plt.subplots(nrows=group_count, figsize=(6, 3 * group_count), constrained_layout=True)
-        plt.suptitle(feature)
+        fig, ax = plt.subplots(nrows=group_count, figsize=(6, 3 * group_count), constrained_layout=True, sharex=True)
+        suptitle = feature[0].upper() + feature[1:].replace("_", " ")
+        if suptitle == "Core degrees":
+            suptitle = "Core total degrees"
+        plt.suptitle(suptitle)
 
         if group_count == 1:
             ax = [ax]
 
-        cmap = plt.get_cmap("tab10", group_count)
+        cmap = plt.get_cmap("tab10")
         for idx, group in enumerate(distributions[feature]):
             ax[idx].set_title(group)
             ax[idx].set_xscale("symlog")
@@ -133,43 +174,10 @@ def degree_plot(distributions, filename=None):
                 ax[idx].plot(x, y, '-o', alpha=0.5, c=cmap(idx))
 
             if filename is not None:
-                plt.savefig(filename + "_" + feature + "_distribution.png")
+                plt.savefig(filename + "_" + feature + "_distribution.png", dpi=300)
 
-        plt.show()
+        # plt.show()
         plt.close()
-
-
-def format_samples(network_statistics, network_names=None):
-    if network_names is None:
-        network_names = list(network_statistics.keys())
-
-    primary_df = pd.DataFrame(np.array(
-        [[network_statistics[n][f] for n in network_names] for f in PRIMARY_FEATURES]
-    )).set_index(pd.MultiIndex.from_product([["primary"], PRIMARY_FEATURES],
-                                            names=["feature_type", "feature_name"]))
-    secondary_df = pd.DataFrame(np.array(
-        [[network_statistics[n][f] for n in network_names] for f in SECONDARY_FEATURES]
-    )).set_index(pd.MultiIndex.from_product([["secondary"], SECONDARY_FEATURES],
-                                            names=["feature_type", "feature_name"]))
-
-    combined_df = pd.concat([primary_df, secondary_df]).T
-    combined_df.rename(index={i: network_names[i] for i in range(len(network_names))}, inplace=True)
-    return combined_df
-
-
-def get_distributions(network_statistics, network_names=None):
-    if network_names is None:
-        network_names = list(network_statistics.keys())
-
-    distributions = {}
-    for f in DISTRIBUTION_FEATURES:
-        distributions[f] = {}
-        for n in network_names:
-            feature_distribution = Counter(network_statistics[n][f])
-            sorted_fd_keys = np.array(sorted(feature_distribution.keys()))
-            sorted_fd_values = np.array([feature_distribution[k] for k in sorted_fd_keys])
-            distributions[f][n] = (sorted_fd_keys, sorted_fd_values)
-    return distributions
 
 
 def transform_labels(labels):
@@ -184,6 +192,47 @@ def transform_labels(labels):
         else:
             tr_labs.append(label.replace("_", " "))
     return np.array(tr_labs)
+
+
+def format_samples(network_statistics, network_names=None):
+    if network_names is None:
+        network_names = list(network_statistics.keys())
+
+    core_df = pd.DataFrame(np.array(
+        [[network_statistics[n][f] for n in network_names] for f in CORE_FEATURES]
+    )).set_index(pd.MultiIndex.from_product([["core"], transform_labels(CORE_FEATURES)],
+                                            names=["feature_type", "feature_name"]))
+    boundary_df = pd.DataFrame(np.array(
+        [[network_statistics[n][f] for n in network_names] for f in BOUNDARY_FEATURES]
+    )).set_index(pd.MultiIndex.from_product([["boundary"], transform_labels(BOUNDARY_FEATURES)],
+                                            names=["feature_type", "feature_name"]))
+    distance_df = pd.DataFrame(np.array(
+        [[network_statistics[n][f] for n in network_names] for f in DISTANCE_FEATURES]
+    )).set_index(pd.MultiIndex.from_product([["distance"], transform_labels(DISTANCE_FEATURES)],
+                                            names=["feature_type", "feature_name"]))
+    clustering_df = pd.DataFrame(np.array(
+        [[network_statistics[n][f] for n in network_names] for f in CLUSTERING_FEATURES]
+    )).set_index(pd.MultiIndex.from_product([["clustering"], transform_labels(CLUSTERING_FEATURES)],
+                                            names=["feature_type", "feature_name"]))
+
+    combined_df = pd.concat([core_df, boundary_df, distance_df, clustering_df]).T
+    combined_df.rename(index={i: network_names[i] for i in range(len(network_names))}, inplace=True)
+    return combined_df
+
+
+def get_distributions(network_statistics, network_names=None):
+    if network_names is None:
+        network_names = list(network_statistics.keys())
+
+    distributions = {}
+    for f in DISTRIBUTION_FEATURES:
+        distributions[f] = {}
+        for n in network_names:
+            feature_distribution = Counter(network_statistics[n][f])
+            sorted_fd_keys = np.array(sorted([k for k in feature_distribution.keys() if float(k) > 0]))
+            sorted_fd_values = np.array([feature_distribution[k] for k in sorted_fd_keys])
+            distributions[f][n] = (sorted_fd_keys, sorted_fd_values)
+    return distributions
 
 
 if __name__ == "__main__":
@@ -224,7 +273,7 @@ if __name__ == "__main__":
         for f in ba_distributions:
             full_ba_distribution = ba_distributions[f]
             partial_ba_distribution = {
-                n: full_ba_distribution[n] for idx, n in enumerate(full_ba_distribution) if idx % 10 == 0
+                n: full_ba_distribution[n] for idx, n in enumerate(full_ba_distribution) if idx % 10 == 5
             }
             distribution_features[f]["Barabási–Albert"] = partial_ba_distribution
 

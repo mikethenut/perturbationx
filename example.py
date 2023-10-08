@@ -9,11 +9,14 @@ from perturbationx.resources import DEFAULT_LOGGING_KWARGS
 from perturbationx import CausalNetwork
 
 
-def example_run(causalbionet, datasets, permutations=("o", "k1", "k2"), full_core_permutation=True):
+def example_run(causalbionet, datasets, sparse=True,
+                permutations=("o", "k1", "k2"), full_core_permutation=True):
     results = causalbionet.toponpa(
         datasets, permutations=permutations,
+        opposing_value_pruning_mode=None,
+        exact_boundary_outdegree=False,
         full_core_permutation=full_core_permutation,
-        verbose=True
+        verbose=True, sparse=sparse
     )
 
     results.plot_distribution("k2")
@@ -116,11 +119,12 @@ def test_opposing_value_pruning():
     data = pd.DataFrame({"nodeID": boundary_nodes,
                          "logFC": [1., 0.5, 0.25, 0., -0.2, -0.4, -0.6, -0.8, -1., -2.]})
 
-    for ovmin in [3., 2., 1., 0.8, 0.6, 0.4, 0.2, 0.]:
-        logging.info("ovmin: %f" % ovmin)
-        my_cbn.toponpa({"test": data}, opposing_value_pruning_mode="nullify",
-                       opposing_value_minimum_amplitude=ovmin, boundary_edge_minimum=0,
-                       compute_statistics=False, permutations=None)
+    for sparse in [True, False]:
+        for ovmin in [3., 2., 1., 0.8, 0.6, 0.4, 0.2, 0.]:
+            logging.info("ovmin: %f" % ovmin)
+            my_cbn.toponpa({"test": data}, opposing_value_pruning_mode="nullify",
+                           opposing_value_minimum_amplitude=ovmin, boundary_edge_minimum=0,
+                           compute_statistics=False, permutations=None, sparse=sparse)
 
 
 if __name__ == "__main__":
@@ -131,13 +135,19 @@ if __name__ == "__main__":
         copd1_data[file] = pd.read_table("./data/COPD1/" + file + ".tsv")
         copd1_data[file] = copd1_data[file].rename(columns={"nodeLabel": "nodeID", "foldChange": "logFC"})
 
+    dataset_folder = "data/ExpressionExamplesGen05"
+    large_data = dict()
+    for file_name in os.listdir(dataset_folder):
+        if file_name.startswith("500_175_15457"):
+            large_data[file_name] = pd.read_table(os.path.join(dataset_folder, file_name), delimiter=',')
+
     logging.basicConfig(**DEFAULT_LOGGING_KWARGS)
     mm_apoptosis = CausalNetwork.from_tsv("data/NPANetworks/Mm_CFA_Apoptosis_backbone.tsv", edge_type="core")
     mm_apoptosis.add_edges_from_tsv("data/NPANetworks/Mm_CFA_Apoptosis_downstream.tsv", edge_type="boundary")
-    example_run(mm_apoptosis, copd1_data, permutations=["o", "k1", "k2"],
-                full_core_permutation=True)
-    example_run(mm_apoptosis, copd1_data, permutations=["o", "k1", "k2"],
-                full_core_permutation=False)
+    # example_run(mm_apoptosis, copd1_data, permutations=["o", "k1", "k2"], sparse=False)
+    # example_run(mm_apoptosis, copd1_data, permutations=["o", "k1", "k2"], sparse=True)
+    mm_apoptosis.toponpa(large_data)
+    exit()
     logging.info("Finished run")
     test_rewiring(mm_apoptosis, copd1_data)
     logging.info("Finished rewiring")

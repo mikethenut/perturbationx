@@ -93,7 +93,7 @@ def plot_correlations(file_paths, header_labels=('logFC', 't', 'adj.P.Val', 'Gen
     dataframes = {}
     for file in file_paths:
         data_df = pd.read_csv(file_paths[file], sep=separator)
-        if "dataset" in file:
+        if "_dataset_" in file:
             file = file[-12:]
         dataframes[file] = data_df
         data_df.set_index(header_labels[3], inplace=True)
@@ -179,6 +179,8 @@ if __name__ == "__main__":
     generated_selection = {file: generated_selection[file] for file in generated_selection
                            if "(0)" in file}
     generated_selection = {file: generated_selection[file] for file in list(generated_selection)[:3]}
+    generated_selection = {"Generated dataset %d" % (idx+1): generated_selection[file]
+                           for idx, file in enumerate(generated_selection)}
     plot_correlations(generated_selection, header_labels=('logFC', None, None, 'nodeID'),
                       separator=",", filename="dataset_analysis_plots/gen02_correlations")
 

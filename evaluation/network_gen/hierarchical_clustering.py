@@ -11,6 +11,17 @@ from sklearn.cluster import FeatureAgglomeration
 from scipy.cluster.hierarchy import linkage, dendrogram
 
 
+PRIMARY_FEATURES = [
+    "core_node_count",
+    "core_edge_count",
+    "core_negative_edge_ratio",
+    "inner_boundary_node_count",
+    "boundary_node_count",
+    "boundary_edge_count",
+    "boundary_negative_edge_ratio"
+]
+
+
 def transform_labels(labels):
     tr_labs = []
     for label in labels:
@@ -36,6 +47,32 @@ def hierarchical_clustering(data, labels, method='average', color_threshold=None
     plt.close()
 
 
+def clustermap_dendrogram(data, labels, method='average', filename=None):
+    feature_types = ["primary" if l in PRIMARY_FEATURES else "secondary" for l in labels]
+    labels = transform_labels(labels)
+    data_df = pd.DataFrame(data, columns=labels)
+    corr_df = data_df.corr()
+    scaled = MinMaxScaler().fit_transform(data)
+    pal = sns.color_palette('Pastel1')
+    cg = sns.clustermap(corr_df, cmap="vlag", vmin=-1, center=0, vmax=1,
+                        figsize=(9, 9),
+                        row_linkage=linkage(scaled.T, method),
+                        col_linkage=linkage(scaled.T, method),
+                        cbar_kws=dict(use_gridspec=False, location="left"),
+                        row_cluster=True, col_cluster=True,
+                        row_colors=[pal[4] if t == "primary" else pal[2] for t in feature_types])
+    # cg.ax_row_dendrogram.set_visible(False)
+    cg.ax_cbar.set_visible(False)
+    cg.ax_col_dendrogram.set_visible(False)
+    fig = plt.gcf()
+    fig.colorbar(cg.ax_heatmap.collections[0], ax=cg.ax_col_dendrogram,
+                 location="bottom", use_gridspec=True)
+    fig.tight_layout()
+    if filename is not None:
+        plt.savefig("clustering_plots/" + filename, dpi=300)
+    plt.close()
+
+
 def barplot(data, filename=None):
     fig = plt.figure(figsize=(6, 4))
     fig.patch.set_facecolor('white')
@@ -52,7 +89,7 @@ def plot_correlation(data, features, filename=None):
     labels = transform_labels(features)
     data_df = pd.DataFrame(data, columns=labels)
     corr_df = data_df.corr()
-    fig = plt.figure(figsize=(12, 8))
+    fig = plt.figure(figsize=(10, 10))
     sns.heatmap(corr_df, annot=True, cmap="vlag", vmin=-1, center=0, vmax=1)
     plt.tight_layout()
     if filename is not None:
@@ -106,7 +143,8 @@ if __name__ == "__main__":
 
 
     data = np.array(data)
-    plot_correlation(data, feature_ordering, "correlation_heatmap.png")
+    plot_correlation(data, feature_ordering, "correlation_heatmap.pdf")
+    clustermap_dendrogram(data, feature_ordering, method="ward", filename="correlation_dendrogram.png")
     scaled_data = MinMaxScaler().fit_transform(data)
     standardized_data = StandardScaler().fit_transform(data)
 

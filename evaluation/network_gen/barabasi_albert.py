@@ -62,16 +62,18 @@ def generate_model(samples, plot_residuals=False, filename=None):
         sns.pairplot(residual_df)
         plt.tight_layout()
         if filename is not None:
-            plt.savefig(filename + "_pairplot.png")
-        plt.show()
+            plt.savefig(filename + "_pairplot.pdf")
+        # plt.show()
         plt.close()
 
-        plt.figure(figsize=(8, 5))
-        sns.heatmap(residual_df.corr(), annot=True, cmap="vlag", vmin=-1, center=0, vmax=1)
-        plt.tight_layout()
+        plt.figure(figsize=(8, 7))
+        sns.heatmap(residual_df.corr(), annot=True, square=True,
+                    cmap="vlag", vmin=-1, center=0, vmax=1)
         if filename is not None:
-            plt.savefig(filename + "_heatmap.png")
-        plt.show()
+            plt.savefig(filename + "_heatmap_normal.png", dpi=300)
+            plt.tight_layout()
+            plt.savefig(filename + "_heatmap_tight.png", dpi=300)
+        # plt.show()
         plt.close()
 
     return model, residual_y
@@ -114,10 +116,15 @@ def is_sample_valid(sample):
     return True
 
 
-def sample_parameters(model, residuals, core_node_count):
+def sample_parameters(model, residuals, core_node_count, add_residuals=True):
     sample = model.predict([[core_node_count]])
-    parameters = None
+    if not add_residuals:
+        parameters = {"core_node_count": core_node_count}
+        for i, f in enumerate(FEATURE_ORDERING[1:]):
+            parameters[f] = np.rint(sample[0][i]).astype(int)
+        return parameters
 
+    parameters = None
     while not is_sample_valid(parameters):
         residual_sample = GLOBAL_RNG.multivariate_normal(
             residuals.mean(axis=0),
@@ -140,7 +147,7 @@ def generate_network_core(parameters):
     ])
 
     node_multiplicity = []
-    with open("../../data/BAGen03/" + network_name + "_core.tsv",
+    with open("../../data/BAGen03b/" + network_name + "_core.tsv",
               'w', newline='') as output_file:
         dsv_file = csv.writer(output_file, delimiter="\t")
         dsv_file.writerow(["subject", "object", "relation", "type"])
@@ -268,7 +275,7 @@ def generate_network_boundary(parameters, core_nodes, boundary_out_degree_distri
     logging.info("Randomized edge signs.")
 
     # Write the boundary network
-    with open("../../data/BAGen03/" + network_name + "_boundary.tsv",
+    with open("../../data/BAGen03b/" + network_name + "_boundary.tsv",
               'w', newline='') as output_file:
         dsv_file = csv.writer(output_file, delimiter="\t")
         dsv_file.writerow(["subject", "object", "relation", "type"])
@@ -283,8 +290,9 @@ if __name__ == "__main__":
     GLOBAL_RNG = np.random.default_rng(seed=72)
     logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                         format="%(asctime)s %(levelname)s -- %(message)s")
-    node_counts = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500]
-    repetitions = 5
+    node_counts = [50]
+    repetitions = 1
+    use_residuals = True
 
     group_a = ["Hs_CST_Oxidative_Stress", "Mm_CST_Oxidative_Stress", "Hs_CFA_Apoptosis", "Mm_CFA_Apoptosis",
                "Hs_IPN_Epithelial_Innate_Immune_Activation", "Mm_IPN_Epithelial_Innate_Immune_Activation",
@@ -301,14 +309,19 @@ if __name__ == "__main__":
 
     boundary_out_degrees = list(d for n in networks for d in net_stats[n]["boundary_out_degrees"] if d != 0)
     linear_model, model_residuals = generate_model(
-        samples, plot_residuals=True, filename="network_gen_plots/linear_model_residuals"
+        samples, plot_residuals=True,
+        filename="network_gen_plots/linear_model_residuals"
     )
 
-    node_counts.clear()
     for node_count in node_counts:
         for _ in range(repetitions):
-            net_params = sample_parameters(linear_model, model_residuals, node_count)
+            net_params = sample_parameters(
+                linear_model, model_residuals, node_count,
+                add_residuals=use_residuals
+            )
             logging.info("Generating network with parameters: {}".format(net_params))
+
+            continue
 
             core_node_names = generate_network_core(net_params)
             generate_network_boundary(net_params, core_node_names, boundary_out_degrees)

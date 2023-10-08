@@ -64,7 +64,7 @@ def perturbations_k1_k2():
             boundary_outdegree_type="continuous"
         )
 
-        core_coefficients = core.value_inference(lap_b, lap_c, dataset["logFC"].to_numpy())
+        core_coefficients = core.coefficient_inference(lap_b, lap_c, dataset["logFC"].to_numpy())
         npa, node_contributions = core.perturbation_amplitude_contributions(
             lap_q, core_coefficients, core_edge_count
         )
@@ -79,7 +79,7 @@ def perturbations_k1_k2():
                     lap_b, adj_c_perm, {},
                     boundary_outdegree_type="continuous"
                 )
-                core_coefficients = core.value_inference(lap_b, lap_c_perm, dataset["logFC"].to_numpy())
+                core_coefficients = core.coefficient_inference(lap_b, lap_c_perm, dataset["logFC"].to_numpy())
                 npa_partial = core.perturbation_amplitude(lap_q, core_coefficients, core_edge_count)
                 npa_full = core.perturbation_amplitude(lap_q_perm, core_coefficients, core_edge_count)
 

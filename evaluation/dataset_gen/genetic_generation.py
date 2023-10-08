@@ -21,7 +21,7 @@ def generate_mask(array, value):
 
 def generate_dataset(network_name, causalbionet, population_size,
                      max_iterations, target_fitness, mutation_rate, directionality=None,
-                     verbose=True, log_frequency=0.01, seed=None):
+                     verbose=True, log_frequency=0.01, include_t=True, seed=None, plot_fitness=True):
     # Create generator, instance id and set up logging
     rng = np.random.default_rng(seed=seed)
     instance_id = str(uuid.uuid4())
@@ -30,8 +30,9 @@ def generate_dataset(network_name, causalbionet, population_size,
 
     # Get laplacian matrices
     core_edge_count = causalbionet.number_of_edges("core")
-    lap_b, lap_c, lap_q, node_ordering = causalbionet.get_laplacians(verbose=False)
-    inference_matrix = - np.matmul(la.inv(lap_c), lap_b)
+    lap_b, lap_c, lap_q, node_ordering = causalbionet.get_laplacians(verbose=False, sparse=True)
+    lap_c_inv = - la.inv(lap_c.todense())
+    logging.info("Laplacians calculated")
 
     # Determine boundary node labels
     boundary_nodes = causalbionet.nodes(typ="boundary")
@@ -42,32 +43,25 @@ def generate_dataset(network_name, causalbionet, population_size,
     boundary_node_count = causalbionet.number_of_nodes("boundary")
     mutation_node_count = np.rint(boundary_node_count * mutation_rate).astype(int)
 
-    # Determine sign of boundary edges (laplacian has opposite sign of adjacency matrix)
-    positive_boundary_edge_counts = np.sum(lap_b < 0, axis=0)
-    negative_boundary_edge_counts = np.sum(lap_b > 0, axis=0)
-    boundary_direction = np.array([1 if p > n else -1 if n > p else 0 for p, n in
-                                   zip(positive_boundary_edge_counts, negative_boundary_edge_counts)])
-    positive_boundary_mask = generate_mask(boundary_direction, 1)
-    negative_boundary_mask = generate_mask(boundary_direction, -1)
-    neutral_boundary_mask = generate_mask(boundary_direction, 0)
-
-    total_edges = np.count_nonzero(lap_b)
-    lowest_possible_edge_consistency = 0.
-    lowest_possible_edge_consistency += np.sum(positive_boundary_edge_counts[negative_boundary_mask])
-    lowest_possible_edge_consistency += np.sum(negative_boundary_edge_counts[positive_boundary_mask])
-    lowest_possible_edge_consistency += np.sum(positive_boundary_edge_counts[neutral_boundary_mask])
-    lowest_possible_edge_consistency /= total_edges
-    print(network_name + " highest possible edge consistency: " + str(lowest_possible_edge_consistency))
-    return
-
     # Load data samples
-    positive_data_samples = pd.read_table("../../data/ExpressionExamples/positive_samples.csv", sep=",")
-    negative_data_samples = pd.read_table("../../data/ExpressionExamples/negative_samples.csv", sep=",")
+    positive_data_samples = pd.read_table(
+        "../../data/ExpressionExamples/positive_samples.csv", sep=",")
+    negative_data_samples = pd.read_table(
+        "../../data/ExpressionExamples/negative_samples.csv", sep=",")
     combined_data_samples = pd.concat([positive_data_samples, negative_data_samples],
                                       axis=0, ignore_index=True)
+    logging.info("Data samples loaded")
 
-    # Generate initial population
     if directionality is not None and directionality in ["consistent", "1", "opposing", "-1"]:
+        # Determine sign of boundary edges (laplacian has opposite sign of adjacency matrix)
+        positive_boundary_edge_counts = np.sum(lap_b < 0, axis=0)
+        negative_boundary_edge_counts = np.sum(lap_b > 0, axis=0)
+        boundary_direction = np.array([1 if p > n else -1 if n > p else 0 for p, n in
+                                       zip(positive_boundary_edge_counts, negative_boundary_edge_counts)])
+        positive_boundary_mask = generate_mask(boundary_direction, 1)
+        negative_boundary_mask = generate_mask(boundary_direction, -1)
+        neutral_boundary_mask = generate_mask(boundary_direction, 0)
+
         if directionality in ["opposing", "-1"]:
             positive_data_samples, negative_data_samples = negative_data_samples, positive_data_samples
 
@@ -87,12 +81,15 @@ def generate_dataset(network_name, causalbionet, population_size,
             size=(population_size, np.sum(neutral_boundary_mask)),
             replace=True
         )
+
     else:
         population = rng.choice(
             combined_data_samples['log_fc'],
             size=(population_size, boundary_node_count),
             replace=True
         )
+
+    logging.info("Initial population generated")
 
     average_fitness_per_iter = []
     best_fitness_per_iter = []
@@ -102,8 +99,9 @@ def generate_dataset(network_name, causalbionet, population_size,
     next_log = 0.
     for ga_iter in range(max_iterations + 1):
         # Evaluate population with npa
-        core_coefficients = np.matmul(inference_matrix, population.T)
+        core_coefficients = lap_c_inv @ (lap_b @ population.T)
         scores = perturbation_amplitude(lap_q, core_coefficients, core_edge_count)
+        logging.info("Iteration %d fitness evaluated", ga_iter)
 
         # Save best network
         average_fitness_per_iter.append(np.mean(scores))
@@ -182,26 +180,33 @@ def generate_dataset(network_name, causalbionet, population_size,
 
         population = np.array(new_population)
 
-    # Plot fitness
-    plt.figure(figsize=(8, 4))
-    plt.title(network_name + ", population size " + str(population_size))
-    plt.plot(average_fitness_per_iter, label="Average fitness")
-    plt.plot(best_fitness_per_iter, label="Best fitness")
-    plt.plot(worst_fitness_per_iter, label="Worst fitness")
-    plt.xlabel("Iteration")
-    plt.ylabel("Fitness")
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig("dataset_generation_plots/" + network_name +
-                "_(" + str(directionality) + ")_dataset_" +
-                instance_id + "_fitness.png")
-    plt.show()
-    plt.close()
+    if plot_fitness:
+        # Plot fitness
+        plt.figure(figsize=(8, 4))
+        plt.title(network_name + ", population size " + str(population_size))
+        plt.plot(average_fitness_per_iter, label="Average fitness")
+        plt.plot(best_fitness_per_iter, label="Best fitness")
+        plt.plot(worst_fitness_per_iter, label="Worst fitness")
+        plt.xlabel("Iteration")
+        plt.ylabel("Fitness")
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig("dataset_generation_plots/" + network_name +
+                    "_(" + str(directionality) + ")_dataset_" +
+                    instance_id + "_fitness.png")
+        plt.show()
+        plt.close()
 
     # Save best dataset
     best_dataset = pd.DataFrame(best_dataset_overall, columns=["logFC"])
     best_dataset["nodeID"] = boundary_node_labels
-    best_dataset.to_csv("../../data/ExpressionExamplesGen04/" + network_name +
+    if include_t:
+        best_dataset["t"] = rng.choice(
+            combined_data_samples['t'],
+            size=boundary_node_count, replace=True
+        )
+
+    best_dataset.to_csv("../../data/ExpressionExamplesGen05/" + network_name +
                         "_(" + str(directionality) + ")_dataset_" +
                         instance_id + ".csv", index=False)
 
@@ -211,13 +216,14 @@ if __name__ == "__main__":
                         format="%(asctime)s %(levelname)s -- %(message)s")
 
     # Network
-    network_folder = "../../data/NPANetworks/"
-    core_suffix = "_backbone.tsv"
-    boundary_suffix = "_downstream.tsv"
+    network_folder = "../../data/BAGen05/"
+    core_suffix = "_core.tsv"
+    boundary_suffix = "_boundary.tsv"
     directions = ["0"]
     datasets_per_direction = 1
-    pop_size = 500
-    iters = 2000
+    pop_size = 1
+    iters = 0
+    gen_plot = False
 
     for file_name in os.listdir(network_folder):
         if file_name.endswith(core_suffix) and not file_name.startswith("Hs_CST_Xenobiotic"):
@@ -231,6 +237,8 @@ if __name__ == "__main__":
             my_cbn.add_edges_from_tsv(boundary_file, edge_type="boundary")
             my_cbn.infer_graph_attributes(verbose=False, inplace=True)
 
+            nx_net = my_cbn.to_networkx()
+
             for didx, direction in enumerate(directions):
                 for i in range(datasets_per_direction):
                     logging.info("Generating dataset %d/%d for %s",
@@ -242,5 +250,5 @@ if __name__ == "__main__":
                         network_title, my_cbn,
                         population_size=pop_size, max_iterations=iters, target_fitness=None,
                         directionality=direction, mutation_rate=0.002,
-                        verbose=True, log_frequency=0.1, seed=(i+1)*72
+                        verbose=True, log_frequency=0.1, seed=(i+1)*72, plot_fitness=gen_plot
                     )
