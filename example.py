@@ -47,10 +47,25 @@ def example_run(causalbionet, datasets, sparse=True,
 
 
 def test_rewiring(causalbionet, datasets):
-    results = causalbionet.wire_edges(3,
-        ["p(MGI:Bcl2)", "p(MGI:Bcl2a1b)", "act(p(MGI:Akt1))", "p(SFAM:\"AKT Family\")", "act(p(MGI:Map3k5))",
-         "act(p(MGI:Nkx3-1))", "bp(MESHPP:Apoptosis)", "act(p(MGI:Birc5))"], ("1.", "-1."),
-        3, datasets
+    nodes = ["p(MGI:Bcl2)", "p(MGI:Bcl2a1b)", "act(p(MGI:Akt1))", "p(SFAM:\"AKT Family\")", "act(p(MGI:Map3k5))",
+         "act(p(MGI:Nkx3-1))", "bp(MESHPP:Apoptosis)", "act(p(MGI:Birc5))"]
+
+    results = causalbionet.wire_edges(
+        nodes, 5, datasets, 3, ("1.", "-1.")
+    )
+
+    results2 = causalbionet.rewire_edges(
+        nodes, 5, datasets, p_rate=0.4
+    )
+
+    edges = causalbionet.edges(typ="core", data=False)
+    rng = np.random.default_rng(0)
+    for edge in edges:
+        if edge[0] in nodes and edge[1] in nodes:
+            causalbionet.modify_edge(edge[0], edge[1], confidence=rng.uniform(0.85, 1.))
+
+    results3 = causalbionet.rewire_edges(
+        nodes, 5, datasets, p_rate="confidence"
     )
 
     for dataset in datasets:
@@ -60,9 +75,33 @@ def test_rewiring(causalbionet, datasets):
             if r[1][dataset] > best_score:
                 best_score = r[1][dataset]
                 best_idx = idx
-        print(dataset, best_idx, results[best_idx][1][dataset])
+
+        best_idx_2 = -1
+        best_score = 0.
+        for idx, r in enumerate(results2):
+            if r[1][dataset] > best_score:
+                best_score = r[1][dataset]
+                best_idx_2 = idx
+
+        best_idx_3 = -1
+        best_score = 0.
+        for idx, r in enumerate(results3):
+            if r[1][dataset] > best_score:
+                best_score = r[1][dataset]
+                best_idx_3 = idx
+
+        print(dataset, best_idx, results[best_idx][1][dataset],
+              best_idx_2, results2[best_idx_2][1][dataset],
+              best_idx_3, results3[best_idx_3][1][dataset])
+
         new_cbn = causalbionet.copy()
         new_cbn.modify_network(results[best_idx][0])
+
+        new_cbn2 = causalbionet.copy()
+        new_cbn2.modify_network(results2[best_idx_2][0])
+
+        new_cbn3 = causalbionet.copy()
+        new_cbn3.modify_network(results3[best_idx_3][0])
 
 
 def test_import():
@@ -146,10 +185,9 @@ if __name__ == "__main__":
     mm_apoptosis.add_edges_from_tsv("data/NPANetworks/Mm_CFA_Apoptosis_downstream.tsv", edge_type="boundary")
     # example_run(mm_apoptosis, copd1_data, permutations=["o", "k1", "k2"], sparse=False)
     # example_run(mm_apoptosis, copd1_data, permutations=["o", "k1", "k2"], sparse=True)
-    mm_apoptosis.toponpa(large_data)
-    exit()
-    logging.info("Finished run")
+    # mm_apoptosis.toponpa(large_data)
+    logging.info("Starting rewiring")
     test_rewiring(mm_apoptosis, copd1_data)
     logging.info("Finished rewiring")
 
-    test_opposing_value_pruning()
+    # test_opposing_value_pruning()
