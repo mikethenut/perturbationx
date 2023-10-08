@@ -27,6 +27,10 @@ DEFAULT_NODE_BORDER_WIDTH = 4.0
 
 
 def get_style_xml_path():
+    """Get the path to the default style xml file.
+    :return: The path to the default style xml file.
+    :rtype: str
+    """
     module_path = os.path.abspath(__file__)
     resource_path = os.path.join(os.path.dirname(module_path), STYLE_XML)
     return resource_path
