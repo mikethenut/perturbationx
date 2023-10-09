@@ -249,6 +249,7 @@ class NPAResult:
             If "union", all nodes within the maximum distance from any leading node are returned. If "intersection",
             only nodes within the maximum distance from all leading nodes are returned. Defaults to "union".
         :type neighborhood_type: str, optional
+        :raises ValueError: If include_shortest_paths is not "directed", "undirected", or "none".
         :return: The nodes and edges in the subgraph. They are returned as a pair of lists.
         :rtype: tuple
         """
@@ -270,7 +271,7 @@ class NPAResult:
             case "none" | None:
                 path_nodes, path_edges = set(), set()
             case _:
-                raise ValueError("Argument neighborhood_type must be "
+                raise ValueError("Argument include_shortest_paths must be "
                                  "'directed', 'undirected', or 'none'.")
 
         # Find neighborhood
@@ -285,7 +286,7 @@ class NPAResult:
 
         :param display_boundary: If True, boundary nodes will be displayed. Defaults to False.
         :type display_boundary: bool, optional
-        :param style: The style to apply to the network. Defaults to perturbationx-default.
+        :param style: The style to apply to the network. Defaults to DEFAULT_STYLE ("perturbationx-default").
         :type style: str, optional
         :param cytoscape_url: The URL of the Cytoscape instance to display the network in. Defaults to
             DEFAULT_BASE_URL in py4cytoscape (http://127.0.0.1:1234/v1).

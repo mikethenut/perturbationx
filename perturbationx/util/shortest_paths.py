@@ -17,6 +17,7 @@ def get_shortest_path_components(graph: nx.DiGraph, endpoints: set, directed=Fal
             length_tolerance is a float, it is interpreted as a percentage of the length of the shortest path.
             Defaults to 0.
     :type length_tolerance: int | float, optional
+    :raises ValueError: If length_tolerance is not a number or is negative.
     :return: The nodes and edges in the paths. They are returned as a pair of lists.
     :rtype: tuple
     """

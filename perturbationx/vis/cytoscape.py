@@ -5,6 +5,7 @@ from contextlib import redirect_stderr
 
 import pandas as pd
 import py4cytoscape as p4c
+import networkx as nx
 from py4cytoscape.exceptions import CyError
 from py4cytoscape.py4cytoscape_utils import DEFAULT_BASE_URL
 from py4cytoscape.tables import load_table_data
@@ -12,13 +13,41 @@ from py4cytoscape.tables import load_table_data
 from perturbationx.resources import *
 
 
-def edge_to_p4c_format(src, trg, interaction):
+def edge_to_p4c_format(src: str, trg: str, interaction: str):
+    """Convert an edge to the format used by py4cytoscape.
+
+    :param src: Source node name.
+    :type src: str
+    :param trg: Target node name.
+    :type trg: str
+    :param interaction: Interaction type.
+    :type interaction: str
+    :return: Edge name.
+    :rtype: str
+    """
     # Edge name format used by p4c is 'source (interaction) target'
     return "%s (%s) %s" % (src, interaction, trg)
 
 
-def init_cytoscape(graph, title, collection, init_boundary: Optional[bool] = False,
+def init_cytoscape(graph: nx.Graph, title: str, collection: str, init_boundary: Optional[bool] = False,
                    network_suid=None, cytoscape_url=DEFAULT_BASE_URL):
+    """Initialize a Cytoscape network from a NetworkX graph.
+
+    :param graph: NetworkX graph.
+    :type graph: nx.Graph
+    :param title: Network title.
+    :type title: str
+    :param collection: Network collection.
+    :type collection: str
+    :param init_boundary: Whether to initialize boundary nodes. Defaults to False.
+    :type init_boundary: bool, optional
+    :param network_suid: Network SUID to update. Defaults to None. If None or invalid, a new network is created.
+    :type network_suid: int, optional
+    :param cytoscape_url: Cytoscape URL. Defaults to DEFAULT_BASE_URL in py4cytoscape (http://127.0.0.1:1234/v1).
+    :type cytoscape_url: str, optional
+    :return: Network SUID.
+    :rtype: int
+    """
     if network_suid is not None:
         try:
             p4c.set_current_network(network_suid, base_url=cytoscape_url)
@@ -43,7 +72,18 @@ def init_cytoscape(graph, title, collection, init_boundary: Optional[bool] = Fal
     return network_suid
 
 
-def load_network_data(dataframe, table, network_suid, cytoscape_url=DEFAULT_BASE_URL):
+def load_network_data(dataframe: pd.DataFrame, table: str, network_suid: int, cytoscape_url=DEFAULT_BASE_URL):
+    """Load a pandas DataFrame into a Cytoscape table.
+
+    :param dataframe: The DataFrame to load.
+    :type dataframe: pd.DataFrame
+    :param table: The table to update.
+    :type table: str
+    :param network_suid: The network to update.
+    :type network_suid: int
+    :param cytoscape_url: Cytoscape URL. Defaults to DEFAULT_BASE_URL in py4cytoscape (http://127.0.0.1:1234/v1).
+    :type cytoscape_url: str, optional
+    """
     dataframe = dataframe.copy()
     # Rename MultiIndex columns
     dataframe.columns = [col if isinstance(col, str) else ' '.join(col)
@@ -57,7 +97,19 @@ def load_network_data(dataframe, table, network_suid, cytoscape_url=DEFAULT_BASE
             )
 
 
-def set_boundary_display(graph, show_boundary, network_suid, cytoscape_url=DEFAULT_BASE_URL):
+def set_boundary_display(graph: nx.Graph, show_boundary: bool, network_suid, cytoscape_url=DEFAULT_BASE_URL):
+    """Set the display of boundary nodes.
+
+    :param graph: The graph to load boundary nodes from.
+    :type graph: nx.Graph
+    :param show_boundary: Whether to show boundary nodes. If boundary nodes were not loaded during initialization,
+                            they can be loaded in here. If boundary nodes have already been loaded, they are hidden.
+    :type show_boundary: bool
+    :param network_suid: The network to update.
+    :type network_suid: int
+    :param cytoscape_url: Cytoscape URL. Defaults to DEFAULT_BASE_URL in py4cytoscape (http://127.0.0.1:1234/v1).
+    :type cytoscape_url: str, optional
+    """
     node_table = p4c.tables.get_table_columns(table="node", columns=["name", "type"],
                                               network=network_suid, base_url=cytoscape_url)
     boundary_nodes = node_table.loc[node_table["type"] == "boundary"]["name"].tolist()
@@ -102,8 +154,23 @@ def set_boundary_display(graph, show_boundary, network_suid, cytoscape_url=DEFAU
         load_network_data(edge_data, "edge", network_suid, cytoscape_url)
 
 
-def color_nodes_by_column(data_column, network_suid, gradient=DEFAULT_GRADIENT, default_color=DEFAULT_NODE_COLOR,
-                          style=DEFAULT_STYLE, cytoscape_url=DEFAULT_BASE_URL):
+def color_nodes_by_column(data_column: str, network_suid: int, gradient=DEFAULT_GRADIENT,
+                          default_color=DEFAULT_NODE_COLOR, style=DEFAULT_STYLE, cytoscape_url=DEFAULT_BASE_URL):
+    """Color nodes by a column in the node table.
+
+    :param data_column: The column to color by.
+    :type data_column: str
+    :param network_suid: The network to update.
+    :type network_suid: int
+    :param gradient: The gradient to use. Defaults to DEFAULT_GRADIENT ("#2B80EF", "#EF3B2C").
+    :type gradient: tuple, optional
+    :param default_color: The default node color to use. Defaults to DEFAULT_NODE_COLOR ("#FEE391").
+    :type default_color: str, optional
+    :param style: The style to use. Defaults to DEFAULT_STYLE ("perturbationx-default").
+    :type style: str, optional
+    :param cytoscape_url: Cytoscape URL. Defaults to DEFAULT_BASE_URL in py4cytoscape (http://127.0.0.1:1234/v1).
+    :type cytoscape_url: str, optional
+    """
     node_table = p4c.tables.get_table_columns(
         table="node", columns=[data_column], network=network_suid, base_url=cytoscape_url
     )
@@ -115,7 +182,20 @@ def color_nodes_by_column(data_column, network_suid, gradient=DEFAULT_GRADIENT, 
     )
 
 
-def highlight_subgraph(nodes, edges, network_suid, highlight_factor=3, cytoscape_url=DEFAULT_BASE_URL):
+def highlight_subgraph(nodes: list, edges: list, network_suid: int, highlight_factor=3, cytoscape_url=DEFAULT_BASE_URL):
+    """Highlight a subgraph.
+
+    :param nodes: The nodes to highlight.
+    :type nodes: list
+    :param edges: The edges to highlight.
+    :type edges: list
+    :param network_suid: The network to update.
+    :type network_suid: int
+    :param highlight_factor: The factor to multiply the default width by. Defaults to 3.
+    :type highlight_factor: float, optional
+    :param cytoscape_url: Cytoscape URL. Defaults to DEFAULT_BASE_URL in py4cytoscape (http://127.0.0.1:1234/v1).
+    :type cytoscape_url: str, optional
+    """
     p4c.style_bypasses.set_node_border_width_bypass(
         nodes, DEFAULT_NODE_BORDER_WIDTH * highlight_factor,
         network=network_suid, base_url=cytoscape_url
@@ -126,7 +206,20 @@ def highlight_subgraph(nodes, edges, network_suid, highlight_factor=3, cytoscape
     )
 
 
-def isolate_subgraph(graph, nodes, edges, network_suid, cytoscape_url=DEFAULT_BASE_URL):
+def isolate_subgraph(graph: nx.Graph, nodes: list, edges: list, network_suid: int, cytoscape_url=DEFAULT_BASE_URL):
+    """Isolate a subgraph.
+
+    :param graph: The graph displayed in Cytoscape.
+    :type graph: nx.Graph
+    :param nodes: The nodes to isolate.
+    :type nodes: list
+    :param edges: The edges to isolate.
+    :type edges: list
+    :param network_suid: The network to update.
+    :type network_suid: int
+    :param cytoscape_url: Cytoscape URL. Defaults to DEFAULT_BASE_URL in py4cytoscape (http://127.0.0.1:1234/v1).
+    :type cytoscape_url: str, optional
+    """
     # Set edge visibility
     core_edges = [edge_to_p4c_format(src, trg, graph[src][trg]["interaction"])
                   for src, trg in graph.edges if graph[src][trg]["type"] == "core"]
@@ -145,14 +238,43 @@ def isolate_subgraph(graph, nodes, edges, network_suid, cytoscape_url=DEFAULT_BA
     )
 
 
-def extract_subgraph(nodes, edges, network_suid, cytoscape_url=DEFAULT_BASE_URL):
+def extract_subgraph(nodes: list, edges: list, network_suid: int, cytoscape_url=DEFAULT_BASE_URL):
+    """Extract a subgraph.
+
+    :param nodes: The nodes to extract.
+    :type nodes: list
+    :param edges: The edges to extract.
+    :type edges: list
+    :param network_suid: The network to update.
+    :type network_suid: int
+    :param cytoscape_url: Cytoscape URL. Defaults to DEFAULT_BASE_URL in py4cytoscape (http://127.0.0.1:1234/v1).
+    :type cytoscape_url: str, optional
+    :return: The SUID of the extracted subnetwork.
+    :rtype: int
+    """
     return p4c.networks.create_subnetwork(
         nodes=nodes, edges=edges, exclude_edges=True,
         network=network_suid, base_url=cytoscape_url
     )
 
 
-def clear_bypass(components, component_type, visual_property, network_suid, cytoscape_url=DEFAULT_BASE_URL):
+def clear_bypass(components: list, component_type: str, visual_property: str, network_suid: int,
+                 cytoscape_url=DEFAULT_BASE_URL):
+    """Clear a bypass.
+
+    :param components: The components to clear the bypass for.
+    :type components: list
+    :param component_type: The component type. Must be 'node' or 'edge'.
+    :type component_type: str
+    :param visual_property: The visual property to clear the bypass for.
+    :type visual_property: str
+    :param network_suid: The network to update.
+    :type network_suid: int
+    :param cytoscape_url: Cytoscape URL. Defaults to DEFAULT_BASE_URL in py4cytoscape (http://127.0.0.1:1234/v1).
+    :type cytoscape_url: str, optional
+    :raises ValueError: If the component type is not 'node' or 'edge'.
+    :raises CyError: If a CyREST error occurs.
+    """
     fake_logger = io.StringIO()
     with redirect_stderr(fake_logger):
         try:

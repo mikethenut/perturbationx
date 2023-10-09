@@ -4,6 +4,13 @@ __all__ = ["connect_adjacency_components"]
 
 
 def get_root(node, parents: dict):
+    """Get the root of a node in a tree represented by a dictionary of parent-child relationships.
+
+    :param node: The node whose root to find.
+    :param parents: A dictionary of parent-child relationships.
+    :type parents: dict
+    :return: The root of the node.
+    """
     if parents[node] == node:
         return node
 
@@ -12,6 +19,15 @@ def get_root(node, parents: dict):
 
 
 def find_connected_components(adj: np.ndarray):
+    """Find the connected components of a graph represented by an adjacency matrix.
+
+    :param adj: The adjacency matrix of the graph.
+    :type adj: np.ndarray
+    :raises ValueError: If the adjacency matrix is not square.
+    :return: A dictionary of connected components, where the keys are the roots of the components and the values are
+        the nodes in the components.
+    :rtype: dict
+    """
     if adj.ndim != 2 or adj.shape[0] != adj.shape[1]:
         raise ValueError("Argument 'adj' {} is not a square matrix.".format(str(adj.shape)))
 
@@ -36,6 +52,18 @@ def find_connected_components(adj: np.ndarray):
 
 
 def connect_adjacency_components(adj: np.ndarray, nodes=None, weights=(1.,), seed=None):
+    """Connect the components of a graph represented by an adjacency matrix.
+
+    :param adj: The adjacency matrix of the graph.
+    :type adj: np.ndarray
+    :param nodes: The nodes to connect. If specified, edges will only be added between these nodes (when possible).
+    :type nodes: list, optional
+    :param weights: The weights to assign to the edges. Each edge will be assigned a random weight from this list.
+    :type weights: list, optional
+    :param seed: The seed for the random number generator.
+    :type seed: int, optional
+    :raises ValueError: If the adjacency matrix is not square.
+    """
     if adj.ndim != 2:
         raise ValueError("Argument 'adj' {} is not a square matrix.".format(str(adj.shape)))
 
