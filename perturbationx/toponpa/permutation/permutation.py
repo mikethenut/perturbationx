@@ -8,6 +8,21 @@ __all__ = ["permute_adjacency", "permute_edge_list"]
 
 
 def permute_adjacency(adj: np.ndarray, permutations=('k2',), iterations=500, permutation_rate=1., seed=None):
+    """Permute an adjacency matrix.
+
+    :param adj: The adjacency matrix to permute.
+    :type adj: np.ndarray
+    :param permutations: The permutations to apply. Defaults to ('k2',). May contain 'k1' and 'k2' in any order.
+    :type permutations: list, optional
+    :param iterations: The number of permutations to generate. Defaults to 500.
+    :type iterations: int, optional
+    :param permutation_rate: The fraction of edges to permute. Defaults to 1.
+    :type permutation_rate: float, optional
+    :param seed: The seed for the random number generator.
+    :type seed: int, optional
+    :return: A dictionary of lists with permuted adjacency matrices, keyed by the permutation name.
+    :rtype: dict
+    """
     if type(permutations) is str:
         permutations = [permutations]
 
@@ -33,7 +48,31 @@ def permute_adjacency(adj: np.ndarray, permutations=('k2',), iterations=500, per
     return adj_perms
 
 
-def permute_edge_list(edge_list: np.ndarray, node_list, iterations, method='k1', permutation_rate=1., seed=None):
+def permute_edge_list(edge_list: np.ndarray, node_list=None, iterations=500,
+                      method='k1', permutation_rate=1., seed=None):
+    """Permute an edge list.
+
+    :param edge_list: The edge list to permute. Must be a 2D array with shape (n_edges, 4). The first two columns
+        contain the source and target nodes, the third column contains the edge type, and the fourth column contains
+        the confidence weight. Confidence weights are optional.
+    :type edge_list: np.ndarray
+    :param node_list: The list of nodes to use in the permutation. Only edges that connect nodes in this list
+        are permuted. If None, the list is inferred from the edge list.
+    :type node_list: list, optional
+    :param iterations: The number of permutations to generate. Defaults to 500.
+    :type iterations: int, optional
+    :param method: The permutation method to use. Defaults to 'k1'. May be 'k1' or 'k2'.
+    :type method: str, optional
+    :param permutation_rate: The fraction of edges to permute. Defaults to 1. If 'confidence', the confidence weights
+        are used to determine the number of edges to permute. For each edge, a random number is drawn from a uniform
+        distribution between 0 and 1. If the confidence weight is larger than this number, the edge is permuted.
+    :type permutation_rate: float | str, optional
+    :param seed: The seed for the random number generator.
+    :type seed: int, optional
+    :raises ValueError: If the permutation method is unknown.
+    :return: A list of permutations. Each permutation is a list of tuples with the source node, target node, and edge
+        type. If the edge type is None, the edge is removed.
+    """
     if node_list is None:
         node_list = np.unique(edge_list[:, :2])
 

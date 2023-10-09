@@ -9,6 +9,13 @@ from perturbationx.io import RelationTranslator
 
 
 def infer_node_type(graph: nx.DiGraph):
+    """Infer the type of each node in the network (core or boundary).
+
+    :param graph: The network to process.
+    :type graph: nx.DiGraph
+    :return: A tuple with the sets of boundary and core nodes.
+    :rtype: tuple
+    """
     # Select nodes with outgoing edges and targets of core edges as core nodes
     core_nodes = {src for src, trg in graph.edges} | \
                  {trg for src, trg in graph.edges if graph[src][trg]["type"] == "core"}
@@ -33,7 +40,16 @@ def infer_node_type(graph: nx.DiGraph):
     return boundary_nodes, core_nodes
 
 
-def enumerate_nodes(graph: nx.DiGraph, boundary_nodes, core_nodes):
+def enumerate_nodes(graph: nx.DiGraph, boundary_nodes: set, core_nodes: set):
+    """Assign an index and type to each node in the network.
+
+    :param graph: The network to process.
+    :type graph: nx.DiGraph
+    :param boundary_nodes: The set of boundary nodes.
+    :type boundary_nodes: set
+    :param core_nodes: The set of core nodes.
+    :type core_nodes: set
+    """
     core_size = len(core_nodes)
     node_idx = {node: idx for idx, node in enumerate(core_nodes)} | \
                {node: (core_size + idx) for idx, node in enumerate(boundary_nodes)}
@@ -43,6 +59,12 @@ def enumerate_nodes(graph: nx.DiGraph, boundary_nodes, core_nodes):
 
 
 def remove_invalid_graph_elements(graph: nx.DiGraph):
+    """Remove invalid elements from the graph. This function removes self-loops and opposing edges, and ensures that the
+    core graph is weakly connected.
+
+    :param graph: The network to process.
+    :type graph: nx.DiGraph
+    """
     core_graph = graph.subgraph([n for n in graph.nodes if graph.nodes[n]["type"] == "core"])
 
     # Check that the core graph is weakly connected
@@ -81,6 +103,13 @@ def remove_invalid_graph_elements(graph: nx.DiGraph):
 
 
 def infer_edge_attributes(graph: nx.DiGraph, relation_translator: Optional[RelationTranslator] = None):
+    """Infer the attributes of each edge in the network.
+
+    :param graph: The network to process.
+    :type graph: nx.DiGraph
+    :param relation_translator: The relation translator to use. If None, a new instance will be created.
+    :type relation_translator: RelationTranslator, optional
+    """
     rt = relation_translator if relation_translator is not None else RelationTranslator()
     for src, trg in graph.edges:
         edge_weight = rt.translate(graph[src][trg]["relation"])
@@ -94,6 +123,13 @@ def infer_edge_attributes(graph: nx.DiGraph, relation_translator: Optional[Relat
 
 
 def infer_metadata(graph: nx.DiGraph, verbose=True):
+    """Infer metadata about the network and add it to the graph instance.
+
+    :param graph: The network to process.
+    :type graph: nx.DiGraph
+    :param verbose: Whether to log network statistics.
+    :type verbose: bool, optional
+    """
     boundary_nodes = {trg for src, trg in graph.edges if graph[src][trg]["type"] == "boundary"}
     core_nodes = {src for src, trg in graph.edges} | \
                  {trg for src, trg in graph.edges if graph[src][trg]["type"] == "core"}
