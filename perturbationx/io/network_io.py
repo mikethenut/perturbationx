@@ -174,7 +174,7 @@ def to_edge_list(graph: nx.DiGraph, edge_type="all", data_cols=DEFAULT_DATA_COLS
 
 def write_dsv(graph: nx.DiGraph, filepath: str, edge_type="all", delimiter='\t',
               data_cols=DEFAULT_DATA_COLS, header=None):
-    """Write a networkx.DiGraph to a DSV file.
+    """Write a networkx.DiGraph to a delimited file.
 
     :param graph: The graph to write.
     :type graph: nx.DiGraph

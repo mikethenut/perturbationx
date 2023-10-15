@@ -15,7 +15,7 @@ def toponpa(graph: nx.DiGraph, relation_translator: RelationTranslator, datasets
             boundary_edge_minimum=6, exact_boundary_outdegree=True, compute_statistics=True,
             alpha=0.95, permutations=('o', 'k2'), full_core_permutation=True, p_iters=500,
             p_rate=1., sparse=True, seed=None, verbose=True):
-    """Compute the Network Perturbation Amplitude (NPA) for a given network and dataset.
+    """Compute the Network Perturbation Amplitude (NPA) for a given network and datasets.
 
     :param graph: The network graph.
     :type graph: nx.DiGraph
