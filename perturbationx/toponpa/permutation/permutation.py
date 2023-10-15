@@ -1,18 +1,19 @@
 import warnings
 
 import numpy as np
+from scipy.sparse import sparray
 
 from .adjacency_permutation import adjacency_permutation_k1, adjacency_permutation_k2
 
 __all__ = ["permute_adjacency", "permute_edge_list"]
 
 
-def permute_adjacency(adj: np.ndarray, permutations=('k2',), iterations=500, permutation_rate=1., seed=None):
+def permute_adjacency(adj: np.ndarray | sparray, permutations=('k2',), iterations=500, permutation_rate=1., seed=None):
     """Permute an adjacency matrix.
 
     :param adj: The adjacency matrix to permute.
-    :type adj: np.ndarray
-    :param permutations: The permutations to apply. Defaults to ('k2',). May contain 'k1' and 'k2' in any order.
+    :type adj: np.ndarray | sp.sparray
+    :param permutations: The permutations to apply. May contain 'k1' and 'k2' in any order. Defaults to ('k2',).
     :type permutations: list, optional
     :param iterations: The number of permutations to generate. Defaults to 500.
     :type iterations: int, optional

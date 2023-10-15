@@ -4,7 +4,7 @@ from typing import Optional
 import networkx as nx
 import numpy as np
 import pandas as pd
-from scipy.sparse import issparse
+from scipy.sparse import issparse, sparray
 
 from perturbationx.io import RelationTranslator
 from .preprocess_network import infer_node_type, enumerate_nodes, remove_invalid_graph_elements, \
@@ -45,11 +45,11 @@ def format_dataset(dataset: pd.DataFrame, computing_statistics=True):
     return reduced_dataset
 
 
-def remove_opposing_edges(adjacency: np.ndarray, dataset: pd.DataFrame, minimum_amplitude=1.):
+def remove_opposing_edges(adjacency: np.ndarray | sparray, dataset: pd.DataFrame, minimum_amplitude=1.):
     """Remove edges that causally oppose the values in the dataset.
 
     :param adjacency: The boundary adjacency matrix to prune.
-    :type adjacency: np.ndarray
+    :type adjacency: np.ndarray | sp.sparray
     :param dataset: The dataset to use for pruning.
     :type dataset: pd.DataFrame
     :param minimum_amplitude: The minimum amplitude of the dataset values to consider. Values with an absolute value
@@ -73,7 +73,7 @@ def remove_opposing_edges(adjacency: np.ndarray, dataset: pd.DataFrame, minimum_
     return adjacency_pruned
 
 
-def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray, dataset: pd.DataFrame, dataset_id: str,
+def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray | sparray, dataset: pd.DataFrame, dataset_id: str,
                           missing_value_pruning_mode="nullify", opposing_value_pruning_mode=None,
                           opposing_value_minimum_amplitude=1., boundary_edge_minimum=6, verbose=True):
     """Prune a network and dataset to match each other.
@@ -81,7 +81,7 @@ def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray, dataset: pd.Data
     :param graph: The network to prune.
     :type graph: nx.DiGraph
     :param adj_b: The boundary adjacency matrix to prune.
-    :type adj_b: np.ndarray
+    :type adj_b: np.ndarray | sp.sparray
     :param dataset: The dataset to use for pruning.
     :type dataset: pd.DataFrame
     :param dataset_id: The name of the dataset.
