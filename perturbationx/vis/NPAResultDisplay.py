@@ -49,10 +49,10 @@ class NPAResultDisplay:
         :type reset_highlight: bool, optional
         :param reset_visibility: Whether to reset the visibility of the nodes and edges. Defaults to False.
         :type reset_visibility: bool, optional
+        :raises CyError: If a CyREST error occurs.
         :return: SUID of the network.
         :rtype: int
         """
-
         logging.getLogger().handlers.clear()  # Block logging to stdout
 
         p4c.set_current_network(self._network_suid, base_url=self._cytoscape_url)
@@ -106,6 +106,7 @@ class NPAResultDisplay:
         :type gradient: (str, str), optional
         :param default_color: The default color to use. Defaults to DEFAULT_NODE_COLOR ("#FEE391").
         :type default_color: str, optional
+        :raises CyError: If a CyREST error occurs.
         :return: SUID of the network.
         :rtype: int
         """
@@ -147,6 +148,10 @@ class NPAResultDisplay:
             If "union", all nodes within the maximum distance from any leading node are returned. If "intersection",
             only nodes within the maximum distance from all leading nodes are returned. Defaults to "union".
         :type neighborhood_type: str, optional
+        :raises ValueError: If include_shortest_paths is not "directed", "undirected", or "none".
+        If max_distance is less than 0 or neighborhood_type is not "union" or "intersection".
+        If length_tolerance is not a number or is negative.
+        :raises CyError: If a CyREST error occurs.
         :return: SUID of the network.
         :rtype: int
         """
@@ -201,6 +206,10 @@ class NPAResultDisplay:
             If "union", all nodes within the maximum distance from any leading node are returned. If "intersection",
             only nodes within the maximum distance from all leading nodes are returned. Defaults to "union".
         :type neighborhood_type: str, optional
+        :raises ValueError: If include_shortest_paths is not "directed", "undirected", or "none".
+        If max_distance is less than 0 or neighborhood_type is not "union" or "intersection".
+        If length_tolerance is not a number or is negative.
+        :raises CyError: If a CyREST error occurs.
         :return: SUID of the network.
         :rtype: int
         """

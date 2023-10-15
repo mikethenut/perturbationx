@@ -180,6 +180,7 @@ def infer_graph_attributes(graph: nx.DiGraph, relation_translator: Optional[Rela
     :type relation_translator: RelationTranslator, optional
     :param verbose: Whether to log network statistics.
     :type verbose: bool, optional
+    :raises ValueError: If the same node appears in both the core and boundary network.
     :return: The processed network.
     :rtype: nx.DiGraph
     """

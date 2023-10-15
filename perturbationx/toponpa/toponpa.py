@@ -62,6 +62,7 @@ def toponpa(graph: nx.DiGraph, relation_translator: RelationTranslator, datasets
     :type seed: int, optional
     :param verbose: Whether to log progress and network statistics. Defaults to True.
     :type verbose: bool, optional
+    :raises ValueError: If the same node appears in both the core and boundary network.
     :return: The NPA result.
     :rtype: NPAResult
     """
@@ -199,6 +200,7 @@ def evaluate_modifications(graph: nx.DiGraph, relation_translator: RelationTrans
     :type seed: int, optional
     :param verbose: Whether to log progress and network statistics. Defaults to True.
     :type verbose: bool, optional
+    :raises ValueError: If the same node appears in both the core and boundary network.
     :return: List of tuples of the form (modification, npa), where modification is the modification and npa is a
                 dictionary of the form {dataset_id: npa}.
     :rtype: list

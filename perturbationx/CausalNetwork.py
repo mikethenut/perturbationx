@@ -71,6 +71,7 @@ class CausalNetwork:
         :type relation_translator: RelationTranslator, optional
         :param inplace: Whether to initialize the network in place. If False, the network is copied. Defaults to False.
         :type inplace: bool, optional
+        :raises TypeError: If the relation translator is not a RelationTranslator.
         """
         return cls(graph, relation_translator, inplace)
 
@@ -90,6 +91,7 @@ class CausalNetwork:
         :type header_cols: list, optional
         :param relation_translator: The relation translator. Defaults to None (default relation translator).
         :type relation_translator: RelationTranslator, optional
+        :raises TypeError: If the relation translator is not a RelationTranslator.
         :return: The constructed CausalNetwork.
         :rtype: CausalNetwork
         """
@@ -115,6 +117,7 @@ class CausalNetwork:
         :type header_cols: list, optional
         :param relation_translator: The relation translator. Defaults to None (default relation translator).
         :type relation_translator: RelationTranslator, optional
+        :raises TypeError: If the relation translator is not a RelationTranslator.
         :return: The constructed CausalNetwork.
         :rtype: CausalNetwork
         """
@@ -135,6 +138,7 @@ class CausalNetwork:
         :type header_cols: list, optional
         :param relation_translator: The relation translator. Defaults to None (default relation translator).
         :type relation_translator: RelationTranslator, optional
+        :raises TypeError: If the relation translator is not a RelationTranslator.
         :return: The constructed CausalNetwork.
         :rtype: CausalNetwork
         """
@@ -149,6 +153,7 @@ class CausalNetwork:
         :type filepath: str
         :param relation_translator: The relation translator. Defaults to None (default relation translator).
         :type relation_translator: RelationTranslator, optional
+        :raises TypeError: If the relation translator is not a RelationTranslator.
         :return: The constructed CausalNetwork.
         :rtype: CausalNetwork
         """
@@ -172,6 +177,7 @@ class CausalNetwork:
         :type header_cols: list, optional
         :param relation_translator: The relation translator. Defaults to None (default relation translator).
         :type relation_translator: RelationTranslator, optional
+        :raises TypeError: If the relation translator is not a RelationTranslator.
         :return: The constructed CausalNetwork.
         :rtype: CausalNetwork
         """
@@ -472,6 +478,8 @@ class CausalNetwork:
         :param logging_kwargs: The keyword arguments to pass to logging.basicConfig. Defaults to "stream": sys.stdout,
          "level": logging.INFO, "format": "%(asctime)s %(levelname)s -- %(message)s".
         :type logging_kwargs: dict, optional
+        :raises ValueError: If the permutation method is unknown. If the same node appears in both
+        the core and boundary network.
         :return: The list of modifications, or a list of tuples of the form (modification, npa), where modification
         is the modification and npa is a dictionary of the form {dataset_id: npa}.
         :rtype: list
@@ -556,6 +564,7 @@ class CausalNetwork:
         :param logging_kwargs: The keyword arguments to pass to logging.basicConfig. Defaults to "stream": sys.stdout,
          "level": logging.INFO, "format": "%(asctime)s %(levelname)s -- %(message)s".
         :type logging_kwargs: dict, optional
+        :raises ValueError: If the same node appears in both the core and boundary network.
         :return: The list of modifications, or a list of tuples of the form (modification, npa), where modification
         is the modification and npa is a dictionary of the form {dataset_id: npa}.
         :rtype: list
@@ -636,6 +645,7 @@ class CausalNetwork:
         :param logging_kwargs: The keyword arguments to pass to logging.basicConfig. Defaults to "stream": sys.stdout,
          "level": logging.INFO, "format": "%(asctime)s %(levelname)s -- %(message)s".
         :type logging_kwargs: dict, optional
+        :raises ValueError: If the same node appears in both the core and boundary network.
         :return: The list of modifications, or a list of tuples of the form (modification, npa), where modification
         is the modification and npa is a dictionary of the form {dataset_id: npa}.
         :rtype: list
@@ -669,6 +679,7 @@ class CausalNetwork:
         :param logging_kwargs: The keyword arguments to pass to logging.basicConfig. Defaults to  "stream": sys.stdout,
         "level": logging.INFO, "format": "%(asctime)s %(levelname)s -- %(message)s".
         :type logging_kwargs: dict, optional
+        :raises ValueError: If the same node appears in both the core and boundary network.
         :return: The graph with the inferred attributes.
         :rtype: CausalNetwork
         """
@@ -693,6 +704,7 @@ class CausalNetwork:
         :param logging_kwargs: The keyword arguments to pass to logging.basicConfig. Defaults to  "stream": sys.stdout,
         "level": logging.INFO, "format": "%(asctime)s %(levelname)s -- %(message)s".
         :type logging_kwargs: dict, optional
+        :raises ValueError: If the same node appears in both the core and boundary network.
         :return: The boundary and core adjacency matrices and the node ordering.
         :rtype: (np.ndarray | sp.sparray, np.ndarray | sp.sparray, list)
         """
@@ -729,6 +741,7 @@ class CausalNetwork:
         :param verbose: Whether to log progress and network statistics. Defaults to True.
         :param logging_kwargs: The keyword arguments to pass to logging.basicConfig. Defaults to  "stream": sys.stdout,
         "level": logging.INFO, "format": "%(asctime)s %(levelname)s -- %(message)s".
+        :raises ValueError: If the same node appears in both the core and boundary network.
         :return: The Lb boundary Laplacian, Lc core Laplacian and Q core Laplacian and the node ordering.
         :rtype: (np.ndarray | sp.sparray, np.ndarray | sp.sparray, np.ndarray | sp.sparray, list)
         """
@@ -790,6 +803,7 @@ class CausalNetwork:
         :param logging_kwargs: The keyword arguments to pass to logging.basicConfig. Defaults to  "stream": sys.stdout,
         "level": logging.INFO, "format": "%(asctime)s %(levelname)s -- %(message)s".
         :type logging_kwargs: dict, optional
+        :raises ValueError: If the same node appears in both the core and boundary network.
         :return: The NPA result.
         :rtype: NPAResult
         """
@@ -849,6 +863,7 @@ class CausalNetwork:
         :type data_cols: list, optional
         :param header: List of header values to use. Must be given in the same order as data_cols. Defaults to None.
         :type header: list, optional
+        :raises ValueError: If the length of the header list does not match the length of the data_cols list.
         """
         px_io.write_dsv(self._graph, filepath, edge_type, delimiter, data_cols, header)
 
@@ -865,6 +880,7 @@ class CausalNetwork:
         :type data_cols: list, optional
         :param header: List of header values to use. Must be given in the same order as data_cols. Defaults to None.
         :type header: list, optional
+        :raises ValueError: If the length of the header list does not match the length of the data_cols list.
         """
         self.to_dsv(filepath, edge_type, data_cols=data_cols, header=header)
 
@@ -881,6 +897,7 @@ class CausalNetwork:
         :type data_cols: list, optional
         :param header: List of header values to use. Must be given in the same order as data_cols. Defaults to None.
         :type header: list, optional
+        :raises ValueError: If the length of the header list does not match the length of the data_cols list.
         """
         self.to_dsv(filepath, edge_type, delimiter=",", data_cols=data_cols, header=header)
 

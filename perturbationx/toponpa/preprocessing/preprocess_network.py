@@ -13,6 +13,7 @@ def infer_node_type(graph: nx.DiGraph):
 
     :param graph: The network to process.
     :type graph: nx.DiGraph
+    :raises ValueError: If the same node appears in both the core and boundary sets.
     :return: A tuple with the sets of boundary and core nodes.
     :rtype: (set, set)
     """

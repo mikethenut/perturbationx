@@ -21,6 +21,7 @@ def permute_adjacency(adj: np.ndarray | sparray, permutations=('k2',), iteration
     :type permutation_rate: float, optional
     :param seed: The seed for the random number generator.
     :type seed: int, optional
+    :raises ValueError: If the adjacency matrix is not square.
     :return: A dictionary of lists with permuted adjacency matrices, keyed by the permutation name.
     :rtype: dict
     """

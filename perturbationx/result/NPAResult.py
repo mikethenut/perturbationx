@@ -250,6 +250,8 @@ class NPAResult:
             only nodes within the maximum distance from all leading nodes are returned. Defaults to "union".
         :type neighborhood_type: str, optional
         :raises ValueError: If include_shortest_paths is not "directed", "undirected", or "none".
+        If max_distance is less than 0 or neighborhood_type is not "union" or "intersection".
+        If length_tolerance is not a number or is negative.
         :return: The nodes and edges in the subgraph. They are returned as a pair of lists.
         :rtype: (list, list)
         """
