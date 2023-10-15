@@ -163,7 +163,7 @@ def color_nodes_by_column(data_column: str, network_suid: int, gradient=DEFAULT_
     :param network_suid: The network to update.
     :type network_suid: int
     :param gradient: The gradient to use. Defaults to DEFAULT_GRADIENT ("#2B80EF", "#EF3B2C").
-    :type gradient: tuple, optional
+    :type gradient: (str, str), optional
     :param default_color: The default node color to use. Defaults to DEFAULT_NODE_COLOR ("#FEE391").
     :type default_color: str, optional
     :param style: The style to use. Defaults to DEFAULT_STYLE ("perturbationx-default").

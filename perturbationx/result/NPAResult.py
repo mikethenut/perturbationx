@@ -148,7 +148,7 @@ class NPAResult:
         :type include_reference: bool, optional
         :return: The distribution for the permutation. If include_reference is True, a tuple of the distribution and
             the reference value will be returned.
-        :rtype: list | tuple
+        :rtype: list | (list, float)
         """
         value_distribution = copy.deepcopy(self._distributions[distribution][dataset][0])
         if include_reference:
@@ -251,7 +251,7 @@ class NPAResult:
         :type neighborhood_type: str, optional
         :raises ValueError: If include_shortest_paths is not "directed", "undirected", or "none".
         :return: The nodes and edges in the subgraph. They are returned as a pair of lists.
-        :rtype: tuple
+        :rtype: (list, list)
         """
         # Remove boundary nodes
         graph = self._graph.copy()

@@ -14,7 +14,7 @@ def infer_node_type(graph: nx.DiGraph):
     :param graph: The network to process.
     :type graph: nx.DiGraph
     :return: A tuple with the sets of boundary and core nodes.
-    :rtype: tuple
+    :rtype: (set, set)
     """
     # Select nodes with outgoing edges and targets of core edges as core nodes
     core_nodes = {src for src, trg in graph.edges} | \

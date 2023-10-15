@@ -87,25 +87,26 @@ def prune_network_dataset(graph: nx.DiGraph, adj_b: np.ndarray | sparray, datase
     :param dataset_id: The name of the dataset.
     :type dataset_id: str
     :param missing_value_pruning_mode: The mode to use for pruning nodes with missing values. Must be one of 'remove'
-        or 'nullify'. Defaults to 'nullify'.
+                                        or 'nullify'. Defaults to 'nullify'.
     :type missing_value_pruning_mode: str, optional
     :param opposing_value_pruning_mode: The mode to use for pruning edges with opposing values. Must be one of 'remove',
-        'nullify', or 'none'. Defaults to None.
+                                        'nullify', or 'none'. Defaults to None.
     :type opposing_value_pruning_mode: str, optional
     :param opposing_value_minimum_amplitude: The minimum amplitude of the dataset values to consider. Values with an
-        absolute value smaller than this threshold are ignored. Defaults to 1.
+                                                absolute value smaller than this threshold are ignored. Defaults to 1.
     :type opposing_value_minimum_amplitude: float, optional
     :param boundary_edge_minimum: The minimum number of boundary edges a core node must have to be included
-        in the pruned network. If a core node has fewer boundary edges after 'remove' pruning, all of its edges are
-        removed. This parameter is ignored if 'nullify' pruning is used. Defaults to 6.
+                                    in the pruned network. If a core node has fewer boundary edges after 'remove'
+                                    pruning, all of its edges are removed. This parameter is ignored if 'nullify'
+                                    pruning is used. Defaults to 6.
     :type boundary_edge_minimum: int, optional
     :param verbose: Whether to log network statistics.
     :type verbose: bool, optional
     :raises ValueError: If the missing value pruning mode is invalid, or if the opposing value pruning mode is invalid,
-        or if the boundary edge minimum is negative, or if the adjacency matrix is not two-dimensional,
-        or if the dataset does not contain any boundary nodes.
+                            or if the boundary edge minimum is negative, or if the adjacency matrix is not
+                            two-dimensional, or if the dataset does not contain any boundary nodes.
     :return: The pruned boundary adjacency matrix and the pruned dataset.
-    :rtype: tuple
+    :rtype: (np.ndarray | sp.sparray, pd.DataFrame)
     """
     if missing_value_pruning_mode not in ["remove", "nullify"]:
         raise ValueError("Invalid missing value pruning mode. Must be one of 'remove' or 'nullify'.")

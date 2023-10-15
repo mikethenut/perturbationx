@@ -19,7 +19,7 @@ def get_shortest_path_components(graph: nx.DiGraph, endpoints: set, directed=Fal
     :type length_tolerance: int | float, optional
     :raises ValueError: If length_tolerance is not a number or is negative.
     :return: The nodes and edges in the paths. They are returned as a pair of lists.
-    :rtype: tuple
+    :rtype: (list, list)
     """
 
     try:

@@ -72,8 +72,8 @@ def get_neighborhood_components(graph: nx.DiGraph, source_nodes: set, max_distan
             only nodes within the maximum distance from all leading nodes are returned. Defaults to "union".
     :type neighborhood_type: str, optional
     :raises ValueError: If max_distance is less than 0 or neighborhood_type is not "union" or "intersection".
-    :return: The nodes and edges in the neighborhood. They are returned as a pair of lists.
-    :rtype: tuple
+    :return: The nodes and edges in the neighborhood. They are returned as a pair of sets.
+    :rtype: (set, set)
     """
 
     if max_distance < 0.:

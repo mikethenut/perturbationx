@@ -103,7 +103,7 @@ class NPAResultDisplay:
         :param attribute: The attribute to color nodes by.
         :type attribute: str
         :param gradient: The gradient to use. Defaults to DEFAULT_GRADIENT ("#2B80EF", "#EF3B2C").
-        :type gradient: tuple, optional
+        :type gradient: (str, str), optional
         :param default_color: The default color to use. Defaults to DEFAULT_NODE_COLOR ("#FEE391").
         :type default_color: str, optional
         :return: SUID of the network.

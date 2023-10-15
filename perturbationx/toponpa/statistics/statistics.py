@@ -26,8 +26,8 @@ def compute_variances(lap_b: np.ndarray | sparray, lap_c: np.ndarray | sparray, 
     :type core_coefficients: np.ndarray
     :param core_edge_count: The number of edges in the core network.
     :type core_edge_count: int
-    :return: (The variance of the perturbation score, The variance of the core node coefficients)
-    :rtype: tuple
+    :return: The variance of the perturbation score and core node coefficients.
+    :rtype: (np.ndarray, np.ndarray)
     """
     core_covariance = core_covariance_matrix(lap_b, lap_c, stderr)
     node_variance = np.diag(core_covariance)
@@ -42,11 +42,10 @@ def confidence_interval(values: np.ndarray, variances: np.ndarray, alpha=0.95):
     :type values: np.ndarray
     :param variances: The variances of the values.
     :type variances: np.ndarray
-    :param alpha: The significance level. Defaults to 0.95.
+    :param alpha: The confidence level. Defaults to 0.95.
     :type alpha: float, optional
-    :return: (The lower bounds of the confidence intervals, The upper bounds of the confidence intervals,
-                The p-values for the values)
-    :rtype: tuple
+    :return: The lower and upper confidence intervals and the p-values.
+    :rtype: (np.ndarray, np.ndarray, np.ndarray)
     """
 
     percentile_threshold = norm.ppf((1. + alpha) / 2.)

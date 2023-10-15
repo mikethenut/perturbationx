@@ -2,12 +2,23 @@ import warnings
 
 import networkx as nx
 import numpy as np
-from scipy.sparse import issparse, lil_array, csr_array, SparseEfficiencyWarning
+from scipy.sparse import issparse, lil_array, csr_array, SparseEfficiencyWarning, sparray
 
 __all__ = ["generate_adjacencies", "generate_boundary_laplacian", "generate_core_laplacians"]
 
 
 def generate_adjacencies(graph: nx.DiGraph, directed=False, sparse=True):
+    """Generate the boundary and core adjacency matrices from a graph.
+
+    :param graph: The graph.
+    :type graph: nx.DiGraph
+    :param directed: Whether to generate directed adjacency matrices. Defaults to False.
+    :type directed: bool, optional
+    :param sparse: Whether to generate sparse adjacency matrices. Defaults to True.
+    :type sparse: bool, optional
+    :return: The boundary and core adjacency matrices.
+    :rtype: (np.ndarray, np.ndarray) | (sp.sparray, sp.sparray)
+    """
     core_size = sum(1 for n in graph.nodes if graph.nodes[n]["type"] == "core")
     network_size = graph.number_of_nodes()
 
@@ -30,7 +41,20 @@ def generate_adjacencies(graph: nx.DiGraph, directed=False, sparse=True):
     return adj_b, adj_c
 
 
-def generate_boundary_laplacian(adj_b, boundary_edge_minimum=6):
+def generate_boundary_laplacian(adj_b: np.ndarray | sparray, boundary_edge_minimum=6):
+    """Generate the boundary Lb Laplacian from a boundary adjacency matrix.
+
+    :param adj_b: The boundary adjacency matrix.
+    :type adj_b: np.ndarray | sp.sparray
+    :param boundary_edge_minimum: The minimum number of boundary edges a core node must have to be
+                                    included in the Lb Laplacian. Nodes with fewer boundary edges
+                                    are removed from the Lb Laplacian. Defaults to 6.
+    :type boundary_edge_minimum: int, optional
+    :raises ValueError: If the adjacency matrix is misshapen or if the boundary edge minimum is negative.
+    :return: The boundary Lb Laplacian.
+    :rtype: np.ndarray | sp.sparray
+    """
+
     if adj_b.ndim != 2:
         raise ValueError("Argument adj_b is not two-dimensional.")
     if boundary_edge_minimum < 0:
@@ -65,7 +89,19 @@ def generate_boundary_laplacian(adj_b, boundary_edge_minimum=6):
     return adj_b
 
 
-def generate_core_laplacians(lap_b, adj_c, exact_boundary_outdegree=True):
+def generate_core_laplacians(lap_b: np.ndarray | sparray, adj_c: np.ndarray | sparray, exact_boundary_outdegree=True):
+    """Generate the core Laplacians from a boundary Laplacian and core adjacency matrix.
+
+    :param lap_b: The boundary Laplacian.
+    :type lap_b: np.ndarray | sp.sparray
+    :param adj_c: The core adjacency matrix.
+    :type adj_c: np.ndarray | sp.sparray
+    :param exact_boundary_outdegree: Whether to use the exact boundary outdegree. If False, the boundary outdegree
+                                        is set to 1 for all core nodes with boundary edges. Defaults to True.
+    :type exact_boundary_outdegree: bool, optional
+    :return: The core Laplacians.
+    :rtype: (np.ndarray, np.ndarray) | (sp.sparray, sp.sparray)
+    """
     core_degrees = np.abs(adj_c).sum(axis=1)
     boundary_outdegrees = np.abs(lap_b).sum(axis=1)
 
