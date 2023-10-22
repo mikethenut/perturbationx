@@ -22,7 +22,7 @@ from perturbationx.util import get_shortest_path_components, get_neighborhood_co
 class NPAResult:
     """Class for storing and accessing the results of a Network Perturbation Analysis (NPA). It is recommended
     to build an NPAResult object using NPAResultBuilder to ensure correct formatting. Metadata is prefixed with
-    "network_" to avoid conflicts, unless the metadata key already starts with "network" or "dataset". By default,
+    "network\_" to avoid conflicts, unless the metadata key already starts with "network" or "dataset". By default,
     the following metadata is added: datetime_utc, python_implementation, python_version, system_name,
     system_release, system_version, network_title, network_collection, perturbationx_version, numpy_version,
     networkx_version, pandas_version, scipy_version, matplotlib_version, seaborn_version, and py4cytoscape_version.
@@ -250,8 +250,8 @@ class NPAResult:
             only nodes within the maximum distance from all leading nodes are returned. Defaults to "union".
         :type neighborhood_type: str, optional
         :raises ValueError: If include_shortest_paths is not "directed", "undirected", or "none".
-        If max_distance is less than 0 or neighborhood_type is not "union" or "intersection".
-        If length_tolerance is not a number or is negative.
+            If max_distance is less than 0 or neighborhood_type is not "union" or "intersection".
+            If length_tolerance is not a number or is negative.
         :return: The nodes and edges in the subgraph. They are returned as a pair of lists.
         :rtype: (list, list)
         """
@@ -294,7 +294,7 @@ class NPAResult:
             DEFAULT_BASE_URL in py4cytoscape (http://127.0.0.1:1234/v1).
         :type cytoscape_url: str, optional
         :return: The display object.
-        :rtype: NPAResultDisplay
+        :rtype: perturbationx.NPAResultDisplay
         """
         logging.getLogger().handlers.clear()  # Block logging to stdout
 

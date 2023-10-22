@@ -177,7 +177,7 @@ def infer_graph_attributes(graph: nx.DiGraph, relation_translator: Optional[Rela
     :param graph: The network to process.
     :type graph: nx.DiGraph
     :param relation_translator: The relation translator to use. If None, a new instance will be created.
-    :type relation_translator: RelationTranslator, optional
+    :type relation_translator: perturbationx.RelationTranslator, optional
     :param verbose: Whether to log network statistics.
     :type verbose: bool, optional
     :raises ValueError: If the same node appears in both the core and boundary network.

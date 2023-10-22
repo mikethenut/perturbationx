@@ -107,7 +107,7 @@ class NPAResultBuilder:
         :param metadata: Metadata to include in the result. Defaults to None.
         :type metadata: dict, optional
         :return: NPAResult object.
-        :rtype: NPAResult
+        :rtype: perturbationx.NPAResult
         """
         # Create global info dataframe
         global_info = pd.DataFrame({

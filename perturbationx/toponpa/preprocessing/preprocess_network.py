@@ -109,7 +109,7 @@ def infer_edge_attributes(graph: nx.DiGraph, relation_translator: Optional[Relat
     :param graph: The network to process.
     :type graph: nx.DiGraph
     :param relation_translator: The relation translator to use. If None, a new instance will be created.
-    :type relation_translator: RelationTranslator, optional
+    :type relation_translator: perturbationx.RelationTranslator, optional
     """
     rt = relation_translator if relation_translator is not None else RelationTranslator()
     for src, trg in graph.edges:

@@ -20,7 +20,7 @@ def toponpa(graph: nx.DiGraph, relation_translator: RelationTranslator, datasets
     :param graph: The network graph.
     :type graph: nx.DiGraph
     :param relation_translator: The relation translator.
-    :type relation_translator: RelationTranslator
+    :type relation_translator: perturbationx.RelationTranslator
     :param datasets: The datasets to use. The keys are the dataset IDs and the values are the datasets, which are
                         pandas DataFrames.
     :type datasets: dict
@@ -64,7 +64,7 @@ def toponpa(graph: nx.DiGraph, relation_translator: RelationTranslator, datasets
     :type verbose: bool, optional
     :raises ValueError: If the same node appears in both the core and boundary network.
     :return: The NPA result.
-    :rtype: NPAResult
+    :rtype: perturbationx.NPAResult
     """
     if verbose:
         logging.info("PREPROCESSING NETWORK")
@@ -168,7 +168,7 @@ def evaluate_modifications(graph: nx.DiGraph, relation_translator: RelationTrans
     :param graph: The network graph.
     :type graph: nx.DiGraph
     :param relation_translator: The relation translator.
-    :type relation_translator: RelationTranslator
+    :type relation_translator: perturbationx.RelationTranslator
     :param modifications: The list of modifications. Each modification is a list of tuples of the form
                             (source, target, relation, confidence).
     :type modifications: list

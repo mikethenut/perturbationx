@@ -2,7 +2,7 @@ import numpy as np
 import numpy.linalg as la
 from scipy.sparse import issparse, sparray
 
-from perturbationx.toponpa import generate_core_laplacians
+import perturbationx.toponpa as toponpa
 
 
 def test_boundary_permutations(lap_b: np.ndarray | sparray, lap_c: np.ndarray | sparray, lap_q: np.ndarray | sparray,
@@ -88,7 +88,7 @@ def test_core_permutations(adj_perms: dict, boundary_coefficients: np.ndarray, l
     distribution = []
 
     for adj_c_perm in adj_perms:
-        lap_c_perm, lap_q_perm = generate_core_laplacians(lap_b, adj_c_perm, exact_boundary_outdegree)
+        lap_c_perm, lap_q_perm = toponpa.generate_core_laplacians(lap_b, adj_c_perm, exact_boundary_outdegree)
 
         if issparse(lap_c_perm):
             lap_c_perm = lap_c_perm.todense()

@@ -14,9 +14,9 @@ defaultMap = {
 
 
 class RelationTranslator:
-    """Class for translating relations to numeric values. By default, relations "1", "increases", "->",
-    "directlyIncreases", and "=>" are mapped to 1.0, while relations "-1", "decreases", "-|", "directlyDecreases",
-    and "=|" are mapped to -1.0. Relations that cannot be mapped to a numeric value will be parsed as 0.0.
+    """Class for translating relations to numeric values. By default, relations "1", "increases", "-\>",
+    "directlyIncreases", and "=\>" are mapped to 1.0, while relations "-1", "decreases", "-\|", "directlyDecreases",
+    and "=\|" are mapped to -1.0. Relations that cannot be mapped to a numeric value will be parsed as 0.0.
 
     :param mappings: Dictionary of additional relation to numeric value mappings. It extends and overrides the default
         mappings.
