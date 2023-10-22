@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>perturbationx.result &mdash; PerturbationX 1.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="perturbationx.result.NPAResult" href="NPAResult/index.html" />
+    <link rel="prev" title="perturbationx.resources.resources" href="../resources/resources/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PerturbationX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation and usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx</span></code></a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../io/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.io</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../resources/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.resources</span></code></a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.result</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../toponpa/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.toponpa</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../util/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.util</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vis/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.vis</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../genindex.html">Index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PerturbationX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.result</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/autoapi/perturbationx/result/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-perturbationx.result">
+<span id="perturbationx-result"></span><h1><a class="reference internal" href="#module-perturbationx.result" title="perturbationx.result"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.result</span></code></a><a class="headerlink" href="#module-perturbationx.result" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="NPAResult/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.result.NPAResult</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="NPAResultBuilder/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.result.NPAResultBuilder</span></code></a></li>
+</ul>
+</div>
+</section>
+<section id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="NPAResult/index.html#module-perturbationx.result.NPAResult" title="perturbationx.result.NPAResult"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NPAResult</span></code></a></p></td>
+<td><p>Class for storing and accessing the results of a Network Perturbation Analysis (NPA). It is recommended</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="NPAResultBuilder/index.html#module-perturbationx.result.NPAResultBuilder" title="perturbationx.result.NPAResultBuilder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NPAResultBuilder</span></code></a></p></td>
+<td><p>Class for building NPAResult objects. Node attributes can be only passed for nodes in the graph with type &quot;core&quot;.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">perturbationx.result.</span></span><span class="sig-name descname"><span class="pre">NPAResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.DiGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distributions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Class for storing and accessing the results of a Network Perturbation Analysis (NPA). It is recommended
+to build an NPAResult object using NPAResultBuilder to ensure correct formatting. Metadata is prefixed with
+“network_” to avoid conflicts, unless the metadata key already starts with “network” or “dataset”. By default,
+the following metadata is added: datetime_utc, python_implementation, python_version, system_name,
+system_release, system_version, network_title, network_collection, perturbationx_version, numpy_version,
+networkx_version, pandas_version, scipy_version, matplotlib_version, seaborn_version, and py4cytoscape_version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<em>networkx.DiGraph</em>) – The network graph.</p></li>
+<li><p><strong>datasets</strong> (<em>list</em>) – The datasets used for the analysis.</p></li>
+<li><p><strong>global_info</strong> (<em>pandas.DataFrame</em>) – The global information for each dataset.</p></li>
+<li><p><strong>node_info</strong> (<em>pandas.DataFrame</em>) – The node information for each dataset.</p></li>
+<li><p><strong>distributions</strong> (<em>dict</em>) – The distributions for each permutation.</p></li>
+<li><p><strong>metadata</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional metadata to store with the result.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResult.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResult.metadata" title="Link to this definition"></a></dt>
+<dd><p>Get the metadata for this result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The metadata for this result.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResult.datasets">
+<span class="sig-name descname"><span class="pre">datasets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResult.datasets" title="Link to this definition"></a></dt>
+<dd><p>Get the datasets used for this result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The datasets used for this result.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResult.node_attributes">
+<span class="sig-name descname"><span class="pre">node_attributes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResult.node_attributes" title="Link to this definition"></a></dt>
+<dd><p>Get the node attributes for this result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The node attributes for this result.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResult.distributions">
+<span class="sig-name descname"><span class="pre">distributions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResult.distributions" title="Link to this definition"></a></dt>
+<dd><p>Get the distributions for this result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The distributions for this result.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResult.global_info">
+<span class="sig-name descname"><span class="pre">global_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResult.global_info" title="Link to this definition"></a></dt>
+<dd><p>Get the global information for this result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The global information for this result.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResult.node_info">
+<span class="sig-name descname"><span class="pre">node_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accessor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResult.node_info" title="Link to this definition"></a></dt>
+<dd><p>Get the node information for this result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>accessor</strong> (<em>str</em>) – The dataset or node attribute to get the information for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The node information for this result.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResult.get_distribution">
+<span class="sig-name descname"><span class="pre">get_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distribution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_reference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResult.get_distribution" title="Link to this definition"></a></dt>
+<dd><p>Get the distribution for a permutation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distribution</strong> (<em>str</em>) – The permutation to get the distribution for.</p></li>
+<li><p><strong>dataset</strong> (<em>str</em>) – The dataset to get the distribution for.</p></li>
+<li><p><strong>include_reference</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the reference value will be included in the distribution. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The distribution for the permutation. If include_reference is True, a tuple of the distribution and
+the reference value will be returned.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list | (list, float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResult.plot_distribution">
+<span class="sig-name descname"><span class="pre">plot_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distribution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResult.plot_distribution" title="Link to this definition"></a></dt>
+<dd><p>Plot the distribution for a permutation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distribution</strong> (<em>str</em>) – The permutation to plot the distribution for.</p></li>
+<li><p><strong>datasets</strong> (<em>list</em><em>, </em><em>optional</em>) – The datasets to plot the distribution for. If None, all datasets will be plotted.</p></li>
+<li><p><strong>show</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the plot will be shown. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The axes of the plot.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.axes.Axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResult.get_leading_nodes">
+<span class="sig-name descname"><span class="pre">get_leading_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'contribution'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abs_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResult.get_leading_nodes" title="Link to this definition"></a></dt>
+<dd><p>Get the leading nodes for a dataset. The leading nodes are the nodes that contribute the most
+to a selected attribute, up to a certain cutoff.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> (<em>str</em>) – The dataset to get the leading nodes for.</p></li>
+<li><p><strong>cutoff</strong> (<em>float</em><em>, </em><em>optional</em>) – The cutoff for the cumulative distribution. Defaults to 0.8.</p></li>
+<li><p><strong>attr</strong> (<em>str</em><em>, </em><em>optional</em>) – The node attribute to get the leading nodes for. Defaults to “contribution”.</p></li>
+<li><p><strong>abs_value</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the absolute value of the attribute will be used. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The leading nodes for the dataset.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>set</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResult.get_node_subgraph">
+<span class="sig-name descname"><span class="pre">get_node_subgraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_shortest_paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_length_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighborhood_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'union'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResult.get_node_subgraph" title="Link to this definition"></a></dt>
+<dd><p>Get the subgraph for a set of nodes. The subgraph can include the shortest paths between the nodes,
+the neighborhood of the nodes, or both.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nodes</strong> (<em>set</em>) – The nodes to get the subgraph for.</p></li>
+<li><p><strong>include_shortest_paths</strong> (<em>str</em><em>, </em><em>optional</em>) – If “directed”, the directed shortest paths between the nodes will be included.
+If “undirected”, the undirected shortest paths between the nodes will be included. If “none”,
+no shortest paths will be included. Defaults to “none”.</p></li>
+<li><p><strong>path_length_tolerance</strong> (<em>int</em><em> | </em><em>float</em><em>, </em><em>optional</em>) – The tolerance for the length of the shortest paths. If 0, only the shortest paths
+are returned. If length_tolerance is an integer, it is interpreted as an absolute length. If
+length_tolerance is a float, it is interpreted as a percentage of the length of the shortest path.
+Defaults to 0.</p></li>
+<li><p><strong>include_neighbors</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum distance from leading nodes that neighbors can be. If 0, no neighbors
+will be included. If 1, only the neighbors of the nodes will be included. If 2, the neighbors of the
+neighbors of the nodes will be included, and so on. Defaults to 0.</p></li>
+<li><p><strong>neighborhood_type</strong> (<em>str</em><em>, </em><em>optional</em>) – The type of neighborhood to include. Can be one of “union” or “intersection”.
+If “union”, all nodes within the maximum distance from any leading node are returned. If “intersection”,
+only nodes within the maximum distance from all leading nodes are returned. Defaults to “union”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If include_shortest_paths is not “directed”, “undirected”, or “none”.
+If max_distance is less than 0 or neighborhood_type is not “union” or “intersection”.
+If length_tolerance is not a number or is negative.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The nodes and edges in the subgraph. They are returned as a pair of lists.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>(list, list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResult.display_network">
+<span class="sig-name descname"><span class="pre">display_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">display_boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_STYLE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cytoscape_url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_BASE_URL</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResult.display_network" title="Link to this definition"></a></dt>
+<dd><p>Display the network in Cytoscape.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>display_boundary</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, boundary nodes will be displayed. Defaults to False.</p></li>
+<li><p><strong>style</strong> (<em>str</em><em>, </em><em>optional</em>) – The style to apply to the network. Defaults to DEFAULT_STYLE (“perturbationx-default”).</p></li>
+<li><p><strong>cytoscape_url</strong> (<em>str</em><em>, </em><em>optional</em>) – The URL of the Cytoscape instance to display the network in. Defaults to
+DEFAULT_BASE_URL in py4cytoscape (<a class="reference external" href="http://127.0.0.1:1234/v1">http://127.0.0.1:1234/v1</a>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The display object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../index.html#perturbationx.NPAResultDisplay" title="perturbationx.NPAResultDisplay">perturbationx.NPAResultDisplay</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResult.to_networkx">
+<span class="sig-name descname"><span class="pre">to_networkx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResult.to_networkx" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the NetworkX graph for this result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The NetworkX graph.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>networkx.DiGraph</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResult.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResult.to_dict" title="Link to this definition"></a></dt>
+<dd><p>Convert this result to a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The result as a dictionary. Top-level keys are “metadata” and dataset names. For each dataset, the
+top-level keys are “global_info”, “node_info”, and “distributions”.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResult.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResult.to_json" title="Link to this definition"></a></dt>
+<dd><p>Save this result to a JSON file. The format is the same as the output of to_dict().</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – The path to save the result to.</p></li>
+<li><p><strong>indent</strong> (<em>int</em><em>, </em><em>optional</em>) – The indentation to use. Defaults to 4.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">perturbationx.result.</span></span><span class="sig-name descname"><span class="pre">NPAResultBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.DiGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Class for building NPAResult objects. Node attributes can be only passed for nodes in the graph with type “core”.
+Each core node should have an attribute “idx” that is a unique integer index for that node. Node attributes should
+be passed as a list of values that is ordered by the node indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<em>networkx.DiGraph</em>) – The graph used to generate the result.</p></li>
+<li><p><strong>datasets</strong> (<em>list</em>) – The datasets used to generate the result.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResultBuilder.new_builder">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new_builder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.DiGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResultBuilder.new_builder" title="Link to this definition"></a></dt>
+<dd><p>Construct a new NPAResultBuilder object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResultBuilder.set_global_attributes">
+<span class="sig-name descname"><span class="pre">set_global_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResultBuilder.set_global_attributes" title="Link to this definition"></a></dt>
+<dd><p>Set global attributes for a dataset. Attributes and values should be ordered in the same way.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset_id</strong> (<em>str</em>) – Dataset to set attributes for.</p></li>
+<li><p><strong>attributes</strong> (<em>list</em>) – List of attribute names.</p></li>
+<li><p><strong>values</strong> (<em>list</em>) – List of attribute values.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResultBuilder.set_node_attributes">
+<span class="sig-name descname"><span class="pre">set_node_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResultBuilder.set_node_attributes" title="Link to this definition"></a></dt>
+<dd><p>Set node attributes for a dataset. Attributes and values should be ordered in the same way.
+Values should be passed as a nested list that is ordered by the node indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset_id</strong> (<em>str</em>) – Dataset to set attributes for.</p></li>
+<li><p><strong>attributes</strong> (<em>list</em>) – List of attribute names.</p></li>
+<li><p><strong>values</strong> (<em>list</em>) – List of attribute values.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResultBuilder.set_distribution">
+<span class="sig-name descname"><span class="pre">set_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distribution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResultBuilder.set_distribution" title="Link to this definition"></a></dt>
+<dd><p>Set a distribution for a dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset_id</strong> (<em>str</em>) – Dataset to set distribution for.</p></li>
+<li><p><strong>distribution</strong> (<em>str</em>) – Name of distribution.</p></li>
+<li><p><strong>values</strong> (<em>list</em>) – List of values.</p></li>
+<li><p><strong>reference</strong> (<em>float</em><em>, </em><em>optional</em>) – Reference value for distribution. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.result.NPAResultBuilder.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.result.NPAResultBuilder.build" title="Link to this definition"></a></dt>
+<dd><p>Construct an NPAResult object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>metadata</strong> (<em>dict</em><em>, </em><em>optional</em>) – Metadata to include in the result. Defaults to None.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>NPAResult object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../index.html#perturbationx.NPAResult" title="perturbationx.NPAResult">perturbationx.NPAResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../resources/resources/index.html" class="btn btn-neutral float-left" title="perturbationx.resources.resources" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="NPAResult/index.html" class="btn btn-neutral float-right" title="perturbationx.result.NPAResult" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright CC BY-NC 4.0.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

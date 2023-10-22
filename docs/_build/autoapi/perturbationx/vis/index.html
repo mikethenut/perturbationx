@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>perturbationx.vis &mdash; PerturbationX 1.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="perturbationx.vis.NPAResultDisplay" href="NPAResultDisplay/index.html" />
+    <link rel="prev" title="perturbationx.util.shortest_paths" href="../util/shortest_paths/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PerturbationX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation and usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx</span></code></a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../io/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.io</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../resources/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.resources</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../result/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.result</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../toponpa/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.toponpa</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../util/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.util</span></code></a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.vis</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../genindex.html">Index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PerturbationX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.vis</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/autoapi/perturbationx/vis/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-perturbationx.vis">
+<span id="perturbationx-vis"></span><h1><a class="reference internal" href="#module-perturbationx.vis" title="perturbationx.vis"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.vis</span></code></a><a class="headerlink" href="#module-perturbationx.vis" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="NPAResultDisplay/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.vis.NPAResultDisplay</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cytoscape/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.vis.cytoscape</span></code></a></li>
+</ul>
+</div>
+</section>
+<section id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="NPAResultDisplay/index.html#module-perturbationx.vis.NPAResultDisplay" title="perturbationx.vis.NPAResultDisplay"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NPAResultDisplay</span></code></a></p></td>
+<td><p>Class to display results from NPA analysis.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">perturbationx.vis.</span></span><span class="sig-name descname"><span class="pre">NPAResultDisplay</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">perturbationx.result.NPAResult</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network_style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network_suid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cytoscape_url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_BASE_URL</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Class to display results from NPA analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<em>nx.Graph</em>) – NetworkX graph object</p></li>
+<li><p><strong>results</strong> (<em>NPAResults</em>) – NPA results object</p></li>
+<li><p><strong>network_style</strong> (<em>str</em>) – Name of the network style to use</p></li>
+<li><p><strong>network_suid</strong> (<em>int</em>) – SUID of the network to display results in.</p></li>
+<li><p><strong>cytoscape_url</strong> (<em>str</em><em>, </em><em>optional</em>) – Cytoscape URL. Defaults to DEFAULT_BASE_URL in py4cytoscape (<a class="reference external" href="http://127.0.0.1:1234/v1">http://127.0.0.1:1234/v1</a>).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.vis.NPAResultDisplay.reset_display">
+<span class="sig-name descname"><span class="pre">reset_display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">display_boundary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_highlight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_visibility</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.vis.NPAResultDisplay.reset_display" title="Link to this definition"></a></dt>
+<dd><p>Reset the display of the network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>display_boundary</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to display the boundary of the network. Defaults to None, which does not
+change the current setting.</p></li>
+<li><p><strong>reset_color</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to reset the color of the nodes. Defaults to False.</p></li>
+<li><p><strong>reset_highlight</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to reset the highlight of the nodes and edges. Defaults to False.</p></li>
+<li><p><strong>reset_visibility</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to reset the visibility of the nodes and edges. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>CyError</strong> – If a CyREST error occurs.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SUID of the network.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.vis.NPAResultDisplay.color_nodes">
+<span class="sig-name descname"><span class="pre">color_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_GRADIENT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_NODE_COLOR</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.vis.NPAResultDisplay.color_nodes" title="Link to this definition"></a></dt>
+<dd><p>Color nodes by a given attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> (<em>str</em>) – The dataset to color nodes by.</p></li>
+<li><p><strong>attribute</strong> (<em>str</em>) – The attribute to color nodes by.</p></li>
+<li><p><strong>gradient</strong> (<em>(</em><em>str</em><em>, </em><em>str</em><em>)</em><em>, </em><em>optional</em>) – The gradient to use. Defaults to DEFAULT_GRADIENT (“#2B80EF”, “#EF3B2C”).</p></li>
+<li><p><strong>default_color</strong> (<em>str</em><em>, </em><em>optional</em>) – The default color to use. Defaults to DEFAULT_NODE_COLOR (“#FEE391”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>CyError</strong> – If a CyREST error occurs.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SUID of the network.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.vis.NPAResultDisplay.highlight_leading_nodes">
+<span class="sig-name descname"><span class="pre">highlight_leading_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'contribution'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abs_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_shortest_paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_length_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighborhood_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'union'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.vis.NPAResultDisplay.highlight_leading_nodes" title="Link to this definition"></a></dt>
+<dd><p>Highlight leading nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> (<em>str</em>) – The dataset to highlight leading nodes for.</p></li>
+<li><p><strong>cutoff</strong> (<em>float</em><em>, </em><em>optional</em>) – The cutoff to use when determining leading nodes. Defaults to 0.8.</p></li>
+<li><p><strong>attr</strong> (<em>str</em><em>, </em><em>optional</em>) – The attribute to use when determining leading nodes. Defaults to “contribution”.</p></li>
+<li><p><strong>abs_value</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use the absolute value of the attribute. Defaults to True.</p></li>
+<li><p><strong>include_shortest_paths</strong> (<em>str</em><em>, </em><em>optional</em>) – If “directed”, the directed shortest paths between the nodes will be included.
+If “undirected”, the undirected shortest paths between the nodes will be included. If “none”,
+no shortest paths will be included. Defaults to “none”.</p></li>
+<li><p><strong>path_length_tolerance</strong> (<em>int</em><em> | </em><em>float</em><em>, </em><em>optional</em>) – The tolerance for the length of the shortest paths. If 0, only the shortest paths
+are returned. If length_tolerance is an integer, it is interpreted as an absolute length. If
+length_tolerance is a float, it is interpreted as a percentage of the length of the shortest path.
+Defaults to 0.</p></li>
+<li><p><strong>include_neighbors</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum distance from leading nodes that neighbors can be. If 0, no neighbors
+will be included. If 1, only the neighbors of the nodes will be included. If 2, the neighbors of the
+neighbors of the nodes will be included, and so on. Defaults to 0.</p></li>
+<li><p><strong>neighborhood_type</strong> (<em>str</em><em>, </em><em>optional</em>) – The type of neighborhood to include. Can be one of “union” or “intersection”.
+If “union”, all nodes within the maximum distance from any leading node are returned. If “intersection”,
+only nodes within the maximum distance from all leading nodes are returned. Defaults to “union”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If include_shortest_paths is not “directed”, “undirected”, or “none”.
+If max_distance is less than 0 or neighborhood_type is not “union” or “intersection”.
+If length_tolerance is not a number or is negative.</p></li>
+<li><p><strong>CyError</strong> – If a CyREST error occurs.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SUID of the network.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.vis.NPAResultDisplay.extract_leading_nodes">
+<span class="sig-name descname"><span class="pre">extract_leading_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'contribution'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abs_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_shortest_paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_length_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighborhood_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'union'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.vis.NPAResultDisplay.extract_leading_nodes" title="Link to this definition"></a></dt>
+<dd><p>Extract leading nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> – The dataset to extract leading nodes for.
+:type dataset: str</p></li>
+<li><p><strong>cutoff</strong> (<em>float</em><em>, </em><em>optional</em>) – The cutoff to use when determining leading nodes. Defaults to 0.8.</p></li>
+<li><p><strong>attr</strong> (<em>str</em><em>, </em><em>optional</em>) – The attribute to use when determining leading nodes. Defaults to “contribution”.</p></li>
+<li><p><strong>abs_value</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use the absolute value of the attribute. Defaults to True.</p></li>
+<li><p><strong>inplace</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to extract the leading nodes in-place. Defaults to True. If True, the network will be
+modified by hiding all nodes and edges that are not leading nodes. If False, a new network will be created
+with only the leading nodes.</p></li>
+<li><p><strong>include_shortest_paths</strong> (<em>str</em><em>, </em><em>optional</em>) – If “directed”, the directed shortest paths between the nodes will be included.
+If “undirected”, the undirected shortest paths between the nodes will be included. If “none”,
+no shortest paths will be included. Defaults to “none”.</p></li>
+<li><p><strong>path_length_tolerance</strong> (<em>int</em><em> | </em><em>float</em><em>, </em><em>optional</em>) – The tolerance for the length of the shortest paths. If 0, only the shortest paths
+are returned. If length_tolerance is an integer, it is interpreted as an absolute length. If
+length_tolerance is a float, it is interpreted as a percentage of the length of the shortest path.
+Defaults to 0.</p></li>
+<li><p><strong>include_neighbors</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum distance from leading nodes that neighbors can be. If 0, no neighbors
+will be included. If 1, only the neighbors of the nodes will be included. If 2, the neighbors of the
+neighbors of the nodes will be included, and so on. Defaults to 0.</p></li>
+<li><p><strong>neighborhood_type</strong> (<em>str</em><em>, </em><em>optional</em>) – The type of neighborhood to include. Can be one of “union” or “intersection”.
+If “union”, all nodes within the maximum distance from any leading node are returned. If “intersection”,
+only nodes within the maximum distance from all leading nodes are returned. Defaults to “union”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If include_shortest_paths is not “directed”, “undirected”, or “none”.
+If max_distance is less than 0 or neighborhood_type is not “union” or “intersection”.
+If length_tolerance is not a number or is negative.</p></li>
+<li><p><strong>CyError</strong> – If a CyREST error occurs.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SUID of the network.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.vis.NPAResultDisplay.get_results">
+<span class="sig-name descname"><span class="pre">get_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.vis.NPAResultDisplay.get_results" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the results object for this display.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The results object.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>NPAResults</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../util/shortest_paths/index.html" class="btn btn-neutral float-left" title="perturbationx.util.shortest_paths" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="NPAResultDisplay/index.html" class="btn btn-neutral float-right" title="perturbationx.vis.NPAResultDisplay" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright CC BY-NC 4.0.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

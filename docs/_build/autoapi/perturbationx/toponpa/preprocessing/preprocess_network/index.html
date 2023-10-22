@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>perturbationx.toponpa.preprocessing.preprocess_network &mdash; PerturbationX 1.0 documentation</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../../_static/documentation_options.js?v=f2a433a1"></script>
+        <script src="../../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="perturbationx.toponpa.preprocessing.preprocessing" href="../preprocessing/index.html" />
+    <link rel="prev" title="perturbationx.toponpa.preprocessing" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            PerturbationX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation and usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx</span></code></a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../../io/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.io</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../resources/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.resources</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../result/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.result</span></code></a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.toponpa</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../util/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.util</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../vis/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.vis</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../index.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../genindex.html">Index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">PerturbationX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx</span></code></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.toponpa</span></code></a></li>
+          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.toponpa.preprocessing</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.toponpa.preprocessing.preprocess_network</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/autoapi/perturbationx/toponpa/preprocessing/preprocess_network/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-perturbationx.toponpa.preprocessing.preprocess_network">
+<span id="perturbationx-toponpa-preprocessing-preprocess-network"></span><h1><a class="reference internal" href="#module-perturbationx.toponpa.preprocessing.preprocess_network" title="perturbationx.toponpa.preprocessing.preprocess_network"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.toponpa.preprocessing.preprocess_network</span></code></a><a class="headerlink" href="#module-perturbationx.toponpa.preprocessing.preprocess_network" title="Link to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#perturbationx.toponpa.preprocessing.preprocess_network.infer_node_type" title="perturbationx.toponpa.preprocessing.preprocess_network.infer_node_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">infer_node_type</span></code></a>(graph)</p></td>
+<td><p>Infer the type of each node in the network (core or boundary).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#perturbationx.toponpa.preprocessing.preprocess_network.enumerate_nodes" title="perturbationx.toponpa.preprocessing.preprocess_network.enumerate_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">enumerate_nodes</span></code></a>(graph, boundary_nodes, core_nodes)</p></td>
+<td><p>Assign an index and type to each node in the network.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#perturbationx.toponpa.preprocessing.preprocess_network.remove_invalid_graph_elements" title="perturbationx.toponpa.preprocessing.preprocess_network.remove_invalid_graph_elements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_invalid_graph_elements</span></code></a>(graph)</p></td>
+<td><p>Remove invalid elements from the graph. This function removes self-loops and opposing edges, and ensures that the</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#perturbationx.toponpa.preprocessing.preprocess_network.infer_edge_attributes" title="perturbationx.toponpa.preprocessing.preprocess_network.infer_edge_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">infer_edge_attributes</span></code></a>(graph[, relation_translator])</p></td>
+<td><p>Infer the attributes of each edge in the network.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#perturbationx.toponpa.preprocessing.preprocess_network.infer_metadata" title="perturbationx.toponpa.preprocessing.preprocess_network.infer_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">infer_metadata</span></code></a>(graph[, verbose])</p></td>
+<td><p>Infer metadata about the network and add it to the graph instance.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="perturbationx.toponpa.preprocessing.preprocess_network.infer_node_type">
+<span class="sig-prename descclassname"><span class="pre">perturbationx.toponpa.preprocessing.preprocess_network.</span></span><span class="sig-name descname"><span class="pre">infer_node_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.DiGraph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.toponpa.preprocessing.preprocess_network.infer_node_type" title="Link to this definition"></a></dt>
+<dd><p>Infer the type of each node in the network (core or boundary).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>graph</strong> (<em>nx.DiGraph</em>) – The network to process.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the same node appears in both the core and boundary sets.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple with the sets of boundary and core nodes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>(set, set)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="perturbationx.toponpa.preprocessing.preprocess_network.enumerate_nodes">
+<span class="sig-prename descclassname"><span class="pre">perturbationx.toponpa.preprocessing.preprocess_network.</span></span><span class="sig-name descname"><span class="pre">enumerate_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.DiGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">core_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">set</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.toponpa.preprocessing.preprocess_network.enumerate_nodes" title="Link to this definition"></a></dt>
+<dd><p>Assign an index and type to each node in the network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<em>nx.DiGraph</em>) – The network to process.</p></li>
+<li><p><strong>boundary_nodes</strong> (<em>set</em>) – The set of boundary nodes.</p></li>
+<li><p><strong>core_nodes</strong> (<em>set</em>) – The set of core nodes.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="perturbationx.toponpa.preprocessing.preprocess_network.remove_invalid_graph_elements">
+<span class="sig-prename descclassname"><span class="pre">perturbationx.toponpa.preprocessing.preprocess_network.</span></span><span class="sig-name descname"><span class="pre">remove_invalid_graph_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.DiGraph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.toponpa.preprocessing.preprocess_network.remove_invalid_graph_elements" title="Link to this definition"></a></dt>
+<dd><p>Remove invalid elements from the graph. This function removes self-loops and opposing edges, and ensures that the
+core graph is weakly connected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>graph</strong> (<em>nx.DiGraph</em>) – The network to process.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="perturbationx.toponpa.preprocessing.preprocess_network.infer_edge_attributes">
+<span class="sig-prename descclassname"><span class="pre">perturbationx.toponpa.preprocessing.preprocess_network.</span></span><span class="sig-name descname"><span class="pre">infer_edge_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.DiGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_translator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">perturbationx.io.RelationTranslator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.toponpa.preprocessing.preprocess_network.infer_edge_attributes" title="Link to this definition"></a></dt>
+<dd><p>Infer the attributes of each edge in the network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<em>nx.DiGraph</em>) – The network to process.</p></li>
+<li><p><strong>relation_translator</strong> (<a class="reference internal" href="../../../index.html#perturbationx.RelationTranslator" title="perturbationx.RelationTranslator"><em>perturbationx.RelationTranslator</em></a><em>, </em><em>optional</em>) – The relation translator to use. If None, a new instance will be created.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="perturbationx.toponpa.preprocessing.preprocess_network.infer_metadata">
+<span class="sig-prename descclassname"><span class="pre">perturbationx.toponpa.preprocessing.preprocess_network.</span></span><span class="sig-name descname"><span class="pre">infer_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.DiGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.toponpa.preprocessing.preprocess_network.infer_metadata" title="Link to this definition"></a></dt>
+<dd><p>Infer metadata about the network and add it to the graph instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<em>nx.DiGraph</em>) – The network to process.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to log network statistics.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="perturbationx.toponpa.preprocessing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../preprocessing/index.html" class="btn btn-neutral float-right" title="perturbationx.toponpa.preprocessing.preprocessing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright CC BY-NC 4.0.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

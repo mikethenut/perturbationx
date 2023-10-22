@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>perturbationx.CausalNetwork &mdash; PerturbationX 1.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="prev" title="perturbationx.vis.cytoscape" href="../vis/cytoscape/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PerturbationX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation and usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx</span></code></a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.CausalNetwork</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../genindex.html">Index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PerturbationX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.CausalNetwork</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/autoapi/perturbationx/CausalNetwork/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-perturbationx.CausalNetwork">
+<span id="perturbationx-causalnetwork"></span><h1><a class="reference internal" href="#module-perturbationx.CausalNetwork" title="perturbationx.CausalNetwork"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.CausalNetwork</span></code></a><a class="headerlink" href="#module-perturbationx.CausalNetwork" title="Link to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#perturbationx.CausalNetwork.CausalNetwork" title="perturbationx.CausalNetwork.CausalNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CausalNetwork</span></code></a></p></td>
+<td><p>Class for storing and evaluating causal networks. The network is stored as a networkx.DiGraph. The class</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">perturbationx.CausalNetwork.</span></span><span class="sig-name descname"><span class="pre">CausalNetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.DiGraph</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_translator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">perturbationx.io.RelationTranslator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork" title="Link to this definition"></a></dt>
+<dd><p>Class for storing and evaluating causal networks. The network is stored as a networkx.DiGraph. The class
+provides methods for reading and writing networks from and to various file formats, as well as for evaluating
+the network using the TopoNPA algorithm. The class also provides methods for rewiring and wiring edges in the
+network, as well as for evaluating the rewired and wired networks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<em>networkx.DiGraph</em><em>, </em><em>optional</em>) – The network graph. Defaults to None (empty graph).</p></li>
+<li><p><strong>relation_translator</strong> (<a class="reference internal" href="../index.html#perturbationx.RelationTranslator" title="perturbationx.RelationTranslator"><em>perturbationx.RelationTranslator</em></a><em>, </em><em>optional</em>) – The relation translator. Defaults to None (default relation translator).</p></li>
+<li><p><strong>inplace</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to initialize the network in place. If False, the network is copied. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If the relation translator is not a RelationTranslator.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.from_networkx">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_networkx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.DiGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_translator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">perturbationx.io.RelationTranslator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.from_networkx" title="Link to this definition"></a></dt>
+<dd><p>Construct a new CausalNetwork from a networkx.DiGraph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<em>networkx.DiGraph</em>) – The network graph.</p></li>
+<li><p><strong>relation_translator</strong> (<a class="reference internal" href="../index.html#perturbationx.RelationTranslator" title="perturbationx.RelationTranslator"><em>perturbationx.RelationTranslator</em></a><em>, </em><em>optional</em>) – The relation translator. Defaults to None (default relation translator).</p></li>
+<li><p><strong>inplace</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to initialize the network in place. If False, the network is copied. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If the relation translator is not a RelationTranslator.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.from_dsv">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dsv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\t'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_DATA_COLS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_translator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.from_dsv" title="Link to this definition"></a></dt>
+<dd><p>Construct a new CausalNetwork from a delimited file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – The path to the file.</p></li>
+<li><p><strong>edge_type</strong> (<em>str</em><em>, </em><em>optional</em>) – The default edge type to use if none is specified in the file. Defaults to “infer”.</p></li>
+<li><p><strong>delimiter</strong> (<em>str</em><em>, </em><em>optional</em>) – The delimiter to use. Defaults to ‘   ‘.</p></li>
+<li><p><strong>header_cols</strong> (<em>list</em><em>, </em><em>optional</em>) – The column names of the columns in the file. Defaults to [“subject”, “object”, “relation”,
+“type”].</p></li>
+<li><p><strong>relation_translator</strong> (<a class="reference internal" href="../index.html#perturbationx.RelationTranslator" title="perturbationx.RelationTranslator"><em>perturbationx.RelationTranslator</em></a><em>, </em><em>optional</em>) – The relation translator. Defaults to None (default relation translator).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If the relation translator is not a RelationTranslator.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The constructed CausalNetwork.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#perturbationx.CausalNetwork.CausalNetwork" title="perturbationx.CausalNetwork.CausalNetwork">CausalNetwork</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.from_tsv">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_tsv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_DATA_COLS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_translator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.from_tsv" title="Link to this definition"></a></dt>
+<dd><p>Construct a new CausalNetwork from a tab-delimited file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – The path to the file.</p></li>
+<li><p><strong>edge_type</strong> (<em>str</em><em>, </em><em>optional</em>) – The default edge type to use if none is specified in the file. Defaults to “infer”.</p></li>
+<li><p><strong>header_cols</strong> (<em>list</em><em>, </em><em>optional</em>) – The column names of the columns in the file. Defaults to [“subject”, “object”, “relation”,
+“type”].</p></li>
+<li><p><strong>relation_translator</strong> (<a class="reference internal" href="../index.html#perturbationx.RelationTranslator" title="perturbationx.RelationTranslator"><em>perturbationx.RelationTranslator</em></a><em>, </em><em>optional</em>) – The relation translator. Defaults to None (default relation translator).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If the relation translator is not a RelationTranslator.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The constructed CausalNetwork.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#perturbationx.CausalNetwork.CausalNetwork" title="perturbationx.CausalNetwork.CausalNetwork">CausalNetwork</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.from_csv">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_DATA_COLS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_translator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.from_csv" title="Link to this definition"></a></dt>
+<dd><p>Construct a new CausalNetwork from a comma-delimited file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – The path to the file.</p></li>
+<li><p><strong>edge_type</strong> (<em>str</em><em>, </em><em>optional</em>) – The default edge type to use if none is specified in the file. Defaults to “infer”.</p></li>
+<li><p><strong>header_cols</strong> (<em>list</em><em>, </em><em>optional</em>) – The column names of the columns in the file. Defaults to [“subject”, “object”, “relation”,
+“type”].</p></li>
+<li><p><strong>relation_translator</strong> (<a class="reference internal" href="../index.html#perturbationx.RelationTranslator" title="perturbationx.RelationTranslator"><em>perturbationx.RelationTranslator</em></a><em>, </em><em>optional</em>) – The relation translator. Defaults to None (default relation translator).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If the relation translator is not a RelationTranslator.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The constructed CausalNetwork.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#perturbationx.CausalNetwork.CausalNetwork" title="perturbationx.CausalNetwork.CausalNetwork">CausalNetwork</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.from_cyjs_json">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cyjs_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_translator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.from_cyjs_json" title="Link to this definition"></a></dt>
+<dd><p>Construct a new CausalNetwork from a Cytoscape.js JSON file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – The path to the file.</p></li>
+<li><p><strong>relation_translator</strong> (<a class="reference internal" href="../index.html#perturbationx.RelationTranslator" title="perturbationx.RelationTranslator"><em>perturbationx.RelationTranslator</em></a><em>, </em><em>optional</em>) – The relation translator. Defaults to None (default relation translator).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If the relation translator is not a RelationTranslator.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The constructed CausalNetwork.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#perturbationx.CausalNetwork.CausalNetwork" title="perturbationx.CausalNetwork.CausalNetwork">CausalNetwork</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.from_pandas">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_edge_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_DATA_COLS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_translator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.from_pandas" title="Link to this definition"></a></dt>
+<dd><p>Construct a new CausalNetwork from a pandas DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – The DataFrame to parse.</p></li>
+<li><p><strong>default_edge_type</strong> (<em>str</em><em>, </em><em>optional</em>) – The default edge type to use if none is specified in the file. Defaults to “infer”.</p></li>
+<li><p><strong>header_cols</strong> (<em>list</em><em>, </em><em>optional</em>) – The column names of the columns in the file. Defaults to [“subject”, “object”, “relation”,
+“type”].</p></li>
+<li><p><strong>relation_translator</strong> (<a class="reference internal" href="../index.html#perturbationx.RelationTranslator" title="perturbationx.RelationTranslator"><em>perturbationx.RelationTranslator</em></a><em>, </em><em>optional</em>) – The relation translator. Defaults to None (default relation translator).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If the relation translator is not a RelationTranslator.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The constructed CausalNetwork.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#perturbationx.CausalNetwork.CausalNetwork" title="perturbationx.CausalNetwork.CausalNetwork">CausalNetwork</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.add_edges_from_dsv">
+<span class="sig-name descname"><span class="pre">add_edges_from_dsv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\t'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_DATA_COLS</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.add_edges_from_dsv" title="Link to this definition"></a></dt>
+<dd><p>Add edges from a delimited file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – The path to the file.</p></li>
+<li><p><strong>edge_type</strong> (<em>str</em><em>, </em><em>optional</em>) – The default edge type to use if none is specified in the file. Defaults to “infer”.</p></li>
+<li><p><strong>delimiter</strong> (<em>str</em><em>, </em><em>optional</em>) – The delimiter to use. Defaults to ‘   ‘.</p></li>
+<li><p><strong>header_cols</strong> (<em>list</em><em>, </em><em>optional</em>) – The column names of the columns in the file. Defaults to [“subject”, “object”, “relation”,
+“type”].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.add_edges_from_tsv">
+<span class="sig-name descname"><span class="pre">add_edges_from_tsv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_DATA_COLS</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.add_edges_from_tsv" title="Link to this definition"></a></dt>
+<dd><p>Add edges from a tab-delimited file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – The path to the file.</p></li>
+<li><p><strong>edge_type</strong> (<em>str</em><em>, </em><em>optional</em>) – The default edge type to use if none is specified in the file. Defaults to “infer”.</p></li>
+<li><p><strong>header_cols</strong> (<em>list</em><em>, </em><em>optional</em>) – The column names of the columns in the file. Defaults to [“subject”, “object”, “relation”,
+“type”].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.add_edges_from_csv">
+<span class="sig-name descname"><span class="pre">add_edges_from_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_DATA_COLS</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.add_edges_from_csv" title="Link to this definition"></a></dt>
+<dd><p>Add edges from a comma-delimited file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – The path to the file.</p></li>
+<li><p><strong>edge_type</strong> (<em>str</em><em>, </em><em>optional</em>) – The default edge type to use if none is specified in the file. Defaults to “infer”.</p></li>
+<li><p><strong>header_cols</strong> (<em>list</em><em>, </em><em>optional</em>) – The column names of the columns in the file. Defaults to [“subject”, “object”, “relation”,
+“type”].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.add_edges_from_pandas">
+<span class="sig-name descname"><span class="pre">add_edges_from_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_edge_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_DATA_COLS</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.add_edges_from_pandas" title="Link to this definition"></a></dt>
+<dd><p>Add edges from a pandas DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – The DataFrame to parse.</p></li>
+<li><p><strong>default_edge_type</strong> (<em>str</em><em>, </em><em>optional</em>) – The default edge type to use if none is specified in the file. Defaults to “infer”.</p></li>
+<li><p><strong>header_cols</strong> (<em>list</em><em>, </em><em>optional</em>) – The column names of the columns in the file. Defaults to [“subject”, “object”, “relation”,
+“type”].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.initialize_metadata">
+<span class="sig-name descname"><span class="pre">initialize_metadata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.initialize_metadata" title="Link to this definition"></a></dt>
+<dd><p>Initialize the metadata dictionary with default values. These values are “Untitled network” for the title
+and “Untitled collection” for the collection. The metadata dictionary is created if it does not exist.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.copy" title="Link to this definition"></a></dt>
+<dd><p>Return a copy of the CausalNetwork.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The copy.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#perturbationx.CausalNetwork.CausalNetwork" title="perturbationx.CausalNetwork.CausalNetwork">CausalNetwork</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.number_of_nodes">
+<span class="sig-name descname"><span class="pre">number_of_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.number_of_nodes" title="Link to this definition"></a></dt>
+<dd><p>Return the number of nodes in the network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>typ</strong> (<em>str</em><em>, </em><em>optional</em>) – The node type to count. If None, all nodes are counted. Defaults to None.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The number of nodes.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.nodes">
+<span class="sig-name descname"><span class="pre">nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.nodes" title="Link to this definition"></a></dt>
+<dd><p>Return a list of nodes in the network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>typ</strong> (<em>str</em><em>, </em><em>optional</em>) – The node type to return. If None, all nodes are returned. Defaults to None.</p></li>
+<li><p><strong>data</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to return the node data. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The list of nodes.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.number_of_edges">
+<span class="sig-name descname"><span class="pre">number_of_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.number_of_edges" title="Link to this definition"></a></dt>
+<dd><p>Return the number of edges in the network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>typ</strong> (<em>str</em><em>, </em><em>optional</em>) – The edge type to count. If None, all edges are counted. Defaults to None.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The number of edges.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.edges">
+<span class="sig-name descname"><span class="pre">edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.edges" title="Link to this definition"></a></dt>
+<dd><p>Return a list of edges in the network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>typ</strong> (<em>str</em><em>, </em><em>optional</em>) – The edge type to return. If None, all edges are returned. Defaults to None.</p></li>
+<li><p><strong>data</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to return the edge data. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The list of edges.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.add_edge">
+<span class="sig-name descname"><span class="pre">add_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">typ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">confidence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.add_edge" title="Link to this definition"></a></dt>
+<dd><p>Add an edge to the network. If the edge already exists, it is modified. If the nodes do not exist, they are
+created.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>str</em>) – The source node.</p></li>
+<li><p><strong>trg</strong> (<em>str</em>) – The target node.</p></li>
+<li><p><strong>rel</strong> (<em>str</em>) – The causal relation of the edge.</p></li>
+<li><p><strong>typ</strong> (<em>str</em><em>, </em><em>optional</em>) – The type of the edge. Allowed values are “core”, “boundary” and “infer”. Defaults to “infer”.</p></li>
+<li><p><strong>confidence</strong> (<em>float</em><em>, </em><em>optional</em>) – The confidence of the edge. Defaults to None, which sets the confidence to 1.0.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.modify_edge">
+<span class="sig-name descname"><span class="pre">modify_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">typ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">confidence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.modify_edge" title="Link to this definition"></a></dt>
+<dd><p>Modify an edge in the network. If the edge does not exist, a KeyError is raised.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>str</em>) – The source node.</p></li>
+<li><p><strong>trg</strong> (<em>str</em>) – The target node.</p></li>
+<li><p><strong>rel</strong> (<em>str</em><em>, </em><em>optional</em>) – The new causal relation of the edge. Defaults to None, which does not modify the relation.</p></li>
+<li><p><strong>typ</strong> (<em>str</em><em>, </em><em>optional</em>) – The new type of the edge. Allowed values are “core”, “boundary” and “infer”. Defaults to None,
+which does not modify the type.</p></li>
+<li><p><strong>confidence</strong> (<em>float</em><em>, </em><em>optional</em>) – The new confidence of the edge. Defaults to None, which does not modify the confidence.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>KeyError</strong> – If the edge does not exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.remove_edge">
+<span class="sig-name descname"><span class="pre">remove_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.remove_edge" title="Link to this definition"></a></dt>
+<dd><p>Remove an edge from the network. If the edge does not exist, a KeyError is raised.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>str</em>) – The source node.</p></li>
+<li><p><strong>trg</strong> (<em>str</em>) – The target node.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>KeyError</strong> – If the edge does not exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.modify_network">
+<span class="sig-name descname"><span class="pre">modify_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.modify_network" title="Link to this definition"></a></dt>
+<dd><p>Modify the network using a list of edges. The list of edges is a list of tuples of the form
+(source, target, relation, type). If the relation is None, the edge is removed. If the type is None, the type
+is not modified. If the type is not one of the allowed types, it is ignored or replaced with “infer”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>edge_list</strong> (<em>list</em>) – The list of edges.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.rewire_edges">
+<span class="sig-name descname"><span class="pre">rewire_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'k1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value_pruning_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nullify'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opposing_value_pruning_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opposing_value_minimum_amplitude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_edge_minimum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact_boundary_outdegree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sparse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logging_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_LOGGING_KWARGS</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.rewire_edges" title="Link to this definition"></a></dt>
+<dd><p>Rewire edges in the network. The rewiring is performed on the given nodes, and the given number of
+iterations. Datasets can be provided to evaluate the rewired networks. If no datasets are provided, the
+rewired networks are returned as a list of modifications. Otherwise, the NPAs of the rewired networks are
+computed and returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nodes</strong> (<em>list</em>) – The nodes to rewire.</p></li>
+<li><p><strong>iterations</strong> (<em>int</em>) – The number of rewiring iterations.</p></li>
+<li><p><strong>datasets</strong> (<em>list</em>) – The datasets to use for evaluation. If None, the rewired networks are returned as a list of
+modifications. Otherwise, the NPAs of the rewired networks are computed and returned.</p></li>
+<li><p><strong>method</strong> (<em>str</em><em>, </em><em>optional</em>) – The rewiring method to use. May be “k1” or “k2”. Defaults to “k1”.</p></li>
+<li><p><strong>p_rate</strong> (<em>float</em><em>, </em><em>optional</em>) – The fraction of edges to rewire. Defaults to 1.0.</p></li>
+<li><p><strong>missing_value_pruning_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode to use for pruning nodes with missing values. Must be one of
+‘remove’ or ‘nullify’. Defaults to ‘nullify’.</p></li>
+<li><p><strong>opposing_value_pruning_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode to use for pruning edges with opposing values. Must be one of
+‘remove’, ‘nullify’, or ‘none’. Defaults to None.</p></li>
+<li><p><strong>opposing_value_minimum_amplitude</strong> (<em>float</em><em>, </em><em>optional</em>) – The minimum amplitude of the dataset values to consider. Values with
+an absolute value smaller than this threshold are ignored. Defaults to 1.</p></li>
+<li><p><strong>boundary_edge_minimum</strong> (<em>int</em><em>, </em><em>optional</em>) – The minimum number of boundary edges a core node must have to be included
+in the pruned network. If a core node has fewer boundary edges after ‘remove’ pruning, all of its edges are
+removed. This parameter is ignored if ‘nullify’ pruning is used. Defaults to 6.</p></li>
+<li><p><strong>exact_boundary_outdegree</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use the exact boundary outdegree. If False, the boundary outdegree
+is set to 1 for all core nodes with boundary edges. Defaults to True.</p></li>
+<li><p><strong>sparse</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use sparse computation. Defaults to True.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – The seed to use for the random number generator. Defaults to None.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to log progress and network statistics. Defaults to True.</p></li>
+<li><p><strong>logging_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – The keyword arguments to pass to logging.basicConfig. Defaults to “stream”: sys.stdout,
+“level”: logging.INFO, “format”: “%(asctime)s %(levelname)s – %(message)s”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the permutation method is unknown. If the same node appears in both
+the core and boundary network.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The list of modifications, or a list of tuples of the form (modification, npa), where modification
+is the modification and npa is a dictionary of the form {dataset_id: npa}.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.wire_edges">
+<span class="sig-name descname"><span class="pre">wire_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_edges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_relations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value_pruning_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nullify'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opposing_value_pruning_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opposing_value_minimum_amplitude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_edge_minimum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact_boundary_outdegree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sparse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logging_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_LOGGING_KWARGS</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.wire_edges" title="Link to this definition"></a></dt>
+<dd><p>Wire edges in the network. The wiring is performed on the given nodes, and the given number of
+iterations. Datasets can be provided to evaluate the wired networks. If no datasets are provided, the
+wired networks are returned as a list of modifications. Otherwise, the NPAs of the wired networks are
+computed and returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nodes</strong> (<em>list</em>) – The nodes to wire.</p></li>
+<li><p><strong>iterations</strong> (<em>int</em>) – The number of wiring iterations.</p></li>
+<li><p><strong>datasets</strong> (<em>list</em>) – The datasets to use for evaluation. If None, the wired networks are returned as a list of
+modifications. Otherwise, the NPAs of the wired networks are computed and returned.</p></li>
+<li><p><strong>number_of_edges</strong> (<em>int</em>) – The number of edges to wire.</p></li>
+<li><p><strong>edge_relations</strong> (<em>list</em>) – The relations to use for wiring.</p></li>
+<li><p><strong>missing_value_pruning_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode to use for pruning nodes with missing values. Must be one of
+‘remove’ or ‘nullify’. Defaults to ‘nullify’.</p></li>
+<li><p><strong>opposing_value_pruning_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode to use for pruning edges with opposing values. Must be one of
+‘remove’, ‘nullify’, or ‘none’. Defaults to None.</p></li>
+<li><p><strong>opposing_value_minimum_amplitude</strong> (<em>float</em><em>, </em><em>optional</em>) – The minimum amplitude of the dataset values to consider. Values with
+an absolute value smaller than this threshold are ignored. Defaults to 1.</p></li>
+<li><p><strong>boundary_edge_minimum</strong> (<em>int</em><em>, </em><em>optional</em>) – The minimum number of boundary edges a core node must have to be included
+in the pruned network. If a core node has fewer boundary edges after ‘remove’ pruning, all of its edges are
+removed. This parameter is ignored if ‘nullify’ pruning is used. Defaults to 6.</p></li>
+<li><p><strong>exact_boundary_outdegree</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use the exact boundary outdegree. If False, the boundary outdegree
+is set to 1 for all core nodes with boundary edges. Defaults to True.</p></li>
+<li><p><strong>sparse</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use sparse computation. Defaults to True.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – The seed to use for the random number generator. Defaults to None.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to log progress and network statistics. Defaults to True.</p></li>
+<li><p><strong>logging_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – The keyword arguments to pass to logging.basicConfig. Defaults to “stream”: sys.stdout,
+“level”: logging.INFO, “format”: “%(asctime)s %(levelname)s – %(message)s”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the same node appears in both the core and boundary network.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The list of modifications, or a list of tuples of the form (modification, npa), where modification
+is the modification and npa is a dictionary of the form {dataset_id: npa}.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.evaluate_modifications">
+<span class="sig-name descname"><span class="pre">evaluate_modifications</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modifications</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value_pruning_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nullify'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opposing_value_pruning_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opposing_value_minimum_amplitude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_edge_minimum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact_boundary_outdegree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sparse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logging_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_LOGGING_KWARGS</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.evaluate_modifications" title="Link to this definition"></a></dt>
+<dd><p>Evaluate modifications of the network. The modifications are evaluated using the given datasets. The
+modifications are returned as a list of tuples of the form (modification, npa), where modification is the
+modification and npa is a dictionary of the form {dataset_id: npa}. Modifications can be generated using
+the rewire_edges or wire_edges methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>modifications</strong> (<em>list</em>) – The modifications to evaluate. The modifications are a list of lists of tuples of the
+form (source, target, relation, type).</p></li>
+<li><p><strong>nodes</strong> (<em>list</em>) – The nodes used in the modifications.</p></li>
+<li><p><strong>datasets</strong> (<em>list</em>) – The datasets to use for evaluation.</p></li>
+<li><p><strong>missing_value_pruning_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode to use for pruning nodes with missing values. Must be one of
+‘remove’ or ‘nullify’. Defaults to ‘nullify’.</p></li>
+<li><p><strong>opposing_value_pruning_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode to use for pruning edges with opposing values. Must be one of
+‘remove’, ‘nullify’, or ‘none’. Defaults to None.</p></li>
+<li><p><strong>opposing_value_minimum_amplitude</strong> (<em>float</em><em>, </em><em>optional</em>) – The minimum amplitude of the dataset values to consider. Values with
+an absolute value smaller than this threshold are ignored. Defaults to 1.</p></li>
+<li><p><strong>boundary_edge_minimum</strong> (<em>int</em><em>, </em><em>optional</em>) – The minimum number of boundary edges a core node must have to be included
+in the pruned network. If a core node has fewer boundary edges after ‘remove’ pruning, all of its edges are
+removed. This parameter is ignored if ‘nullify’ pruning is used. Defaults to 6.</p></li>
+<li><p><strong>exact_boundary_outdegree</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use the exact boundary outdegree. If False, the boundary outdegree
+is set to 1 for all core nodes with boundary edges. Defaults to True.</p></li>
+<li><p><strong>sparse</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use sparse computation. Defaults to True.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – The seed to use for the random number generator. Defaults to None.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to log progress and network statistics. Defaults to True.</p></li>
+<li><p><strong>logging_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – The keyword arguments to pass to logging.basicConfig. Defaults to “stream”: sys.stdout,
+“level”: logging.INFO, “format”: “%(asctime)s %(levelname)s – %(message)s”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the same node appears in both the core and boundary network.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The list of modifications, or a list of tuples of the form (modification, npa), where modification
+is the modification and npa is a dictionary of the form {dataset_id: npa}.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.infer_graph_attributes">
+<span class="sig-name descname"><span class="pre">infer_graph_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logging_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_LOGGING_KWARGS</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.infer_graph_attributes" title="Link to this definition"></a></dt>
+<dd><p>Infer graph attributes required for NPA computation. The attributes are inferred from the relations in the
+network. The attributes are added to the graph as node and edge attributes. If inplace is True, the attributes
+are added to the graph and the graph is returned. Otherwise, the attributes are added to a copy of the graph
+and the copy is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inplace</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to add the attributes to the graph inplace. Defaults to False.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to log progress and network statistics. Defaults to True.</p></li>
+<li><p><strong>logging_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – The keyword arguments to pass to logging.basicConfig. Defaults to  “stream”: sys.stdout,
+“level”: logging.INFO, “format”: “%(asctime)s %(levelname)s – %(message)s”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the same node appears in both the core and boundary network.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The graph with the inferred attributes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#perturbationx.CausalNetwork.CausalNetwork" title="perturbationx.CausalNetwork.CausalNetwork">CausalNetwork</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.get_adjacencies">
+<span class="sig-name descname"><span class="pre">get_adjacencies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sparse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logging_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_LOGGING_KWARGS</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.get_adjacencies" title="Link to this definition"></a></dt>
+<dd><p>Get the adjacency matrices of the network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sparse</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use sparse matrices. Defaults to False.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to log progress and network statistics. Defaults to True.</p></li>
+<li><p><strong>logging_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – The keyword arguments to pass to logging.basicConfig. Defaults to  “stream”: sys.stdout,
+“level”: logging.INFO, “format”: “%(asctime)s %(levelname)s – %(message)s”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the same node appears in both the core and boundary network.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The boundary and core adjacency matrices and the node ordering.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>(np.ndarray | sp.sparray, np.ndarray | sp.sparray, list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.get_laplacians">
+<span class="sig-name descname"><span class="pre">get_laplacians</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boundary_outdegree_minimum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact_boundary_outdegree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sparse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logging_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_LOGGING_KWARGS</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.get_laplacians" title="Link to this definition"></a></dt>
+<dd><p>Get the Laplacian matrices of the network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>boundary_outdegree_minimum</strong> (<em>int</em><em>, </em><em>optional</em>) – The minimum number of boundary edges a core node must have to be included
+in the boundary network. Defaults to 6.</p></li>
+<li><p><strong>exact_boundary_outdegree</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use the exact boundary outdegree. If False, the boundary outdegree
+is set to 1 for all core nodes with boundary edges. Defaults to True.</p></li>
+<li><p><strong>sparse</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use sparse matrices. Defaults to False.</p></li>
+<li><p><strong>verbose</strong> – Whether to log progress and network statistics. Defaults to True.</p></li>
+<li><p><strong>logging_kwargs</strong> – The keyword arguments to pass to logging.basicConfig. Defaults to  “stream”: sys.stdout,
+“level”: logging.INFO, “format”: “%(asctime)s %(levelname)s – %(message)s”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the same node appears in both the core and boundary network.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The Lb boundary Laplacian, Lc core Laplacian and Q core Laplacian and the node ordering.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>(np.ndarray | sp.sparray, np.ndarray | sp.sparray, np.ndarray | sp.sparray, list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.toponpa">
+<span class="sig-name descname"><span class="pre">toponpa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value_pruning_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nullify'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opposing_value_pruning_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opposing_value_minimum_amplitude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_edge_minimum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact_boundary_outdegree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_statistics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permutations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('o',</span> <span class="pre">'k2')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_core_permutation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_iters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sparse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logging_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_LOGGING_KWARGS</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.toponpa" title="Link to this definition"></a></dt>
+<dd><p>Compute the Network Perturbation Amplitude (NPA) for a given network and datasets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datasets</strong> (<em>dict</em>) – The datasets to use. The keys are the dataset IDs and the values are the datasets, which are
+pandas DataFrames.</p></li>
+<li><p><strong>missing_value_pruning_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode to use for pruning nodes with missing values. Must be one of
+‘remove’ or ‘nullify’. Defaults to ‘nullify’.</p></li>
+<li><p><strong>opposing_value_pruning_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode to use for pruning edges with opposing values. Must be one of
+‘remove’, ‘nullify’, or ‘none’. Defaults to None.</p></li>
+<li><p><strong>opposing_value_minimum_amplitude</strong> (<em>float</em><em>, </em><em>optional</em>) – The minimum amplitude of the dataset values to consider. Values with an
+absolute value smaller than this threshold are ignored. Defaults to 1.</p></li>
+<li><p><strong>boundary_edge_minimum</strong> (<em>int</em><em>, </em><em>optional</em>) – The minimum number of boundary edges a core node must have to be included in
+the pruned network. If a core node has fewer boundary edges after ‘remove’ pruning, all of its edges are
+removed. This parameter is ignored if ‘nullify’ pruning is used. Defaults to 6.</p></li>
+<li><p><strong>exact_boundary_outdegree</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use the exact boundary outdegree. If False, the boundary outdegree
+is set to 1 for all core nodes with boundary edges. Defaults to True.</p></li>
+<li><p><strong>compute_statistics</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to compute variances and confidence intervals. Defaults to True.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – The confidence level for the confidence intervals. Defaults to 0.95.</p></li>
+<li><p><strong>permutations</strong> (<em>list</em><em>, </em><em>optional</em>) – The permutations to test. May contain ‘o’, ‘k1’, and ‘k2’ in any order.
+Defaults to (‘o’, ‘k2’).</p></li>
+<li><p><strong>full_core_permutation</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use the full permutation matrix for each core permutation. Partial
+permutations sample core coefficients, while full permutations sample perturbation scores. Defaults to True.</p></li>
+<li><p><strong>p_iters</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of permutations to perform. Defaults to 500.</p></li>
+<li><p><strong>p_rate</strong> (<em>float</em><em>, </em><em>optional</em>) – The fraction of boundary coefficients to permute. Defaults to 1.</p></li>
+<li><p><strong>sparse</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use sparse computation. Defaults to True.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – The seed for the random number generator. Defaults to None.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to log progress and network statistics. Defaults to True.</p></li>
+<li><p><strong>logging_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – The keyword arguments to pass to logging.basicConfig. Defaults to  “stream”: sys.stdout,
+“level”: logging.INFO, “format”: “%(asctime)s %(levelname)s – %(message)s”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the same node appears in both the core and boundary network.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The NPA result.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../index.html#perturbationx.NPAResult" title="perturbationx.NPAResult">perturbationx.NPAResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.to_networkx">
+<span class="sig-name descname"><span class="pre">to_networkx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.to_networkx" title="Link to this definition"></a></dt>
+<dd><p>Return a copy of the network as a NetworkX graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The NetworkX graph.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>nx.DiGraph</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.to_edge_list">
+<span class="sig-name descname"><span class="pre">to_edge_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_DATA_COLS</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.to_edge_list" title="Link to this definition"></a></dt>
+<dd><p>Convert the network to a list of edges.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edge_type</strong> (<em>list</em><em> | </em><em>str</em><em>, </em><em>optional</em>) – List of edge types to include. If “all”, all edges will be included. Defaults to “all”.</p></li>
+<li><p><strong>data_cols</strong> (<em>list</em><em>, </em><em>optional</em>) – data_cols: List of data columns to include. Defaults to [“subject”, “object”,
+“relation”, “type”].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of edges.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.to_dsv">
+<span class="sig-name descname"><span class="pre">to_dsv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\t'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_DATA_COLS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.to_dsv" title="Link to this definition"></a></dt>
+<dd><p>Write the network to a delimited file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – The path to write the file to.</p></li>
+<li><p><strong>edge_type</strong> (<em>list</em><em> | </em><em>str</em><em>, </em><em>optional</em>) – List of edge types to include. If “all”, all edges will be included. Defaults to “all”.</p></li>
+<li><p><strong>delimiter</strong> (<em>str</em><em>, </em><em>optional</em>) – The delimiter to use in the DSV file. Defaults to ”   “.</p></li>
+<li><p><strong>data_cols</strong> (<em>list</em><em>, </em><em>optional</em>) – List of data columns to include. Columns not in [“subject”, “object”, “relation”, “type”] will
+be ignored. Defaults to [“subject”, “object”, “relation”, “type”].</p></li>
+<li><p><strong>header</strong> (<em>list</em><em>, </em><em>optional</em>) – List of header values to use. Must be given in the same order as data_cols. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the length of the header list does not match the length of the data_cols list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.to_tsv">
+<span class="sig-name descname"><span class="pre">to_tsv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_DATA_COLS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.to_tsv" title="Link to this definition"></a></dt>
+<dd><p>Write the network to a tab-separated file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – The path to write the file to.</p></li>
+<li><p><strong>edge_type</strong> (<em>list</em><em> | </em><em>str</em><em>, </em><em>optional</em>) – List of edge types to include. If “all”, all edges will be included. Defaults to “all”.</p></li>
+<li><p><strong>data_cols</strong> (<em>list</em><em>, </em><em>optional</em>) – List of data columns to include. Columns not in [“subject”, “object”, “relation”, “type”] will
+be ignored. Defaults to [“subject”, “object”, “relation”, “type”].</p></li>
+<li><p><strong>header</strong> (<em>list</em><em>, </em><em>optional</em>) – List of header values to use. Must be given in the same order as data_cols. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the length of the header list does not match the length of the data_cols list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.to_csv">
+<span class="sig-name descname"><span class="pre">to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_DATA_COLS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.to_csv" title="Link to this definition"></a></dt>
+<dd><p>Write the network to a comma-separated file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – The path to write the file to.</p></li>
+<li><p><strong>edge_type</strong> (<em>list</em><em> | </em><em>str</em><em>, </em><em>optional</em>) – List of edge types to include. If “all”, all edges will be included. Defaults to “all”.</p></li>
+<li><p><strong>data_cols</strong> (<em>list</em><em>, </em><em>optional</em>) – List of data columns to include. Columns not in [“subject”, “object”, “relation”, “type”] will
+be ignored. Defaults to [“subject”, “object”, “relation”, “type”].</p></li>
+<li><p><strong>header</strong> (<em>list</em><em>, </em><em>optional</em>) – List of header values to use. Must be given in the same order as data_cols. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the length of the header list does not match the length of the data_cols list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.to_cyjs_json">
+<span class="sig-name descname"><span class="pre">to_cyjs_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.to_cyjs_json" title="Link to this definition"></a></dt>
+<dd><p>Write the network to a Cytoscape.js JSON file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – The path to write the file to.</p></li>
+<li><p><strong>indent</strong> (<em>int</em><em>, </em><em>optional</em>) – The indentation to use in the JSON file. Defaults to 4.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../vis/cytoscape/index.html" class="btn btn-neutral float-left" title="perturbationx.vis.cytoscape" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright CC BY-NC 4.0.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
