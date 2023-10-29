@@ -4,4 +4,4 @@ from .result import *
 from .toponpa import *
 from .util import *
 from .vis import *
-
+import resources

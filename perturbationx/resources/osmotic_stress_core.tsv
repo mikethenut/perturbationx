@@ -1,41 +1,41 @@
-subject	relation	object	type
-p(HGNC:EGF)	directlyIncreases	kin(p(HGNC:EGFR))	core
-p(HGNC:EGF)	increases	a(CHEBI:"hydrogen peroxide")	core
-p(HGNC:EGF)	increases	p(HGNC:EGFR,pmod(P,Y))	core
-p(HGNC:EGF)	increases	p(HGNC:PLCG1,pmod(P,Y))	core
-kin(p(SFAM:"PRKA Family"))	increases	tscript(p(HGNC:NFAT5))	core
-kin(p(SFAM:"PRKA Family"))	increases	tport(p(HGNC:CFTR))	core
-a(SCHEM:Dinoprostone)	increases	kin(p(SFAM:"PRKA Family"))	core
-kin(p(HGNC:MAPK14))	increases	tscript(p(HGNC:NFAT5))	core
-tscript(p(HGNC:HIF1A))	increases	p(HGNC:AQP5)	core
-cat(p(HGNC:PARP1))	decreases	kin(p(HGNC:ATM))	core
-kin(p(HGNC:EGFR))	increases	a(CHEBI:"hydrogen peroxide")	core
-bp(GOBP:"hyperosmotic response")	increases	kin(p(HGNC:ATM))	core
-bp(GOBP:"hyperosmotic response")	increases	tscript(p(HGNC:HIF1A))	core
-bp(GOBP:"hyperosmotic response")	increases	kin(p(HGNC:MAPK14))	core
-bp(GOBP:"hyperosmotic response")	increases	kin(p(SFAM:"MAPK Erk1/2 Family")	core)
-bp(GOBP:"hyperosmotic response")	increases	kin(p(SFAM:"PRKA Family"))	core
-bp(GOBP:"hyperosmotic response")	increases	p(HGNC:NRG1)	core
-cat(p(HGNC:PTGES2))	increases	a(SCHEM:Dinoprostone)	core
-cat(p(HGNC:ERBB3))	increases	kin(p(SFAM:"MAPK Erk1/2 Family"))	core
-kin(p(SFAM:"MAPK Erk1/2 Family"))	increases	p(HGNC:AQP1)	core
-kin(p(SFAM:"MAPK Erk1/2 Family"))	increases	p(HGNC:AQP3)	core
-kin(p(SFAM:"MAPK Erk1/2 Family"))	increases	p(HGNC:AQP5)	core
-a(CHEBI:"hydrogen peroxide")	increases	p(HGNC:EGFR,pmod(P,Y))	core
-a(CHEBI:"hydrogen peroxide")	increases	cat(p(HGNC:PTGS2))	core
-a(CHEBI:"hydrogen peroxide")	increases	p(HGNC:PLCG1,pmod(P,Y))	core
-a(CHEBI:"hydrogen peroxide")	increases	cat(p(HGNC:PTGES2))	core
-kin(complex(SCOMP:"AMP Activated Protein Kinase Complex"))	directlyIncreases	p(HGNC:CFTR,pmod(P,S,768))	core
-a(SCHEM:Calcium)	decreases	p(HGNC:AQP5)	core
-p(HGNC:CFTR,pmod(P,S,768))	directlyDecreases	tport(p(HGNC:CFTR))	core
-tscript(complex(SCOMP:"AP-1 Complex"))	directlyIncreases	tscript(p(HGNC:NFAT5))	core
-cat(p(HGNC:PTGS2))	increases	a(SCHEM:Dinoprostone)	core
-p(HGNC:NRG1)	increases	cat(p(HGNC:ERBB3))	core
-tscript(p(HGNC:NFAT5))	increases	p(HGNC:HSPA1B)	core
-tscript(p(HGNC:NFAT5))	increases	p(HGNC:AKR1B1)	core
-tscript(p(HGNC:NFAT5))	increases	p(HGNC:SLC6A12)	core
-tscript(p(HGNC:NFAT5))	directlyIncreases	p(HGNC:AQP1)	core
-tscript(p(HGNC:NFAT5))	directlyIncreases	p(HGNC:SLC5A3)	core
-tscript(p(HGNC:NFAT5))	increases	p(HGNC:HSPA1A)	core
-kin(p(HGNC:ATM))	directlyIncreases	tscript(p(HGNC:NFAT5))	core
-kin(p(HGNC:ATM))	increases	p(HGNC:SLC6A12)	core
+subject	relation	object
+p(HGNC:EGF)	directlyIncreases	kin(p(HGNC:EGFR))
+p(HGNC:EGF)	increases	a(CHEBI:"hydrogen peroxide")
+p(HGNC:EGF)	increases	p(HGNC:EGFR,pmod(P,Y))
+p(HGNC:EGF)	increases	p(HGNC:PLCG1,pmod(P,Y))
+kin(p(SFAM:"PRKA Family"))	increases	tscript(p(HGNC:NFAT5))
+kin(p(SFAM:"PRKA Family"))	increases	tport(p(HGNC:CFTR))
+a(SCHEM:Dinoprostone)	increases	kin(p(SFAM:"PRKA Family"))
+kin(p(HGNC:MAPK14))	increases	tscript(p(HGNC:NFAT5))
+tscript(p(HGNC:HIF1A))	increases	p(HGNC:AQP5)
+cat(p(HGNC:PARP1))	decreases	kin(p(HGNC:ATM))
+kin(p(HGNC:EGFR))	increases	a(CHEBI:"hydrogen peroxide")
+bp(GOBP:"hyperosmotic response")	increases	kin(p(HGNC:ATM))
+bp(GOBP:"hyperosmotic response")	increases	tscript(p(HGNC:HIF1A))
+bp(GOBP:"hyperosmotic response")	increases	kin(p(HGNC:MAPK14))
+bp(GOBP:"hyperosmotic response")	increases	kin(p(SFAM:"MAPK Erk1/2 Family"))
+bp(GOBP:"hyperosmotic response")	increases	kin(p(SFAM:"PRKA Family"))
+bp(GOBP:"hyperosmotic response")	increases	p(HGNC:NRG1)
+cat(p(HGNC:PTGES2))	increases	a(SCHEM:Dinoprostone)
+cat(p(HGNC:ERBB3))	increases	kin(p(SFAM:"MAPK Erk1/2 Family"))
+kin(p(SFAM:"MAPK Erk1/2 Family"))	increases	p(HGNC:AQP1)
+kin(p(SFAM:"MAPK Erk1/2 Family"))	increases	p(HGNC:AQP3)
+kin(p(SFAM:"MAPK Erk1/2 Family"))	increases	p(HGNC:AQP5)
+a(CHEBI:"hydrogen peroxide")	increases	p(HGNC:EGFR,pmod(P,Y))
+a(CHEBI:"hydrogen peroxide")	increases	cat(p(HGNC:PTGS2))
+a(CHEBI:"hydrogen peroxide")	increases	p(HGNC:PLCG1,pmod(P,Y))
+a(CHEBI:"hydrogen peroxide")	increases	cat(p(HGNC:PTGES2))
+kin(complex(SCOMP:"AMP Activated Protein Kinase Complex"))	directlyIncreases	p(HGNC:CFTR,pmod(P,S,768))
+a(SCHEM:Calcium)	decreases	p(HGNC:AQP5)
+p(HGNC:CFTR,pmod(P,S,768))	directlyDecreases	tport(p(HGNC:CFTR))
+tscript(complex(SCOMP:"AP-1 Complex"))	directlyIncreases	tscript(p(HGNC:NFAT5))
+cat(p(HGNC:PTGS2))	increases	a(SCHEM:Dinoprostone)
+p(HGNC:NRG1)	increases	cat(p(HGNC:ERBB3))
+tscript(p(HGNC:NFAT5))	increases	p(HGNC:HSPA1B)
+tscript(p(HGNC:NFAT5))	increases	p(HGNC:AKR1B1)
+tscript(p(HGNC:NFAT5))	increases	p(HGNC:SLC6A12)
+tscript(p(HGNC:NFAT5))	directlyIncreases	p(HGNC:AQP1)
+tscript(p(HGNC:NFAT5))	directlyIncreases	p(HGNC:SLC5A3)
+tscript(p(HGNC:NFAT5))	increases	p(HGNC:HSPA1A)
+kin(p(HGNC:ATM))	directlyIncreases	tscript(p(HGNC:NFAT5))
+kin(p(HGNC:ATM))	increases	p(HGNC:SLC6A12)
