@@ -13,6 +13,10 @@ from py4cytoscape.tables import load_table_data
 from perturbationx.resources import *
 
 
+__all__ = ["edge_to_p4c_format", "init_cytoscape", "load_network_data", "set_boundary_display",
+           "color_nodes_by_column", "highlight_subgraph", "isolate_subgraph", "extract_subgraph", "clear_bypass"]
+
+
 def edge_to_p4c_format(src: str, trg: str, interaction: str):
     """Convert an edge to the format used by py4cytoscape.
 
