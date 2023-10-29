@@ -280,7 +280,7 @@ class CausalNetwork:
         :rtype: int
         """
         if typ is not None:
-            return sum(1 for n, d in self._graph.nodes(data=True) if d["type"] == typ)
+            return sum(1 for n, d in self._graph.nodes(data=True) if "type" in d and d["type"] == typ)
         return self._graph.number_of_nodes()
 
     def nodes(self, typ=None, data=True):
@@ -295,9 +295,9 @@ class CausalNetwork:
         """
         if typ is not None:
             if data:
-                return [(n, d) for n, d in self._graph.nodes(data=True) if d["type"] == typ]
+                return [(n, d) for n, d in self._graph.nodes(data=True) if "type" in d and d["type"] == typ]
             else:
-                return [n for n, d in self._graph.nodes(data=True) if d["type"] == typ]
+                return [n for n, d in self._graph.nodes(data=True) if "type" in d and d["type"] == typ]
 
         return list(self._graph.nodes(data=data))
 
@@ -310,7 +310,7 @@ class CausalNetwork:
         :rtype: int
         """
         if typ is not None:
-            return sum(1 for e in self._graph.edges.data() if e[2]["type"] == typ)
+            return sum(1 for e in self._graph.edges.data() if "type" in e[2] and e[2]["type"] == typ)
         return self._graph.number_of_edges()
 
     def edges(self, typ=None, data=True):
@@ -325,9 +325,9 @@ class CausalNetwork:
         """
         if typ is not None:
             if data:
-                return [(src, trg, d) for src, trg, d in self._graph.edges.data() if d["type"] == typ]
+                return [(src, trg, d) for src, trg, d in self._graph.edges.data() if "type" in d and d["type"] == typ]
             else:
-                return [(src, trg) for src, trg, d in self._graph.edges.data() if d["type"] == typ]
+                return [(src, trg) for src, trg, d in self._graph.edges.data() if "type" in d and d["type"] == typ]
 
         if data:
             return list(self._graph.edges.data())
