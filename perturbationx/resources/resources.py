@@ -38,7 +38,7 @@ def get_style_xml_path():
 
 
 def get_osmotic_stress_core_path():
-    """Get the path to the osmotic stress core network file. The network is a subset of the osmotic stress network
+    """Get the path to the osmotic stress core network file. The network is a subset of the human osmotic stress network
     from the Causal Biological Networks database (https://www.causalbionet.com/, network ID osmotic_stress_2.0_hs).
     All non-causal edges were removed and the largest connected component was then selected.
 
