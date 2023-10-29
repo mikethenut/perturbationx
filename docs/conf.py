@@ -56,7 +56,7 @@ def setup(sphinx):
 # 3.1 Uncomment `autoapi_generate_api_docs = False`
 # 3.2 Run `sphinx-build -b html -E . _build`
 # 3.3 Fix any warnings related to duplicates and rerun
-# 4.0 For some reason this re-adds data and attribute members to the documentation
+# 4.1 For some reason this re-adds data and attribute members to the documentation
 #     Search for ::py:attribute::, ::py:data::, Attribute (case-sensitive) to find and remove them
-# 4.1 Make sure to also check for correct references in function tables
-# 4.2 Run `sphinx-build -b html -E . _build` once more
+# 4.2 Make sure to also check for correct references in function tables
+# 4.3 Run `sphinx-build -b html -E . _build` once more

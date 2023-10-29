@@ -1,0 +1,397 @@
+subject	object	relation	type
+p(HGNC:NRG1)	91e42021-9e59-4556-8eb7-65f3fd504449	1	boundary
+p(HGNC:NRG1)	dfdab33a-518f-4f06-acee-9a03fe619d19	1	boundary
+p(HGNC:NRG1)	df3e77d4-309d-4d73-96bf-f0d75b77c6f3	-1	boundary
+p(HGNC:NRG1)	8d9da440-5618-4601-9abb-17d7a1e01ce9	-1	boundary
+p(HGNC:NRG1)	cc059e26-afc2-48ed-ac2b-270f9909afea	1	boundary
+p(HGNC:NRG1)	87c4d4a3-e252-4eb0-843e-89bd2d675105	-1	boundary
+p(HGNC:NRG1)	da432c90-bdc6-40c7-8780-f67633152c3a	-1	boundary
+p(HGNC:NRG1)	d9d4c8b1-ec40-490f-81dd-d3905fa296db	-1	boundary
+p(HGNC:NRG1)	577379dc-94eb-4d7d-bd54-3234ba31ba68	-1	boundary
+p(HGNC:NRG1)	262fb54c-7caa-4438-9021-f754f8ae9e61	-1	boundary
+p(HGNC:NRG1)	4d6febd6-2034-4e6b-9a27-8ce097fae2bb	-1	boundary
+p(HGNC:NRG1)	78bd3e4e-ce7e-4dcc-bf3e-c720462b2b2d	1	boundary
+p(HGNC:NRG1)	3b3e580e-eafe-491c-b793-b3ebda44f7fd	1	boundary
+p(HGNC:NRG1)	61d1cd6d-a073-4a88-904a-fac2f901d136	-1	boundary
+p(HGNC:NRG1)	3d19981c-3d6e-4b32-aca0-598bb0e1cc50	-1	boundary
+p(HGNC:NRG1)	145eac7c-2620-4156-93a0-7a6c1e1abbbe	-1	boundary
+p(HGNC:NRG1)	ab4413a2-14eb-46f1-96a3-25e7949f1d81	-1	boundary
+p(HGNC:NRG1)	34709bee-afd4-4ee1-8888-470e348b13e0	-1	boundary
+p(HGNC:SLC6A12)	2d1d1f7f-efb4-432d-a064-cc6b8acb0888	1	boundary
+p(HGNC:SLC6A12)	cc059e26-afc2-48ed-ac2b-270f9909afea	1	boundary
+p(HGNC:SLC6A12)	eae3710e-494f-44c0-9519-ebddabf412cc	-1	boundary
+p(HGNC:SLC6A12)	61d1cd6d-a073-4a88-904a-fac2f901d136	-1	boundary
+p(HGNC:SLC6A12)	b8798821-7ad3-4666-a397-b7b799e94eb2	1	boundary
+p(HGNC:SLC6A12)	b2e350de-e7b4-443a-83b4-57e5e97aa317	-1	boundary
+p(HGNC:SLC6A12)	314a6316-615d-4441-91a4-62ef4bdeb703	-1	boundary
+p(HGNC:SLC6A12)	4d6febd6-2034-4e6b-9a27-8ce097fae2bb	1	boundary
+p(HGNC:SLC6A12)	8cfd3662-ac11-414f-a830-ab28187d6d8b	-1	boundary
+p(HGNC:SLC6A12)	262fb54c-7caa-4438-9021-f754f8ae9e61	1	boundary
+p(HGNC:SLC6A12)	78bd3e4e-ce7e-4dcc-bf3e-c720462b2b2d	1	boundary
+p(HGNC:SLC6A12)	9803d3eb-a572-40f9-ba98-8bf71607febf	1	boundary
+p(HGNC:SLC6A12)	1630f06b-ea7d-4643-bf2d-4176b9a4d690	1	boundary
+p(HGNC:SLC6A12)	f722f8b4-f849-4608-9a80-758c4a9d7632	-1	boundary
+p(HGNC:SLC6A12)	34709bee-afd4-4ee1-8888-470e348b13e0	1	boundary
+p(HGNC:SLC6A12)	a620a646-bc82-4700-9db4-a60fe4601a89	-1	boundary
+p(HGNC:SLC6A12)	8811edf2-4972-4346-aaae-40144c1f92e9	1	boundary
+p(HGNC:SLC6A12)	4b551ba0-d459-4325-9a61-49c36e01e08b	1	boundary
+p(HGNC:SLC6A12)	9b4107b1-98a5-4886-a9a7-bdd2a12d95ef	-1	boundary
+p(HGNC:SLC6A12)	b2385637-2851-4593-850f-4227454d6f05	1	boundary
+p(HGNC:SLC6A12)	68b763c6-7386-4d3a-98c8-9c8317743c65	-1	boundary
+p(HGNC:SLC6A12)	3cb25b24-7a24-45b3-8b9e-ba0ea00b1eaf	-1	boundary
+p(HGNC:SLC6A12)	1757b457-3219-4802-ac2d-21e6fdd2c240	1	boundary
+p(HGNC:SLC6A12)	519bb8bb-4c11-4e6a-b8dc-bbd721c00d72	-1	boundary
+p(HGNC:SLC6A12)	4eb8e1d2-fd96-4dc0-a922-8f211d83ddc5	1	boundary
+p(HGNC:SLC6A12)	d85b2402-b879-47b3-9bd9-05c502b9038c	1	boundary
+p(HGNC:SLC6A12)	1545edcb-1eb0-49d8-afe3-c3cc1c2dea99	-1	boundary
+p(HGNC:SLC6A12)	4ff972cd-e037-4313-8ac1-856fc3f2d7b5	1	boundary
+p(HGNC:SLC6A12)	24ebdd59-d43d-49c1-877d-df36f2986dd1	-1	boundary
+p(HGNC:SLC6A12)	23c0af54-0e82-42aa-9b31-21d5a5997e8c	-1	boundary
+p(HGNC:SLC6A12)	4a8500e5-b20f-4198-b492-193c4af68a96	-1	boundary
+p(HGNC:SLC6A12)	fc922948-9077-4097-9775-3096e7f49775	-1	boundary
+p(HGNC:SLC6A12)	3fb7319e-de14-4859-a1a9-94d7e4d9ae17	-1	boundary
+p(HGNC:SLC6A12)	2795034f-4062-4a64-a281-fb24f053c44b	1	boundary
+kin(p(HGNC:EGFR))	c02e699c-017f-482a-960d-5228e9109f8c	-1	boundary
+kin(p(HGNC:EGFR))	3fb7319e-de14-4859-a1a9-94d7e4d9ae17	-1	boundary
+kin(p(HGNC:EGFR))	1e891141-f170-43cd-832b-f790598186a1	1	boundary
+cat(p(HGNC:PARP1))	2d1d1f7f-efb4-432d-a064-cc6b8acb0888	1	boundary
+cat(p(HGNC:PARP1))	c3d4d494-cd8f-4a4e-a6ef-f5bdeb0f8360	-1	boundary
+cat(p(HGNC:PARP1))	ae5c3abd-92db-4714-b5e7-1e15ce357141	1	boundary
+cat(p(HGNC:PARP1))	b8798821-7ad3-4666-a397-b7b799e94eb2	-1	boundary
+cat(p(HGNC:PARP1))	55b6ff2b-4535-455f-90a0-52b8ccdc7114	-1	boundary
+cat(p(HGNC:PARP1))	9fd8925c-0622-42fd-a6b9-f51a8d449e14	-1	boundary
+cat(p(HGNC:PARP1))	646c5c74-5a8a-4ea8-b635-d159e10b12cc	-1	boundary
+cat(p(HGNC:PARP1))	4d6febd6-2034-4e6b-9a27-8ce097fae2bb	-1	boundary
+cat(p(HGNC:PARP1))	8cfd3662-ac11-414f-a830-ab28187d6d8b	1	boundary
+cat(p(HGNC:PARP1))	f32c9ead-8f0e-4ec4-b342-bd636f64b3cb	-1	boundary
+cat(p(HGNC:PARP1))	262fb54c-7caa-4438-9021-f754f8ae9e61	1	boundary
+cat(p(HGNC:PARP1))	9e90bbe1-9eeb-49ab-9efe-6a557976e2b1	1	boundary
+cat(p(HGNC:PARP1))	a5b9fb1e-e079-4c7a-a28d-342504e84238	-1	boundary
+cat(p(HGNC:PARP1))	27b27f3f-50f7-4b2d-8957-959c8a2e8eca	-1	boundary
+cat(p(HGNC:PARP1))	875bf937-90b1-4c5a-ab51-9580d870194b	-1	boundary
+cat(p(HGNC:PARP1))	f4c36f7d-a154-4d77-98fa-2fee31acd851	-1	boundary
+cat(p(HGNC:PARP1))	9b4107b1-98a5-4886-a9a7-bdd2a12d95ef	-1	boundary
+cat(p(HGNC:PARP1))	68b763c6-7386-4d3a-98c8-9c8317743c65	1	boundary
+cat(p(HGNC:PARP1))	3cb25b24-7a24-45b3-8b9e-ba0ea00b1eaf	-1	boundary
+cat(p(HGNC:PARP1))	1757b457-3219-4802-ac2d-21e6fdd2c240	1	boundary
+cat(p(HGNC:PARP1))	4ff972cd-e037-4313-8ac1-856fc3f2d7b5	-1	boundary
+cat(p(HGNC:PARP1))	577379dc-94eb-4d7d-bd54-3234ba31ba68	-1	boundary
+cat(p(HGNC:PARP1))	fc922948-9077-4097-9775-3096e7f49775	-1	boundary
+cat(p(HGNC:PARP1))	3e74559b-d1e8-4359-9cd8-a6c20c52ff96	-1	boundary
+cat(p(HGNC:PARP1))	5e56c51c-0626-4832-8b63-9a8a5eb9f2c8	-1	boundary
+cat(p(HGNC:PARP1))	145eac7c-2620-4156-93a0-7a6c1e1abbbe	1	boundary
+cat(p(HGNC:PARP1))	f32bc2cc-7656-471e-b288-4b20048d7147	-1	boundary
+cat(p(HGNC:PARP1))	4efaf06c-9a14-4ea5-9131-7401969b053a	-1	boundary
+cat(p(HGNC:PARP1))	1f9bb666-f28f-491a-b3b6-0ce3290cd1a3	-1	boundary
+cat(p(HGNC:PARP1))	87c4d4a3-e252-4eb0-843e-89bd2d675105	1	boundary
+cat(p(HGNC:PARP1))	da432c90-bdc6-40c7-8780-f67633152c3a	1	boundary
+cat(p(HGNC:PARP1))	a83a5ec5-db5b-40c3-a0cb-e782b3c70c69	1	boundary
+cat(p(HGNC:PARP1))	9803d3eb-a572-40f9-ba98-8bf71607febf	-1	boundary
+cat(p(HGNC:PARP1))	1630f06b-ea7d-4643-bf2d-4176b9a4d690	-1	boundary
+cat(p(HGNC:PARP1))	f722f8b4-f849-4608-9a80-758c4a9d7632	-1	boundary
+cat(p(HGNC:PARP1))	3fdb194b-45ce-408c-9331-745eb9de6c42	-1	boundary
+cat(p(HGNC:PARP1))	a620a646-bc82-4700-9db4-a60fe4601a89	-1	boundary
+cat(p(HGNC:PARP1))	03ca77e0-c348-40b2-8685-f4aaa0c6f12e	1	boundary
+cat(p(HGNC:PARP1))	df3e77d4-309d-4d73-96bf-f0d75b77c6f3	1	boundary
+cat(p(HGNC:PARP1))	ddb75537-d3b3-45e0-9d73-dec9a9abf78b	-1	boundary
+cat(p(HGNC:PARP1))	927d3398-282f-44d5-a3a0-6b80bc91cff7	1	boundary
+cat(p(HGNC:PARP1))	abd1b447-b18b-4bfc-aa3d-3162cc2b74bc	1	boundary
+cat(p(HGNC:PARP1))	2cb7def9-675b-422f-93d6-a6637016ab46	-1	boundary
+cat(p(HGNC:PARP1))	519bb8bb-4c11-4e6a-b8dc-bbd721c00d72	1	boundary
+cat(p(HGNC:PARP1))	dfe9e073-6b6b-44f0-9651-6a3aa506bd28	-1	boundary
+cat(p(HGNC:PARP1))	f4a1e3c7-5dc1-4c08-8666-842100db5068	-1	boundary
+cat(p(HGNC:PARP1))	33f3d32c-a2a9-481e-8b8d-47221988b3ec	-1	boundary
+cat(p(HGNC:PARP1))	3b3e580e-eafe-491c-b793-b3ebda44f7fd	1	boundary
+cat(p(HGNC:PARP1))	3fb7319e-de14-4859-a1a9-94d7e4d9ae17	1	boundary
+cat(p(HGNC:PARP1))	34709bee-afd4-4ee1-8888-470e348b13e0	1	boundary
+cat(p(HGNC:PARP1))	37d257b7-d9d6-4f1b-b108-6527be19900f	1	boundary
+cat(p(HGNC:PARP1))	3e6b1117-2444-49a8-a441-63128b4f5db3	1	boundary
+cat(p(HGNC:PARP1))	eae3710e-494f-44c0-9519-ebddabf412cc	-1	boundary
+cat(p(HGNC:PARP1))	c02e699c-017f-482a-960d-5228e9109f8c	-1	boundary
+cat(p(HGNC:PARP1))	1e891141-f170-43cd-832b-f790598186a1	-1	boundary
+cat(p(HGNC:PARP1))	b2e350de-e7b4-443a-83b4-57e5e97aa317	-1	boundary
+cat(p(HGNC:PARP1))	7e1d2734-e753-40e6-a18f-34de9adce1c5	1	boundary
+cat(p(HGNC:PARP1))	d60a7289-a7e2-4aed-aaca-742d47b78177	1	boundary
+cat(p(HGNC:PARP1))	314a6316-615d-4441-91a4-62ef4bdeb703	-1	boundary
+cat(p(HGNC:PARP1))	8d9da440-5618-4601-9abb-17d7a1e01ce9	1	boundary
+cat(p(HGNC:PARP1))	91e42021-9e59-4556-8eb7-65f3fd504449	1	boundary
+cat(p(HGNC:PARP1))	243e26be-6b56-44ec-818c-31b1c99021c6	1	boundary
+cat(p(HGNC:PARP1))	a4579c33-b9fa-42e6-a50e-e669ee6a39d8	1	boundary
+cat(p(HGNC:PARP1))	ab4413a2-14eb-46f1-96a3-25e7949f1d81	1	boundary
+cat(p(HGNC:PARP1))	8dd4c033-bec0-4fb1-8caa-d748f460b38f	-1	boundary
+cat(p(HGNC:PARP1))	8811edf2-4972-4346-aaae-40144c1f92e9	1	boundary
+cat(p(HGNC:PARP1))	79ccfae5-ac81-40ec-b8a1-cc3440e91dc5	-1	boundary
+cat(p(HGNC:PARP1))	d2afab62-689e-4389-b1e5-af74b14538cb	1	boundary
+cat(p(HGNC:PARP1))	e9241e5e-40fa-486b-9af8-500f197333bd	-1	boundary
+cat(p(HGNC:PARP1))	f7e8f950-65da-4bdf-b88d-ab730f73d01a	1	boundary
+cat(p(HGNC:PARP1))	eed5f26b-f565-47bb-8a87-fdb05fe14140	-1	boundary
+cat(p(HGNC:PARP1))	783a60cc-6bdf-4e95-855c-ce29d18f6e8e	-1	boundary
+cat(p(HGNC:PARP1))	d85b2402-b879-47b3-9bd9-05c502b9038c	1	boundary
+cat(p(HGNC:PARP1))	1545edcb-1eb0-49d8-afe3-c3cc1c2dea99	1	boundary
+cat(p(HGNC:PARP1))	513508f4-ed99-4da4-90d3-e9cbb617ce34	1	boundary
+cat(p(HGNC:PARP1))	4a8500e5-b20f-4198-b492-193c4af68a96	-1	boundary
+cat(p(HGNC:PARP1))	2795034f-4062-4a64-a281-fb24f053c44b	1	boundary
+cat(p(HGNC:PARP1))	dfdab33a-518f-4f06-acee-9a03fe619d19	1	boundary
+cat(p(HGNC:PARP1))	cc059e26-afc2-48ed-ac2b-270f9909afea	1	boundary
+cat(p(HGNC:PARP1))	d9d4c8b1-ec40-490f-81dd-d3905fa296db	1	boundary
+cat(p(HGNC:PARP1))	0dbf8e3f-eb1b-43bb-9e3d-b5c7bc535fb1	-1	boundary
+cat(p(HGNC:PARP1))	61d1cd6d-a073-4a88-904a-fac2f901d136	-1	boundary
+cat(p(HGNC:PARP1))	af7ddf2e-7e59-4748-97d5-0ea9bbeca724	1	boundary
+cat(p(HGNC:PARP1))	d20cf080-1ddd-4fd3-9a9b-b2fe082e54cd	-1	boundary
+cat(p(HGNC:PARP1))	8165a4db-5a3a-4855-a217-70b8bb09acd2	1	boundary
+cat(p(HGNC:PARP1))	bbcf1d68-7838-459b-b4e1-e8a0d2b42c9f	1	boundary
+cat(p(HGNC:PARP1))	55a481bd-2de6-414f-bd25-65f4d76bdd1e	1	boundary
+cat(p(HGNC:PARP1))	78bd3e4e-ce7e-4dcc-bf3e-c720462b2b2d	1	boundary
+cat(p(HGNC:PARP1))	6feadba6-5dc4-4d3f-93c3-9de5246bb7b0	1	boundary
+cat(p(HGNC:PARP1))	4b551ba0-d459-4325-9a61-49c36e01e08b	-1	boundary
+cat(p(HGNC:PARP1))	b2385637-2851-4593-850f-4227454d6f05	-1	boundary
+cat(p(HGNC:PARP1))	e93adacb-c171-4438-8c33-39873720e9d1	-1	boundary
+cat(p(HGNC:PARP1))	f8ad84cc-625b-4c94-bc77-e7d10b54d0ee	-1	boundary
+cat(p(HGNC:PARP1))	6ba9cd60-effa-482c-9012-093de39ddc5c	1	boundary
+cat(p(HGNC:PARP1))	d5d0619f-d01f-4ddb-ba12-b8aeac039cc8	1	boundary
+cat(p(HGNC:PARP1))	bd973310-9cd2-4647-b2a7-f9695f85f371	-1	boundary
+cat(p(HGNC:PARP1))	4eb8e1d2-fd96-4dc0-a922-8f211d83ddc5	1	boundary
+cat(p(HGNC:PARP1))	24ebdd59-d43d-49c1-877d-df36f2986dd1	-1	boundary
+cat(p(HGNC:PARP1))	23c0af54-0e82-42aa-9b31-21d5a5997e8c	1	boundary
+cat(p(HGNC:PARP1))	3d19981c-3d6e-4b32-aca0-598bb0e1cc50	-1	boundary
+cat(p(HGNC:PTGS2))	1f9bb666-f28f-491a-b3b6-0ce3290cd1a3	1	boundary
+cat(p(HGNC:PTGS2))	d85b2402-b879-47b3-9bd9-05c502b9038c	1	boundary
+cat(p(HGNC:PTGS2))	ddb75537-d3b3-45e0-9d73-dec9a9abf78b	1	boundary
+cat(p(HGNC:PTGS2))	3e6b1117-2444-49a8-a441-63128b4f5db3	-1	boundary
+cat(p(HGNC:PTGS2))	eae3710e-494f-44c0-9519-ebddabf412cc	1	boundary
+cat(p(HGNC:PTGS2))	abd1b447-b18b-4bfc-aa3d-3162cc2b74bc	-1	boundary
+cat(p(HGNC:PTGS2))	b2385637-2851-4593-850f-4227454d6f05	1	boundary
+cat(p(HGNC:PTGS2))	262fb54c-7caa-4438-9021-f754f8ae9e61	-1	boundary
+cat(p(HGNC:PTGS2))	fc922948-9077-4097-9775-3096e7f49775	-1	boundary
+cat(p(HGNC:PTGS2))	3b3e580e-eafe-491c-b793-b3ebda44f7fd	-1	boundary
+cat(p(HGNC:PTGS2))	ae5c3abd-92db-4714-b5e7-1e15ce357141	1	boundary
+cat(p(HGNC:PTGS2))	1630f06b-ea7d-4643-bf2d-4176b9a4d690	1	boundary
+cat(p(HGNC:PTGS2))	145eac7c-2620-4156-93a0-7a6c1e1abbbe	-1	boundary
+cat(p(HGNC:PTGS2))	34709bee-afd4-4ee1-8888-470e348b13e0	1	boundary
+cat(p(HGNC:PTGS2))	37d257b7-d9d6-4f1b-b108-6527be19900f	-1	boundary
+cat(p(HGNC:PTGS2))	d5d0619f-d01f-4ddb-ba12-b8aeac039cc8	1	boundary
+cat(p(HGNC:PTGS2))	8dd4c033-bec0-4fb1-8caa-d748f460b38f	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	2d1d1f7f-efb4-432d-a064-cc6b8acb0888	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	c3d4d494-cd8f-4a4e-a6ef-f5bdeb0f8360	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	ae5c3abd-92db-4714-b5e7-1e15ce357141	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	b8798821-7ad3-4666-a397-b7b799e94eb2	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	55b6ff2b-4535-455f-90a0-52b8ccdc7114	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	9fd8925c-0622-42fd-a6b9-f51a8d449e14	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	646c5c74-5a8a-4ea8-b635-d159e10b12cc	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	8cfd3662-ac11-414f-a830-ab28187d6d8b	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	4d6febd6-2034-4e6b-9a27-8ce097fae2bb	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	f32c9ead-8f0e-4ec4-b342-bd636f64b3cb	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	262fb54c-7caa-4438-9021-f754f8ae9e61	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	9e90bbe1-9eeb-49ab-9efe-6a557976e2b1	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	a5b9fb1e-e079-4c7a-a28d-342504e84238	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	27b27f3f-50f7-4b2d-8957-959c8a2e8eca	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	875bf937-90b1-4c5a-ab51-9580d870194b	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	f4c36f7d-a154-4d77-98fa-2fee31acd851	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	9b4107b1-98a5-4886-a9a7-bdd2a12d95ef	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	68b763c6-7386-4d3a-98c8-9c8317743c65	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	3cb25b24-7a24-45b3-8b9e-ba0ea00b1eaf	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	1757b457-3219-4802-ac2d-21e6fdd2c240	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	4ff972cd-e037-4313-8ac1-856fc3f2d7b5	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	577379dc-94eb-4d7d-bd54-3234ba31ba68	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	fc922948-9077-4097-9775-3096e7f49775	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	3e74559b-d1e8-4359-9cd8-a6c20c52ff96	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	5e56c51c-0626-4832-8b63-9a8a5eb9f2c8	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	145eac7c-2620-4156-93a0-7a6c1e1abbbe	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	f32bc2cc-7656-471e-b288-4b20048d7147	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	4efaf06c-9a14-4ea5-9131-7401969b053a	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	1f9bb666-f28f-491a-b3b6-0ce3290cd1a3	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	87c4d4a3-e252-4eb0-843e-89bd2d675105	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	da432c90-bdc6-40c7-8780-f67633152c3a	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	a83a5ec5-db5b-40c3-a0cb-e782b3c70c69	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	9803d3eb-a572-40f9-ba98-8bf71607febf	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	1630f06b-ea7d-4643-bf2d-4176b9a4d690	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	f722f8b4-f849-4608-9a80-758c4a9d7632	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	3fdb194b-45ce-408c-9331-745eb9de6c42	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	a620a646-bc82-4700-9db4-a60fe4601a89	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	03ca77e0-c348-40b2-8685-f4aaa0c6f12e	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	df3e77d4-309d-4d73-96bf-f0d75b77c6f3	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	927d3398-282f-44d5-a3a0-6b80bc91cff7	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	ddb75537-d3b3-45e0-9d73-dec9a9abf78b	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	abd1b447-b18b-4bfc-aa3d-3162cc2b74bc	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	2cb7def9-675b-422f-93d6-a6637016ab46	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	519bb8bb-4c11-4e6a-b8dc-bbd721c00d72	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	dfe9e073-6b6b-44f0-9651-6a3aa506bd28	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	f4a1e3c7-5dc1-4c08-8666-842100db5068	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	33f3d32c-a2a9-481e-8b8d-47221988b3ec	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	3b3e580e-eafe-491c-b793-b3ebda44f7fd	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	3fb7319e-de14-4859-a1a9-94d7e4d9ae17	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	34709bee-afd4-4ee1-8888-470e348b13e0	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	37d257b7-d9d6-4f1b-b108-6527be19900f	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	3e6b1117-2444-49a8-a441-63128b4f5db3	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	eae3710e-494f-44c0-9519-ebddabf412cc	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	c02e699c-017f-482a-960d-5228e9109f8c	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	1e891141-f170-43cd-832b-f790598186a1	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	b2e350de-e7b4-443a-83b4-57e5e97aa317	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	d60a7289-a7e2-4aed-aaca-742d47b78177	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	8d9da440-5618-4601-9abb-17d7a1e01ce9	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	314a6316-615d-4441-91a4-62ef4bdeb703	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	7e1d2734-e753-40e6-a18f-34de9adce1c5	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	91e42021-9e59-4556-8eb7-65f3fd504449	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	243e26be-6b56-44ec-818c-31b1c99021c6	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	a4579c33-b9fa-42e6-a50e-e669ee6a39d8	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	ab4413a2-14eb-46f1-96a3-25e7949f1d81	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	8dd4c033-bec0-4fb1-8caa-d748f460b38f	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	8811edf2-4972-4346-aaae-40144c1f92e9	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	79ccfae5-ac81-40ec-b8a1-cc3440e91dc5	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	d2afab62-689e-4389-b1e5-af74b14538cb	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	e9241e5e-40fa-486b-9af8-500f197333bd	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	f7e8f950-65da-4bdf-b88d-ab730f73d01a	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	783a60cc-6bdf-4e95-855c-ce29d18f6e8e	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	eed5f26b-f565-47bb-8a87-fdb05fe14140	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	d85b2402-b879-47b3-9bd9-05c502b9038c	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	1545edcb-1eb0-49d8-afe3-c3cc1c2dea99	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	513508f4-ed99-4da4-90d3-e9cbb617ce34	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	4a8500e5-b20f-4198-b492-193c4af68a96	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	2795034f-4062-4a64-a281-fb24f053c44b	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	dfdab33a-518f-4f06-acee-9a03fe619d19	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	cc059e26-afc2-48ed-ac2b-270f9909afea	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	d9d4c8b1-ec40-490f-81dd-d3905fa296db	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	0dbf8e3f-eb1b-43bb-9e3d-b5c7bc535fb1	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	61d1cd6d-a073-4a88-904a-fac2f901d136	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	af7ddf2e-7e59-4748-97d5-0ea9bbeca724	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	d20cf080-1ddd-4fd3-9a9b-b2fe082e54cd	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	8165a4db-5a3a-4855-a217-70b8bb09acd2	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	bbcf1d68-7838-459b-b4e1-e8a0d2b42c9f	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	78bd3e4e-ce7e-4dcc-bf3e-c720462b2b2d	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	55a481bd-2de6-414f-bd25-65f4d76bdd1e	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	6feadba6-5dc4-4d3f-93c3-9de5246bb7b0	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	4b551ba0-d459-4325-9a61-49c36e01e08b	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	b2385637-2851-4593-850f-4227454d6f05	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	e93adacb-c171-4438-8c33-39873720e9d1	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	f8ad84cc-625b-4c94-bc77-e7d10b54d0ee	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	6ba9cd60-effa-482c-9012-093de39ddc5c	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	d5d0619f-d01f-4ddb-ba12-b8aeac039cc8	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	bd973310-9cd2-4647-b2a7-f9695f85f371	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	4eb8e1d2-fd96-4dc0-a922-8f211d83ddc5	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	24ebdd59-d43d-49c1-877d-df36f2986dd1	-1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	23c0af54-0e82-42aa-9b31-21d5a5997e8c	1	boundary
+p(HGNC:PLCG1,pmod(P,Y))	3d19981c-3d6e-4b32-aca0-598bb0e1cc50	-1	boundary
+cat(p(HGNC:ERBB3))	1f9bb666-f28f-491a-b3b6-0ce3290cd1a3	1	boundary
+cat(p(HGNC:ERBB3))	2d1d1f7f-efb4-432d-a064-cc6b8acb0888	-1	boundary
+cat(p(HGNC:ERBB3))	c3d4d494-cd8f-4a4e-a6ef-f5bdeb0f8360	-1	boundary
+cat(p(HGNC:ERBB3))	d9d4c8b1-ec40-490f-81dd-d3905fa296db	1	boundary
+cat(p(HGNC:ERBB3))	c02e699c-017f-482a-960d-5228e9109f8c	1	boundary
+cat(p(HGNC:ERBB3))	0dbf8e3f-eb1b-43bb-9e3d-b5c7bc535fb1	1	boundary
+cat(p(HGNC:ERBB3))	ae5c3abd-92db-4714-b5e7-1e15ce357141	-1	boundary
+cat(p(HGNC:ERBB3))	61d1cd6d-a073-4a88-904a-fac2f901d136	1	boundary
+cat(p(HGNC:ERBB3))	1e891141-f170-43cd-832b-f790598186a1	-1	boundary
+cat(p(HGNC:ERBB3))	b8798821-7ad3-4666-a397-b7b799e94eb2	-1	boundary
+cat(p(HGNC:ERBB3))	8d9da440-5618-4601-9abb-17d7a1e01ce9	-1	boundary
+cat(p(HGNC:ERBB3))	314a6316-615d-4441-91a4-62ef4bdeb703	1	boundary
+cat(p(HGNC:ERBB3))	d20cf080-1ddd-4fd3-9a9b-b2fe082e54cd	-1	boundary
+cat(p(HGNC:ERBB3))	91e42021-9e59-4556-8eb7-65f3fd504449	1	boundary
+cat(p(HGNC:ERBB3))	55b6ff2b-4535-455f-90a0-52b8ccdc7114	1	boundary
+cat(p(HGNC:ERBB3))	9fd8925c-0622-42fd-a6b9-f51a8d449e14	-1	boundary
+cat(p(HGNC:ERBB3))	87c4d4a3-e252-4eb0-843e-89bd2d675105	-1	boundary
+cat(p(HGNC:ERBB3))	8cfd3662-ac11-414f-a830-ab28187d6d8b	-1	boundary
+cat(p(HGNC:ERBB3))	f32c9ead-8f0e-4ec4-b342-bd636f64b3cb	1	boundary
+cat(p(HGNC:ERBB3))	262fb54c-7caa-4438-9021-f754f8ae9e61	-1	boundary
+cat(p(HGNC:ERBB3))	55a481bd-2de6-414f-bd25-65f4d76bdd1e	-1	boundary
+cat(p(HGNC:ERBB3))	f32bc2cc-7656-471e-b288-4b20048d7147	-1	boundary
+cat(p(HGNC:ERBB3))	f722f8b4-f849-4608-9a80-758c4a9d7632	-1	boundary
+cat(p(HGNC:ERBB3))	9e90bbe1-9eeb-49ab-9efe-6a557976e2b1	-1	boundary
+cat(p(HGNC:ERBB3))	a5b9fb1e-e079-4c7a-a28d-342504e84238	-1	boundary
+cat(p(HGNC:ERBB3))	a620a646-bc82-4700-9db4-a60fe4601a89	-1	boundary
+cat(p(HGNC:ERBB3))	ab4413a2-14eb-46f1-96a3-25e7949f1d81	-1	boundary
+cat(p(HGNC:ERBB3))	a4579c33-b9fa-42e6-a50e-e669ee6a39d8	1	boundary
+cat(p(HGNC:ERBB3))	3fdb194b-45ce-408c-9331-745eb9de6c42	1	boundary
+cat(p(HGNC:ERBB3))	8dd4c033-bec0-4fb1-8caa-d748f460b38f	-1	boundary
+cat(p(HGNC:ERBB3))	8811edf2-4972-4346-aaae-40144c1f92e9	-1	boundary
+cat(p(HGNC:ERBB3))	27b27f3f-50f7-4b2d-8957-959c8a2e8eca	1	boundary
+cat(p(HGNC:ERBB3))	875bf937-90b1-4c5a-ab51-9580d870194b	1	boundary
+cat(p(HGNC:ERBB3))	4b551ba0-d459-4325-9a61-49c36e01e08b	-1	boundary
+cat(p(HGNC:ERBB3))	abd1b447-b18b-4bfc-aa3d-3162cc2b74bc	1	boundary
+cat(p(HGNC:ERBB3))	d2afab62-689e-4389-b1e5-af74b14538cb	-1	boundary
+cat(p(HGNC:ERBB3))	b2385637-2851-4593-850f-4227454d6f05	-1	boundary
+cat(p(HGNC:ERBB3))	f8ad84cc-625b-4c94-bc77-e7d10b54d0ee	1	boundary
+cat(p(HGNC:ERBB3))	68b763c6-7386-4d3a-98c8-9c8317743c65	-1	boundary
+cat(p(HGNC:ERBB3))	f7e8f950-65da-4bdf-b88d-ab730f73d01a	-1	boundary
+cat(p(HGNC:ERBB3))	3cb25b24-7a24-45b3-8b9e-ba0ea00b1eaf	1	boundary
+cat(p(HGNC:ERBB3))	d5d0619f-d01f-4ddb-ba12-b8aeac039cc8	1	boundary
+cat(p(HGNC:ERBB3))	1757b457-3219-4802-ac2d-21e6fdd2c240	1	boundary
+cat(p(HGNC:ERBB3))	4eb8e1d2-fd96-4dc0-a922-8f211d83ddc5	-1	boundary
+cat(p(HGNC:ERBB3))	1545edcb-1eb0-49d8-afe3-c3cc1c2dea99	-1	boundary
+cat(p(HGNC:ERBB3))	dfe9e073-6b6b-44f0-9651-6a3aa506bd28	-1	boundary
+cat(p(HGNC:ERBB3))	4ff972cd-e037-4313-8ac1-856fc3f2d7b5	-1	boundary
+cat(p(HGNC:ERBB3))	24ebdd59-d43d-49c1-877d-df36f2986dd1	1	boundary
+cat(p(HGNC:ERBB3))	23c0af54-0e82-42aa-9b31-21d5a5997e8c	1	boundary
+cat(p(HGNC:ERBB3))	33f3d32c-a2a9-481e-8b8d-47221988b3ec	1	boundary
+cat(p(HGNC:ERBB3))	4a8500e5-b20f-4198-b492-193c4af68a96	-1	boundary
+cat(p(HGNC:ERBB3))	3b3e580e-eafe-491c-b793-b3ebda44f7fd	1	boundary
+cat(p(HGNC:ERBB3))	3e74559b-d1e8-4359-9cd8-a6c20c52ff96	1	boundary
+cat(p(HGNC:ERBB3))	3fb7319e-de14-4859-a1a9-94d7e4d9ae17	-1	boundary
+cat(p(HGNC:ERBB3))	5e56c51c-0626-4832-8b63-9a8a5eb9f2c8	-1	boundary
+cat(p(HGNC:ERBB3))	145eac7c-2620-4156-93a0-7a6c1e1abbbe	-1	boundary
+cat(p(HGNC:ERBB3))	2795034f-4062-4a64-a281-fb24f053c44b	1	boundary
+cat(p(HGNC:ERBB3))	4efaf06c-9a14-4ea5-9131-7401969b053a	-1	boundary
+p(HGNC:CFTR,pmod(P,S,768))	dfe9e073-6b6b-44f0-9651-6a3aa506bd28	1	boundary
+p(HGNC:CFTR,pmod(P,S,768))	b2385637-2851-4593-850f-4227454d6f05	1	boundary
+p(HGNC:CFTR,pmod(P,S,768))	a4579c33-b9fa-42e6-a50e-e669ee6a39d8	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	1f9bb666-f28f-491a-b3b6-0ce3290cd1a3	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	2d1d1f7f-efb4-432d-a064-cc6b8acb0888	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	3e6b1117-2444-49a8-a441-63128b4f5db3	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	cc059e26-afc2-48ed-ac2b-270f9909afea	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	eae3710e-494f-44c0-9519-ebddabf412cc	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	d9d4c8b1-ec40-490f-81dd-d3905fa296db	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	c02e699c-017f-482a-960d-5228e9109f8c	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	0dbf8e3f-eb1b-43bb-9e3d-b5c7bc535fb1	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	61d1cd6d-a073-4a88-904a-fac2f901d136	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	b8798821-7ad3-4666-a397-b7b799e94eb2	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	7e1d2734-e753-40e6-a18f-34de9adce1c5	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	d60a7289-a7e2-4aed-aaca-742d47b78177	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	d20cf080-1ddd-4fd3-9a9b-b2fe082e54cd	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	8165a4db-5a3a-4855-a217-70b8bb09acd2	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	646c5c74-5a8a-4ea8-b635-d159e10b12cc	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	8cfd3662-ac11-414f-a830-ab28187d6d8b	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	bbcf1d68-7838-459b-b4e1-e8a0d2b42c9f	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	da432c90-bdc6-40c7-8780-f67633152c3a	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	262fb54c-7caa-4438-9021-f754f8ae9e61	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	78bd3e4e-ce7e-4dcc-bf3e-c720462b2b2d	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	55a481bd-2de6-414f-bd25-65f4d76bdd1e	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	243e26be-6b56-44ec-818c-31b1c99021c6	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	1630f06b-ea7d-4643-bf2d-4176b9a4d690	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	9803d3eb-a572-40f9-ba98-8bf71607febf	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	3fdb194b-45ce-408c-9331-745eb9de6c42	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	a4579c33-b9fa-42e6-a50e-e669ee6a39d8	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	4efaf06c-9a14-4ea5-9131-7401969b053a	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	8dd4c033-bec0-4fb1-8caa-d748f460b38f	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	8811edf2-4972-4346-aaae-40144c1f92e9	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	27b27f3f-50f7-4b2d-8957-959c8a2e8eca	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	03ca77e0-c348-40b2-8685-f4aaa0c6f12e	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	ddb75537-d3b3-45e0-9d73-dec9a9abf78b	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	df3e77d4-309d-4d73-96bf-f0d75b77c6f3	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	79ccfae5-ac81-40ec-b8a1-cc3440e91dc5	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	4b551ba0-d459-4325-9a61-49c36e01e08b	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	f4c36f7d-a154-4d77-98fa-2fee31acd851	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	abd1b447-b18b-4bfc-aa3d-3162cc2b74bc	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	e93adacb-c171-4438-8c33-39873720e9d1	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	f8ad84cc-625b-4c94-bc77-e7d10b54d0ee	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	68b763c6-7386-4d3a-98c8-9c8317743c65	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	e9241e5e-40fa-486b-9af8-500f197333bd	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	eed5f26b-f565-47bb-8a87-fdb05fe14140	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	3cb25b24-7a24-45b3-8b9e-ba0ea00b1eaf	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	1757b457-3219-4802-ac2d-21e6fdd2c240	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	4eb8e1d2-fd96-4dc0-a922-8f211d83ddc5	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	1545edcb-1eb0-49d8-afe3-c3cc1c2dea99	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	dfe9e073-6b6b-44f0-9651-6a3aa506bd28	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	4ff972cd-e037-4313-8ac1-856fc3f2d7b5	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	23c0af54-0e82-42aa-9b31-21d5a5997e8c	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	577379dc-94eb-4d7d-bd54-3234ba31ba68	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	33f3d32c-a2a9-481e-8b8d-47221988b3ec	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	4a8500e5-b20f-4198-b492-193c4af68a96	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	fc922948-9077-4097-9775-3096e7f49775	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	3b3e580e-eafe-491c-b793-b3ebda44f7fd	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	5e56c51c-0626-4832-8b63-9a8a5eb9f2c8	-1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	145eac7c-2620-4156-93a0-7a6c1e1abbbe	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	34709bee-afd4-4ee1-8888-470e348b13e0	1	boundary
+"tscript(complex(SCOMP:""AP-1 Complex""))"	37d257b7-d9d6-4f1b-b108-6527be19900f	-1	boundary
+p(HGNC:SLC5A3)	dfe9e073-6b6b-44f0-9651-6a3aa506bd28	1	boundary
+p(HGNC:SLC5A3)	9b4107b1-98a5-4886-a9a7-bdd2a12d95ef	-1	boundary
+p(HGNC:SLC5A3)	da432c90-bdc6-40c7-8780-f67633152c3a	1	boundary
+p(HGNC:SLC5A3)	33f3d32c-a2a9-481e-8b8d-47221988b3ec	-1	boundary
+p(HGNC:SLC5A3)	4a8500e5-b20f-4198-b492-193c4af68a96	-1	boundary
