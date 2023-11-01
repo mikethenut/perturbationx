@@ -71,7 +71,7 @@ def get_osmotic_stress_dataset_paths():
     """
     module_path = os.path.abspath(__file__)
     resource_paths = [
-        os.path.join(os.path.dirname(module_path), "osmotic_stress_dataset_" + idx + ".csv")
+        os.path.join(os.path.dirname(module_path), "osmotic_stress_dataset_" + idx + ".tsv")
         for idx in ["1", "2", "3"]
     ]
     return resource_paths
