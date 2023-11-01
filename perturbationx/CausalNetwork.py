@@ -382,7 +382,7 @@ class CausalNetwork:
         if rel is not None:
             self._graph[src][trg]["relation"] = rel
         if typ is not None:
-            if typ not in self.__allowed_edge_types:
+            if typ in self.__allowed_edge_types:
                 self._graph[src][trg]["type"] = typ
             else:
                 warnings.warn("Unknown type %s of edge %s "
