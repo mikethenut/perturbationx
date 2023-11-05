@@ -6,7 +6,7 @@
 Welcome to PerturbationX's documentation!
 =========================================
 
-TODO: Add description
+PerturbationX is a package for analyzing causal networks in combination with gene expression data. It is based on the `TopoNPA <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4227138/>`_ algorithm. It was developed as part of a Master's thesis at the University of Ljubljana, Faculty of Computer and Information Science and in collaboration with the National Institute of Biology.
 
 .. toctree::
    :maxdepth: 1
