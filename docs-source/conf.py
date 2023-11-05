@@ -49,4 +49,4 @@ autoapi_generate_api_docs = False
 # 4.1 Search for ::py:attribute::, ::py:data::, Attribute (case-sensitive) to find and remove them
 # 4.2 Rename toponpa modules to topo_npa; keep entries under autoapisummary as is
 # 4.3 Run `sphinx-build -b html -E . _build` once more
-# 4.4 Copy docs-source/_build to docs/
+# 4.4 Copy docs-source/_build to docs/, add empty .nojekyll file
