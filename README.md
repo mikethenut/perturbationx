@@ -11,4 +11,4 @@ python -m pip install git+https://github.com/mikethenut/perturbationx # GitHub
 
 ## Usage
 
-An example Jupyter notebook [example.ipynb](https://github.com/mikethenut/perturbationx/blob/main/example.ipynb) is available for step-by-step instructions on how to use the package. For advanced usage, refer to the documentation and [Master's thesis](https://github.com/mikethenut/perturbationx/blob/main/Integration%20of%20gene%20expression%20data%20with%20causal%20networks.pdf).
+An example Jupyter notebook [example.ipynb](https://github.com/mikethenut/perturbationx/blob/main/example.ipynb) is available for step-by-step instructions on how to use the package. For advanced usage, refer to the [documentation](https://mikethenut.github.io/perturbationx/index.html) and [Master's thesis](https://github.com/mikethenut/perturbationx/blob/main/Integration%20of%20gene%20expression%20data%20with%20causal%20networks.pdf).

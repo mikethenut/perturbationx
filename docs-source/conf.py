@@ -9,7 +9,7 @@
 project = 'PerturbationX'
 copyright = 'CC BY-NC 4.0'
 author = 'Mihael Rajh'
-release = '1.0.0'
+release = '1.0.1'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
