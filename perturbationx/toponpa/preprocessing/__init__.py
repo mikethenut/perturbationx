@@ -2,5 +2,4 @@ from perturbationx.toponpa.preprocessing import preprocessing, preprocess_networ
 
 from .preprocessing import *
 
-__all__ = ["preprocessing", "preprocess_network"]
-__all__.extend(preprocessing.__all__)
+__all__ = ['preprocessing', 'preprocess_network', 'format_dataset', 'prune_network_dataset', 'infer_graph_attributes']

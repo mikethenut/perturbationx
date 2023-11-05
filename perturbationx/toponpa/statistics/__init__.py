@@ -2,5 +2,5 @@ from perturbationx.toponpa.statistics import permutation_tests, statistics, vari
 
 from .statistics import *
 
-__all__ = ["permutation_tests", "statistics", "variance"]
-__all__.extend(statistics.__all__)
+__all__ = ['permutation_tests', 'statistics', 'variance', 'compute_variances',
+           'confidence_interval', 'test_permutations', 'p_value']
