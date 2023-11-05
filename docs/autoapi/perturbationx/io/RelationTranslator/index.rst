@@ -14,7 +14,7 @@ Classes
 
    perturbationx.io.RelationTranslator.RelationTranslator
 
-   
+
 
 .. py:class:: RelationTranslator(mappings=None, allow_numeric=True)
 

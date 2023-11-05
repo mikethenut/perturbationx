@@ -33,6 +33,9 @@ Classes
    :type inplace: bool, optional
    :raises TypeError: If the relation translator is not a RelationTranslator.
 
+   .. py:attribute:: __allowed_edge_types
+      :value: ('core', 'boundary', 'infer')
+
       
 
    .. py:method:: from_networkx(graph: networkx.DiGraph, relation_translator: Optional[perturbationx.io.RelationTranslator] = None, inplace=False)

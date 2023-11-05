@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>perturbationx.vis.cytoscape &mdash; PerturbationX 1.0 documentation</title>
+  <title>perturbationx.vis.cytoscape &mdash; PerturbationX 1.0.0 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=f2a433a1"></script>
+        <script src="../../../../_static/documentation_options.js?v=8d563738"></script>
         <script src="../../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -101,7 +101,7 @@
 <h3>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#perturbationx.vis.cytoscape.edge_to_p4c_format" title="perturbationx.vis.cytoscape.edge_to_p4c_format"><code class="xref py py-obj docutils literal notranslate"><span class="pre">edge_to_p4c_format</span></code></a>(src, trg, interaction)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#perturbationx.vis.cytoscape.edge_to_p4c_format" title="perturbationx.vis.cytoscape.edge_to_p4c_format"><code class="xref py py-obj docutils literal notranslate"><span class="pre">edge_to_p4c_format</span></code></a>(src, trg, interaction[, escape_commas])</p></td>
 <td><p>Convert an edge to the format used by py4cytoscape.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#perturbationx.vis.cytoscape.init_cytoscape" title="perturbationx.vis.cytoscape.init_cytoscape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_cytoscape</span></code></a>(graph, title, collection[, ...])</p></td>
@@ -132,7 +132,7 @@
 </table>
 <dl class="py function">
 <dt class="sig sig-object py" id="perturbationx.vis.cytoscape.edge_to_p4c_format">
-<span class="sig-prename descclassname"><span class="pre">perturbationx.vis.cytoscape.</span></span><span class="sig-name descname"><span class="pre">edge_to_p4c_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interaction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.vis.cytoscape.edge_to_p4c_format" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">perturbationx.vis.cytoscape.</span></span><span class="sig-name descname"><span class="pre">edge_to_p4c_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interaction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">escape_commas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.vis.cytoscape.edge_to_p4c_format" title="Link to this definition"></a></dt>
 <dd><p>Convert an edge to the format used by py4cytoscape.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -140,6 +140,7 @@
 <li><p><strong>src</strong> (<em>str</em>) – Source node name.</p></li>
 <li><p><strong>trg</strong> (<em>str</em>) – Target node name.</p></li>
 <li><p><strong>interaction</strong> (<em>str</em>) – Interaction type.</p></li>
+<li><p><strong>escape_commas</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to escape commas. Defaults to False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

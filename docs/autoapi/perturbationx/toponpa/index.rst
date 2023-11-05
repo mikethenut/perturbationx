@@ -35,24 +35,69 @@ Functions
 
 .. autoapisummary::
 
+   perturbationx.toponpa.permute_adjacency
+   perturbationx.toponpa.permute_edge_list
    perturbationx.toponpa.format_dataset
    perturbationx.toponpa.prune_network_dataset
    perturbationx.toponpa.infer_graph_attributes
-   perturbationx.toponpa.generate_adjacencies
-   perturbationx.toponpa.generate_boundary_laplacian
-   perturbationx.toponpa.generate_core_laplacians
-   perturbationx.toponpa.permute_adjacency
-   perturbationx.toponpa.permute_edge_list
-   perturbationx.toponpa.coefficient_inference
-   perturbationx.toponpa.perturbation_amplitude
-   perturbationx.toponpa.perturbation_amplitude_contributions
    perturbationx.toponpa.compute_variances
    perturbationx.toponpa.confidence_interval
    perturbationx.toponpa.test_permutations
    perturbationx.toponpa.p_value
+   perturbationx.toponpa.coefficient_inference
+   perturbationx.toponpa.perturbation_amplitude
+   perturbationx.toponpa.perturbation_amplitude_contributions
+   perturbationx.toponpa.generate_adjacencies
+   perturbationx.toponpa.generate_boundary_laplacian
+   perturbationx.toponpa.generate_core_laplacians
    perturbationx.toponpa.toponpa
    perturbationx.toponpa.evaluate_modifications
 
+
+
+.. py:function:: permute_adjacency(adj: numpy.ndarray | scipy.sparse.sparray, permutations=('k2', ), iterations=500, permutation_rate=1.0, seed=None)
+
+   Permute an adjacency matrix.
+
+   :param adj: The adjacency matrix to permute.
+   :type adj: np.ndarray | sp.sparray
+   :param permutations: The permutations to apply. May contain 'k1' and 'k2' in any order. Defaults to ('k2',).
+   :type permutations: list, optional
+   :param iterations: The number of permutations to generate. Defaults to 500.
+   :type iterations: int, optional
+   :param permutation_rate: The fraction of edges to permute. Defaults to 1.
+   :type permutation_rate: float, optional
+   :param seed: The seed for the random number generator.
+   :type seed: int, optional
+   :raises ValueError: If the adjacency matrix is not square.
+   :return: A dictionary of lists with permuted adjacency matrices, keyed by the permutation name.
+   :rtype: dict
+
+
+.. py:function:: permute_edge_list(edge_list: numpy.ndarray, node_list=None, iterations=500, method='k1', permutation_rate=1.0, seed=None)
+
+   Permute an edge list.
+
+   :param edge_list: The edge list to permute. Must be a 2D array with shape (n_edges, 4). The first two columns
+       contain the source and target nodes, the third column contains the edge type, and the fourth column contains
+       the confidence weight. Confidence weights are optional.
+   :type edge_list: np.ndarray
+   :param node_list: The list of nodes to use in the permutation. Only edges that connect nodes in this list
+       are permuted. If None, the list is inferred from the edge list.
+   :type node_list: list, optional
+   :param iterations: The number of permutations to generate. Defaults to 500.
+   :type iterations: int, optional
+   :param method: The permutation method to use. Defaults to 'k1'. May be 'k1' or 'k2'.
+   :type method: str, optional
+   :param permutation_rate: The fraction of edges to permute. Defaults to 1. If 'confidence', the confidence weights
+       are used to determine the number of edges to permute. For each edge, a random number is drawn from a uniform
+       distribution between 0 and 1. If the confidence weight is larger than this number, the edge is permuted.
+   :type permutation_rate: float | str, optional
+   :param seed: The seed for the random number generator.
+   :type seed: int, optional
+   :raises ValueError: If the permutation method is unknown.
+   :return: A list of permutations. Each permutation is a list of tuples with the source node, target node, and edge
+       type. If the edge type is None, the edge is removed.
 
 
 .. py:function:: format_dataset(dataset: pandas.DataFrame, computing_statistics=True)
@@ -118,140 +163,6 @@ Functions
    :raises ValueError: If the same node appears in both the core and boundary network.
    :return: The processed network.
    :rtype: nx.DiGraph
-
-
-.. py:function:: generate_adjacencies(graph: networkx.DiGraph, directed=False, sparse=True)
-
-   Generate the boundary and core adjacency matrices from a graph.
-
-   :param graph: The graph.
-   :type graph: nx.DiGraph
-   :param directed: Whether to generate directed adjacency matrices. Defaults to False.
-   :type directed: bool, optional
-   :param sparse: Whether to generate sparse adjacency matrices. Defaults to True.
-   :type sparse: bool, optional
-   :return: The boundary and core adjacency matrices.
-   :rtype: (np.ndarray, np.ndarray) | (sp.sparray, sp.sparray)
-
-
-.. py:function:: generate_boundary_laplacian(adj_b: numpy.ndarray | scipy.sparse.sparray, boundary_edge_minimum=6)
-
-   Generate the boundary Lb Laplacian from a boundary adjacency matrix.
-
-   :param adj_b: The boundary adjacency matrix.
-   :type adj_b: np.ndarray | sp.sparray
-   :param boundary_edge_minimum: The minimum number of boundary edges a core node must have to be
-                                   included in the Lb Laplacian. Nodes with fewer boundary edges
-                                   are removed from the Lb Laplacian. Defaults to 6.
-   :type boundary_edge_minimum: int, optional
-   :raises ValueError: If the adjacency matrix is misshapen or if the boundary edge minimum is negative.
-   :return: The boundary Lb Laplacian.
-   :rtype: np.ndarray | sp.sparray
-
-
-.. py:function:: generate_core_laplacians(lap_b: numpy.ndarray | scipy.sparse.sparray, adj_c: numpy.ndarray | scipy.sparse.sparray, exact_boundary_outdegree=True)
-
-   Generate the core Laplacians from a boundary Laplacian and core adjacency matrix.
-
-   :param lap_b: The boundary Laplacian.
-   :type lap_b: np.ndarray | sp.sparray
-   :param adj_c: The core adjacency matrix.
-   :type adj_c: np.ndarray | sp.sparray
-   :param exact_boundary_outdegree: Whether to use the exact boundary outdegree. If False, the boundary outdegree
-                                       is set to 1 for all core nodes with boundary edges. Defaults to True.
-   :type exact_boundary_outdegree: bool, optional
-   :return: The core Laplacians.
-   :rtype: (np.ndarray, np.ndarray) | (sp.sparray, sp.sparray)
-
-
-.. py:function:: permute_adjacency(adj: numpy.ndarray | scipy.sparse.sparray, permutations=('k2', ), iterations=500, permutation_rate=1.0, seed=None)
-
-   Permute an adjacency matrix.
-
-   :param adj: The adjacency matrix to permute.
-   :type adj: np.ndarray | sp.sparray
-   :param permutations: The permutations to apply. May contain 'k1' and 'k2' in any order. Defaults to ('k2',).
-   :type permutations: list, optional
-   :param iterations: The number of permutations to generate. Defaults to 500.
-   :type iterations: int, optional
-   :param permutation_rate: The fraction of edges to permute. Defaults to 1.
-   :type permutation_rate: float, optional
-   :param seed: The seed for the random number generator.
-   :type seed: int, optional
-   :raises ValueError: If the adjacency matrix is not square.
-   :return: A dictionary of lists with permuted adjacency matrices, keyed by the permutation name.
-   :rtype: dict
-
-
-.. py:function:: permute_edge_list(edge_list: numpy.ndarray, node_list=None, iterations=500, method='k1', permutation_rate=1.0, seed=None)
-
-   Permute an edge list.
-
-   :param edge_list: The edge list to permute. Must be a 2D array with shape (n_edges, 4). The first two columns
-       contain the source and target nodes, the third column contains the edge type, and the fourth column contains
-       the confidence weight. Confidence weights are optional.
-   :type edge_list: np.ndarray
-   :param node_list: The list of nodes to use in the permutation. Only edges that connect nodes in this list
-       are permuted. If None, the list is inferred from the edge list.
-   :type node_list: list, optional
-   :param iterations: The number of permutations to generate. Defaults to 500.
-   :type iterations: int, optional
-   :param method: The permutation method to use. Defaults to 'k1'. May be 'k1' or 'k2'.
-   :type method: str, optional
-   :param permutation_rate: The fraction of edges to permute. Defaults to 1. If 'confidence', the confidence weights
-       are used to determine the number of edges to permute. For each edge, a random number is drawn from a uniform
-       distribution between 0 and 1. If the confidence weight is larger than this number, the edge is permuted.
-   :type permutation_rate: float | str, optional
-   :param seed: The seed for the random number generator.
-   :type seed: int, optional
-   :raises ValueError: If the permutation method is unknown.
-   :return: A list of permutations. Each permutation is a list of tuples with the source node, target node, and edge
-       type. If the edge type is None, the edge is removed.
-
-
-.. py:function:: coefficient_inference(lap_b: numpy.ndarray | scipy.sparse.sparray, lap_c: numpy.ndarray | scipy.sparse.sparray, boundary_coefficients: numpy.ndarray)
-
-   Infer core coefficients from boundary coefficients and Laplacian matrices.
-
-   :param lap_b: The Lb boundary Laplacian.
-   :type lap_b: np.ndarray | sp.sparray
-   :param lap_c: The Lc core Laplacian.
-   :type lap_c: np.ndarray | sp.sparray
-   :param boundary_coefficients: The boundary coefficients.
-   :type boundary_coefficients: np.ndarray
-   :raises ValueError: If the Laplacian matrices are misshapen or if the matrix dimensions do not match.
-   :return: The inferred core coefficients.
-   :rtype: np.ndarray
-
-
-.. py:function:: perturbation_amplitude(lap_q: numpy.ndarray | scipy.sparse.sparray, core_coefficients: numpy.ndarray, core_edge_count: int)
-
-   Compute the perturbation amplitude from the core Laplacian and core coefficients.
-
-   :param lap_q: The Q core Laplacian.
-   :type lap_q: np.ndarray | sp.sparray
-   :param core_coefficients: The core coefficients.
-   :type core_coefficients: np.ndarray
-   :param core_edge_count: The number of edges in the core network.
-   :type core_edge_count: int
-   :raises ValueError: If the Laplacian matrix is misshapen or if the matrix dimensions do not match.
-   :return: The perturbation amplitude.
-   :rtype: np.ndarray
-
-
-.. py:function:: perturbation_amplitude_contributions(lap_q: numpy.ndarray | scipy.sparse.sparray, core_coefficients: numpy.ndarray, core_edge_count: int)
-
-   Compute the perturbation amplitude and relative contributions from the core Laplacian and core coefficients.
-
-   :param lap_q: The Q core Laplacian.
-   :type lap_q: np.ndarray | sp.sparray
-   :param core_coefficients: The core coefficients.
-   :type core_coefficients: np.ndarray
-   :param core_edge_count: The number of edges in the core network.
-   :type core_edge_count: int
-   :raises ValueError: If the Laplacian matrix is misshapen or if the matrix dimensions do not match.
-   :return: The perturbation amplitude and relative contributions.
-   :rtype: (np.ndarray, np.ndarray)
 
 
 .. py:function:: compute_variances(lap_b: numpy.ndarray | scipy.sparse.sparray, lap_c: numpy.ndarray | scipy.sparse.sparray, lap_q: numpy.ndarray | scipy.sparse.sparray, stderr: numpy.ndarray, core_coefficients: numpy.ndarray, core_edge_count: int)
@@ -338,6 +249,95 @@ Functions
    :type distribution: list
    :return: The p-value.
    :rtype: float
+
+
+.. py:function:: coefficient_inference(lap_b: numpy.ndarray | scipy.sparse.sparray, lap_c: numpy.ndarray | scipy.sparse.sparray, boundary_coefficients: numpy.ndarray)
+
+   Infer core coefficients from boundary coefficients and Laplacian matrices.
+
+   :param lap_b: The Lb boundary Laplacian.
+   :type lap_b: np.ndarray | sp.sparray
+   :param lap_c: The Lc core Laplacian.
+   :type lap_c: np.ndarray | sp.sparray
+   :param boundary_coefficients: The boundary coefficients.
+   :type boundary_coefficients: np.ndarray
+   :raises ValueError: If the Laplacian matrices are misshapen or if the matrix dimensions do not match.
+   :return: The inferred core coefficients.
+   :rtype: np.ndarray
+
+
+.. py:function:: perturbation_amplitude(lap_q: numpy.ndarray | scipy.sparse.sparray, core_coefficients: numpy.ndarray, core_edge_count: int)
+
+   Compute the perturbation amplitude from the core Laplacian and core coefficients.
+
+   :param lap_q: The Q core Laplacian.
+   :type lap_q: np.ndarray | sp.sparray
+   :param core_coefficients: The core coefficients.
+   :type core_coefficients: np.ndarray
+   :param core_edge_count: The number of edges in the core network.
+   :type core_edge_count: int
+   :raises ValueError: If the Laplacian matrix is misshapen or if the matrix dimensions do not match.
+   :return: The perturbation amplitude.
+   :rtype: np.ndarray
+
+
+.. py:function:: perturbation_amplitude_contributions(lap_q: numpy.ndarray | scipy.sparse.sparray, core_coefficients: numpy.ndarray, core_edge_count: int)
+
+   Compute the perturbation amplitude and relative contributions from the core Laplacian and core coefficients.
+
+   :param lap_q: The Q core Laplacian.
+   :type lap_q: np.ndarray | sp.sparray
+   :param core_coefficients: The core coefficients.
+   :type core_coefficients: np.ndarray
+   :param core_edge_count: The number of edges in the core network.
+   :type core_edge_count: int
+   :raises ValueError: If the Laplacian matrix is misshapen or if the matrix dimensions do not match.
+   :return: The perturbation amplitude and relative contributions.
+   :rtype: (np.ndarray, np.ndarray)
+
+
+.. py:function:: generate_adjacencies(graph: networkx.DiGraph, directed=False, sparse=True)
+
+   Generate the boundary and core adjacency matrices from a graph.
+
+   :param graph: The graph.
+   :type graph: nx.DiGraph
+   :param directed: Whether to generate directed adjacency matrices. Defaults to False.
+   :type directed: bool, optional
+   :param sparse: Whether to generate sparse adjacency matrices. Defaults to True.
+   :type sparse: bool, optional
+   :return: The boundary and core adjacency matrices.
+   :rtype: (np.ndarray, np.ndarray) | (sp.sparray, sp.sparray)
+
+
+.. py:function:: generate_boundary_laplacian(adj_b: numpy.ndarray | scipy.sparse.sparray, boundary_edge_minimum=6)
+
+   Generate the boundary Lb Laplacian from a boundary adjacency matrix.
+
+   :param adj_b: The boundary adjacency matrix.
+   :type adj_b: np.ndarray | sp.sparray
+   :param boundary_edge_minimum: The minimum number of boundary edges a core node must have to be
+                                   included in the Lb Laplacian. Nodes with fewer boundary edges
+                                   are removed from the Lb Laplacian. Defaults to 6.
+   :type boundary_edge_minimum: int, optional
+   :raises ValueError: If the adjacency matrix is misshapen or if the boundary edge minimum is negative.
+   :return: The boundary Lb Laplacian.
+   :rtype: np.ndarray | sp.sparray
+
+
+.. py:function:: generate_core_laplacians(lap_b: numpy.ndarray | scipy.sparse.sparray, adj_c: numpy.ndarray | scipy.sparse.sparray, exact_boundary_outdegree=True)
+
+   Generate the core Laplacians from a boundary Laplacian and core adjacency matrix.
+
+   :param lap_b: The boundary Laplacian.
+   :type lap_b: np.ndarray | sp.sparray
+   :param adj_c: The core adjacency matrix.
+   :type adj_c: np.ndarray | sp.sparray
+   :param exact_boundary_outdegree: Whether to use the exact boundary outdegree. If False, the boundary outdegree
+                                       is set to 1 for all core nodes with boundary edges. Defaults to True.
+   :type exact_boundary_outdegree: bool, optional
+   :return: The core Laplacians.
+   :rtype: (np.ndarray, np.ndarray) | (sp.sparray, sp.sparray)
 
 
 .. py:function:: toponpa(graph: networkx.DiGraph, relation_translator: perturbationx.io.RelationTranslator, datasets: dict, missing_value_pruning_mode='nullify', opposing_value_pruning_mode=None, opposing_value_minimum_amplitude=1.0, boundary_edge_minimum=6, exact_boundary_outdegree=True, compute_statistics=True, alpha=0.95, permutations=('o', 'k2'), full_core_permutation=True, p_iters=500, p_rate=1.0, sparse=True, seed=None, verbose=True)

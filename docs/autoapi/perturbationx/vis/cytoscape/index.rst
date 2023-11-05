@@ -25,7 +25,7 @@ Functions
 
 
 
-.. py:function:: edge_to_p4c_format(src: str, trg: str, interaction: str)
+.. py:function:: edge_to_p4c_format(src: str, trg: str, interaction: str, escape_commas=False)
 
    Convert an edge to the format used by py4cytoscape.
 
@@ -35,6 +35,8 @@ Functions
    :type trg: str
    :param interaction: Interaction type.
    :type interaction: str
+   :param escape_commas: Whether to escape commas. Defaults to False.
+   :type escape_commas: bool, optional
    :return: Edge name.
    :rtype: str
 

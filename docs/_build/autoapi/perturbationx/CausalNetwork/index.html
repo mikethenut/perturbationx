@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>perturbationx.CausalNetwork &mdash; PerturbationX 1.0 documentation</title>
+  <title>perturbationx.CausalNetwork &mdash; PerturbationX 1.0.0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+        <script src="../../../_static/documentation_options.js?v=8d563738"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -118,6 +118,11 @@ network, as well as for evaluating the rewired and wired networks.</p>
 <dd class="field-even"><p><strong>TypeError</strong> – If the relation translator is not a RelationTranslator.</p>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.__allowed_edge_types">
+<span class="sig-name descname"><span class="pre">__allowed_edge_types</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('core',</span> <span class="pre">'boundary',</span> <span class="pre">'infer')</span></em><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.__allowed_edge_types" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="perturbationx.CausalNetwork.CausalNetwork.from_networkx">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_networkx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.DiGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation_translator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">perturbationx.io.RelationTranslator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.CausalNetwork.CausalNetwork.from_networkx" title="Link to this definition"></a></dt>

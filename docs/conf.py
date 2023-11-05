@@ -6,11 +6,10 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-
 project = 'PerturbationX'
 copyright = 'CC BY-NC 4.0'
 author = 'Mihael Rajh'
-release = '1.0'
+release = '1.0.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -23,6 +22,8 @@ extensions = [
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
+
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
@@ -34,17 +35,6 @@ coverage_show_missing_items = True
 autoapi_dirs = ['../perturbationx']
 autoapi_template_dir = '_templates/_autoapi'
 autoapi_generate_api_docs = False
-
-
-def skip_attributes(app, what, name, obj, skip, options):
-    if what == ["data", "attribute"]:
-        skip = True
-    return skip
-
-
-def setup(sphinx):
-   sphinx.connect("autoapi-skip-member", skip_attributes)
-
 
 # Build instructions
 # 1.1 Comment out `autoapi_generate_api_docs = False`

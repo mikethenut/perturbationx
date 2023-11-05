@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>perturbationx.resources.resources &mdash; PerturbationX 1.0 documentation</title>
+  <title>perturbationx.resources.resources &mdash; PerturbationX 1.0.0 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=f2a433a1"></script>
+        <script src="../../../../_static/documentation_options.js?v=8d563738"></script>
         <script src="../../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -104,6 +104,15 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#perturbationx.resources.resources.get_style_xml_path" title="perturbationx.resources.resources.get_style_xml_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_style_xml_path</span></code></a>()</p></td>
 <td><p>Get the path to the default style xml file.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#perturbationx.resources.resources.get_osmotic_stress_core_path" title="perturbationx.resources.resources.get_osmotic_stress_core_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_osmotic_stress_core_path</span></code></a>()</p></td>
+<td><p>Get the path to the osmotic stress core network file. The network is a subset of the human osmotic stress network</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#perturbationx.resources.resources.get_osmotic_stress_boundary_path" title="perturbationx.resources.resources.get_osmotic_stress_boundary_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_osmotic_stress_boundary_path</span></code></a>()</p></td>
+<td><p>Get the path to the osmotic stress boundary network file. The network was generated using the Barabási-Albert</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#perturbationx.resources.resources.get_osmotic_stress_dataset_paths" title="perturbationx.resources.resources.get_osmotic_stress_dataset_paths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_osmotic_stress_dataset_paths</span></code></a>()</p></td>
+<td><p>Get the paths to the osmotic stress dataset files. The datasets were generated using a genetic algorithm and</p></td>
+</tr>
 </tbody>
 </table>
 <dl class="py function">
@@ -112,6 +121,52 @@
 <dd><p>Get the path to the default style xml file.
 :return: The path to the default style xml file.
 :rtype: str</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="perturbationx.resources.resources.get_osmotic_stress_core_path">
+<span class="sig-prename descclassname"><span class="pre">perturbationx.resources.resources.</span></span><span class="sig-name descname"><span class="pre">get_osmotic_stress_core_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.resources.resources.get_osmotic_stress_core_path" title="Link to this definition"></a></dt>
+<dd><p>Get the path to the osmotic stress core network file. The network is a subset of the human osmotic stress network
+from the Causal Biological Networks database (<a class="reference external" href="https://www.causalbionet.com/">https://www.causalbionet.com/</a>, network ID osmotic_stress_2.0_hs).
+All non-causal edges were removed and the largest connected component was then selected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The path to the osmotic stress core network file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="perturbationx.resources.resources.get_osmotic_stress_boundary_path">
+<span class="sig-prename descclassname"><span class="pre">perturbationx.resources.resources.</span></span><span class="sig-name descname"><span class="pre">get_osmotic_stress_boundary_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.resources.resources.get_osmotic_stress_boundary_path" title="Link to this definition"></a></dt>
+<dd><p>Get the path to the osmotic stress boundary network file. The network was generated using the Barabási-Albert
+model and is not biological in nature. It contains 100 outer boundary nodes and 500 boundary edges.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The path to the osmotic stress boundary network file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="perturbationx.resources.resources.get_osmotic_stress_dataset_paths">
+<span class="sig-prename descclassname"><span class="pre">perturbationx.resources.resources.</span></span><span class="sig-name descname"><span class="pre">get_osmotic_stress_dataset_paths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.resources.resources.get_osmotic_stress_dataset_paths" title="Link to this definition"></a></dt>
+<dd><p>Get the paths to the osmotic stress dataset files. The datasets were generated using a genetic algorithm and
+are not biological in nature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The paths to the osmotic stress dataset files.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

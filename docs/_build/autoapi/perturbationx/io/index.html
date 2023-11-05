@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>perturbationx.io &mdash; PerturbationX 1.0 documentation</title>
+  <title>perturbationx.io &mdash; PerturbationX 1.0.0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+        <script src="../../../_static/documentation_options.js?v=8d563738"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -136,6 +136,80 @@
 </tr>
 </tbody>
 </table>
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">perturbationx.io.</span></span><span class="sig-name descname"><span class="pre">RelationTranslator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mappings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_numeric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Class for translating relations to numeric values. By default, relations “1”, “increases”, “-&gt;”,
+“directlyIncreases”, and “=&gt;” are mapped to 1.0, while relations “-1”, “decreases”, “-|”, “directlyDecreases”,
+and “=|” are mapped to -1.0. Relations that cannot be mapped to a numeric value will be parsed as 0.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mappings</strong> (<em>dict</em><em>, </em><em>optional</em>) – Dictionary of additional relation to numeric value mappings. It extends and overrides the default
+mappings.</p></li>
+<li><p><strong>allow_numeric</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, relations will be parsed as numeric values if they cannot be found in the mappings
+dictionary. Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.io.RelationTranslator.add_mapping">
+<span class="sig-name descname"><span class="pre">add_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maps_to</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.io.RelationTranslator.add_mapping" title="Link to this definition"></a></dt>
+<dd><p>Add a new mapping from a relation to a numeric value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>relation</strong> (<em>str</em>) – The relation to map.</p></li>
+<li><p><strong>maps_to</strong> (<em>float</em>) – The numeric value to map to.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.io.RelationTranslator.remove_mapping">
+<span class="sig-name descname"><span class="pre">remove_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.io.RelationTranslator.remove_mapping" title="Link to this definition"></a></dt>
+<dd><p>Remove a mapping from a relation to a numeric value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>relation</strong> (<em>str</em>) – The relation to remove the mapping for.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.io.RelationTranslator.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.io.RelationTranslator.copy" title="Link to this definition"></a></dt>
+<dd><p>Create a copy of this RelationTranslator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A copy of this RelationTranslator.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="RelationTranslator/index.html#perturbationx.io.RelationTranslator.RelationTranslator" title="perturbationx.io.RelationTranslator.RelationTranslator">RelationTranslator</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="perturbationx.io.RelationTranslator.translate">
+<span class="sig-name descname"><span class="pre">translate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.io.RelationTranslator.translate" title="Link to this definition"></a></dt>
+<dd><p>Translate a relation to a numeric value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>relation</strong> (<em>str</em>) – The relation to translate.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The numeric value that the relation maps to.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="perturbationx.io.read_dsv">
 <span class="sig-prename descclassname"><span class="pre">perturbationx.io.</span></span><span class="sig-name descname"><span class="pre">read_dsv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_edge_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\t'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DEFAULT_DATA_COLS</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.io.read_dsv" title="Link to this definition"></a></dt>
@@ -240,80 +314,6 @@ be ignored. Defaults to [“subject”, “object”, “relation”, “type”
 <dd class="field-even"><p><strong>ValueError</strong> – If the length of the header list does not match the length of the data_cols list.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">perturbationx.io.</span></span><span class="sig-name descname"><span class="pre">RelationTranslator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mappings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_numeric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Class for translating relations to numeric values. By default, relations “1”, “increases”, “-&gt;”,
-“directlyIncreases”, and “=&gt;” are mapped to 1.0, while relations “-1”, “decreases”, “-|”, “directlyDecreases”,
-and “=|” are mapped to -1.0. Relations that cannot be mapped to a numeric value will be parsed as 0.0.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>mappings</strong> (<em>dict</em><em>, </em><em>optional</em>) – Dictionary of additional relation to numeric value mappings. It extends and overrides the default
-mappings.</p></li>
-<li><p><strong>allow_numeric</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, relations will be parsed as numeric values if they cannot be found in the mappings
-dictionary. Defaults to True.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="perturbationx.io.RelationTranslator.add_mapping">
-<span class="sig-name descname"><span class="pre">add_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maps_to</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.io.RelationTranslator.add_mapping" title="Link to this definition"></a></dt>
-<dd><p>Add a new mapping from a relation to a numeric value.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>relation</strong> (<em>str</em>) – The relation to map.</p></li>
-<li><p><strong>maps_to</strong> (<em>float</em>) – The numeric value to map to.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="perturbationx.io.RelationTranslator.remove_mapping">
-<span class="sig-name descname"><span class="pre">remove_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.io.RelationTranslator.remove_mapping" title="Link to this definition"></a></dt>
-<dd><p>Remove a mapping from a relation to a numeric value.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>relation</strong> (<em>str</em>) – The relation to remove the mapping for.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="perturbationx.io.RelationTranslator.copy">
-<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.io.RelationTranslator.copy" title="Link to this definition"></a></dt>
-<dd><p>Create a copy of this RelationTranslator.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A copy of this RelationTranslator.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="RelationTranslator/index.html#perturbationx.io.RelationTranslator.RelationTranslator" title="perturbationx.io.RelationTranslator.RelationTranslator">RelationTranslator</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="perturbationx.io.RelationTranslator.translate">
-<span class="sig-name descname"><span class="pre">translate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.io.RelationTranslator.translate" title="Link to this definition"></a></dt>
-<dd><p>Translate a relation to a numeric value.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>relation</strong> (<em>str</em>) – The relation to translate.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The numeric value that the relation maps to.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 </section>
