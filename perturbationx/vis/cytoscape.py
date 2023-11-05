@@ -17,7 +17,7 @@ __all__ = ["edge_to_p4c_format", "init_cytoscape", "load_network_data", "set_bou
            "color_nodes_by_column", "highlight_subgraph", "isolate_subgraph", "extract_subgraph", "clear_bypass"]
 
 
-def edge_to_p4c_format(src: str, trg: str, interaction: str):
+def edge_to_p4c_format(src: str, trg: str, interaction: str, escape_commas=False):
     """Convert an edge to the format used by py4cytoscape.
 
     :param src: Source node name.
@@ -26,11 +26,16 @@ def edge_to_p4c_format(src: str, trg: str, interaction: str):
     :type trg: str
     :param interaction: Interaction type.
     :type interaction: str
+    :param escape_commas: Whether to escape commas. Defaults to False.
+    :type escape_commas: bool, optional
     :return: Edge name.
     :rtype: str
     """
     # Edge name format used by p4c is 'source (interaction) target'
-    return "%s (%s) %s" % (src, interaction, trg)
+    edge_formatted = "%s (%s) %s" % (src, interaction, trg)
+    if escape_commas:
+        edge_formatted = edge_formatted.replace(",", r"\,")
+    return edge_formatted
 
 
 def init_cytoscape(graph: nx.Graph, title: str, collection: str, init_boundary: Optional[bool] = False,
@@ -257,8 +262,8 @@ def extract_subgraph(nodes: list, edges: list, network_suid: int, cytoscape_url=
     :rtype: int
     """
     return p4c.networks.create_subnetwork(
-        nodes=nodes, edges=edges, exclude_edges=True,
-        network=network_suid, base_url=cytoscape_url
+        nodes=nodes, nodes_by_col='name', edges=edges, edges_by_col='name',
+        exclude_edges=True, network=network_suid, base_url=cytoscape_url
     )
 
 

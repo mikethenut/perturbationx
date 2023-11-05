@@ -220,10 +220,10 @@ class NPAResultDisplay:
         nodes, edges = self._results.get_node_subgraph(
             leading_nodes, include_shortest_paths, path_length_tolerance, include_neighbors, neighborhood_type
         )
-        edges = [edge_to_p4c_format(*e) for e in edges]
 
         # Set visibility
         if inplace:
+            edges = [edge_to_p4c_format(*e) for e in edges]
             isolate_subgraph(
                 self._graph, nodes, edges,
                 network_suid=self._network_suid,
@@ -231,6 +231,7 @@ class NPAResultDisplay:
             )
             return self._network_suid
         else:
+            edges = [edge_to_p4c_format(*e, escape_commas=True) for e in edges]
             return extract_subgraph(
                 nodes, edges,
                 network_suid=self._network_suid,

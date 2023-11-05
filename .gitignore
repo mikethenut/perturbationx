@@ -21,3 +21,7 @@ __pycache__/
 
 # Exclude py4cytoscape logs
 logs/
+
+# Exclude pip install info
+build/
+perturbationx.egg-info/
