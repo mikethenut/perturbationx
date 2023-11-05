@@ -13,7 +13,7 @@ Subpackages
    io/index.rst
    resources/index.rst
    result/index.rst
-   toponpa/index.rst
+   topo_npa/index.rst
    util/index.rst
    vis/index.rst
 

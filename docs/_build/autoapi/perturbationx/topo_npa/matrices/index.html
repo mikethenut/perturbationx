@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>perturbationx.topo_npa.matrices &mdash; PerturbationX 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=8d563738"></script>
+        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="perturbationx.topo_npa.topo_npa" href="../topo_npa/index.html" />
+    <link rel="prev" title="perturbationx.topo_npa.core" href="../core/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            PerturbationX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation and usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx</span></code></a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../io/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.io</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../resources/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.resources</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../result/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.result</span></code></a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.topo_npa</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../util/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.util</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../vis/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.vis</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../genindex.html">Index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">PerturbationX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx</span></code></a></li>
+          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.topo_npa</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.topo_npa.matrices</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/perturbationx/topo_npa/matrices/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-perturbationx.topo_npa.matrices">
+<span id="perturbationx-topo-npa-matrices"></span><h1><a class="reference internal" href="#module-perturbationx.topo_npa.matrices" title="perturbationx.topo_npa.matrices"><code class="xref py py-mod docutils literal notranslate"><span class="pre">perturbationx.topo_npa.matrices</span></code></a><a class="headerlink" href="#module-perturbationx.topo_npa.matrices" title="Link to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_adjacencies</span></code>(graph[, directed, sparse])</p></td>
+<td><p>Generate the boundary and core adjacency matrices from a graph.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_boundary_laplacian</span></code>(adj_b[, boundary_edge_minimum])</p></td>
+<td><p>Generate the boundary Lb Laplacian from a boundary adjacency matrix.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_core_laplacians</span></code>(lap_b, adj_c[, ...])</p></td>
+<td><p>Generate the core Laplacians from a boundary Laplacian and core adjacency matrix.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="perturbationx.topo_npa.matrices.generate_adjacencies">
+<span class="sig-prename descclassname"><span class="pre">perturbationx.topo_npa.matrices.</span></span><span class="sig-name descname"><span class="pre">generate_adjacencies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.DiGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sparse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.topo_npa.matrices.generate_adjacencies" title="Link to this definition"></a></dt>
+<dd><p>Generate the boundary and core adjacency matrices from a graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<em>nx.DiGraph</em>) – The graph.</p></li>
+<li><p><strong>directed</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to generate directed adjacency matrices. Defaults to False.</p></li>
+<li><p><strong>sparse</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to generate sparse adjacency matrices. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The boundary and core adjacency matrices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(np.ndarray, np.ndarray) | (sp.sparray, sp.sparray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="perturbationx.topo_npa.matrices.generate_boundary_laplacian">
+<span class="sig-prename descclassname"><span class="pre">perturbationx.topo_npa.matrices.</span></span><span class="sig-name descname"><span class="pre">generate_boundary_laplacian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adj_b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">scipy.sparse.sparray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_edge_minimum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.topo_npa.matrices.generate_boundary_laplacian" title="Link to this definition"></a></dt>
+<dd><p>Generate the boundary Lb Laplacian from a boundary adjacency matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>adj_b</strong> (<em>np.ndarray</em><em> | </em><em>sp.sparray</em>) – The boundary adjacency matrix.</p></li>
+<li><p><strong>boundary_edge_minimum</strong> (<em>int</em><em>, </em><em>optional</em>) – The minimum number of boundary edges a core node must have to be
+included in the Lb Laplacian. Nodes with fewer boundary edges
+are removed from the Lb Laplacian. Defaults to 6.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the adjacency matrix is misshapen or if the boundary edge minimum is negative.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The boundary Lb Laplacian.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray | sp.sparray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="perturbationx.topo_npa.matrices.generate_core_laplacians">
+<span class="sig-prename descclassname"><span class="pre">perturbationx.topo_npa.matrices.</span></span><span class="sig-name descname"><span class="pre">generate_core_laplacians</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lap_b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">scipy.sparse.sparray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adj_c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">scipy.sparse.sparray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact_boundary_outdegree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#perturbationx.topo_npa.matrices.generate_core_laplacians" title="Link to this definition"></a></dt>
+<dd><p>Generate the core Laplacians from a boundary Laplacian and core adjacency matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lap_b</strong> (<em>np.ndarray</em><em> | </em><em>sp.sparray</em>) – The boundary Laplacian.</p></li>
+<li><p><strong>adj_c</strong> (<em>np.ndarray</em><em> | </em><em>sp.sparray</em>) – The core adjacency matrix.</p></li>
+<li><p><strong>exact_boundary_outdegree</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use the exact boundary outdegree. If False, the boundary outdegree
+is set to 1 for all core nodes with boundary edges. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The core Laplacians.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(np.ndarray, np.ndarray) | (sp.sparray, sp.sparray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../core/index.html" class="btn btn-neutral float-left" title="perturbationx.topo_npa.core" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../topo_npa/index.html" class="btn btn-neutral float-right" title="perturbationx.topo_npa.topo_npa" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright CC BY-NC 4.0.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
