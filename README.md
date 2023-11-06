@@ -10,5 +10,21 @@ python -m pip install git+https://github.com/mikethenut/perturbationx # GitHub
 ```
 
 ## Usage
-
 An example Jupyter notebook [example.ipynb](https://github.com/mikethenut/perturbationx/blob/main/example.ipynb) is available for step-by-step instructions on how to use the package. For advanced usage, refer to the [documentation](https://mikethenut.github.io/perturbationx/index.html) and [Master's thesis](https://github.com/mikethenut/perturbationx/blob/main/Integration%20of%20gene%20expression%20data%20with%20causal%20networks.pdf).
+
+## Citation
+No paper describing the package has been published yet. If you use this package in your research, please cite the following Zenodo DOI:
+
+[![DOI](https://zenodo.org/badge/580879301.svg)](https://zenodo.org/doi/10.5281/zenodo.10073529)
+
+```bibtex
+@software{rajh2023perturbationx,
+  author       = {Rajh, Mihael and Bleker, Carissa Robyn and Curk, Tomaž},
+  title        = {PerturbationX},
+  year         = 2023,
+  publisher    = {Zenodo},
+  version      = {v1.0.1},
+  doi          = {10.5281/zenodo.10073529},
+  url          = {https://doi.org/10.5281/zenodo.10073529}
+}
+```
